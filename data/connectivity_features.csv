@@ -1,0 +1,22 @@
+Category,Criteria,Indicator,Metric,Network,Landscape,Projected
+Size,Disturbance-based,"fire MDR, insect MDR",Area in km2,,,No
+,Territory-based,"Home range, territory, migratory range",Area in km2,,,
+Intactness,Single-scale,IFL and/or HFP,%intact,,,No
+,Multi-scale,Moving window,,,,
+Representation,Biodiversity,"CMI, GPP, LED, LCC","KS, BC",,,Some
+,Geodiversity,"Facets, geomorphology, soils, topography",,,,
+,Focal species,"Songbirds, waterfowl, caribou","KS, RI",,,Some
+Connectivity,Aquatic,Hydrological,DCI,,,Assume static
+,,,RCI,,,Depends
+,Terrestrial - systems,Riparian and wetlands,,,,
+,,Ancient forests,,,,
+,,Shrublands,,,,
+,Terrestrial - species,Focal species,,,,
+,,Species at risk,,,,
+,,Cultural species,,,,
+,,Ungulate species,,,,
+,,Tree species,,,,
+Climate,Bioclimatic variables,,"Individual, PCAs",,,yes
+,Analogue,,,,,yes
+,Velocity,Forward,,,,yes
+,,Backward,,,,

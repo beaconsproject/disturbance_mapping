@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 Connectivity Mapping | Disturbance &amp; Connectivity Mapping</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="generator" content="bookdown 0.24.4 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 Connectivity Mapping | Disturbance &amp; Connectivity Mapping" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 Connectivity Mapping | Disturbance &amp; Connectivity Mapping" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+The HTML output format for this example is bookdown::gitbook,
+set in the _output.yml file.</p>" />
+  
+
+<meta name="author" content="Pierre Vernier" />
+
+
+<meta name="date" content="2021-12-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="disturbance-mapping.html"/>
+<link rel="next" href="references.html"/>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="index.html">Disturbance & Connectivity Mapping</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#workplan"><i class="fa fa-check"></i><b>1.1</b> Workplan</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="spatial-database.html"><a href="spatial-database.html"><i class="fa fa-check"></i><b>2</b> Spatial Database</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="spatial-database.html"><a href="spatial-database.html#develop-spatial-database"><i class="fa fa-check"></i><b>2.1</b> Develop spatial database</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="spatial-database.html"><a href="spatial-database.html#identify-and-acquire-existing-disturbance-datasets"><i class="fa fa-check"></i><b>2.1.1</b> Identify and acquire existing disturbance datasets</a></li>
+<li class="chapter" data-level="2.1.2" data-path="spatial-database.html"><a href="spatial-database.html#develop-a-spatial-database-with-common-extent-and-projection"><i class="fa fa-check"></i><b>2.1.2</b> Develop a spatial database with common extent and projection</a></li>
+<li class="chapter" data-level="2.1.3" data-path="spatial-database.html"><a href="spatial-database.html#identify-spatial-and-temporal-gaps-in-coverage"><i class="fa fa-check"></i><b>2.1.3</b> Identify spatial and temporal gaps in coverage</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="disturbance-mapping.html"><a href="disturbance-mapping.html"><i class="fa fa-check"></i><b>3</b> Disturbance Mapping</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="disturbance-mapping.html"><a href="disturbance-mapping.html#develop-disturbance-maps"><i class="fa fa-check"></i><b>3.1</b> Develop disturbance maps</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="disturbance-mapping.html"><a href="disturbance-mapping.html#develop-individual-disturbance-type-maps"><i class="fa fa-check"></i><b>3.1.1</b> Develop individual disturbance type maps</a></li>
+<li class="chapter" data-level="3.1.2" data-path="disturbance-mapping.html"><a href="disturbance-mapping.html#develop-cumulative-disturbance-maps"><i class="fa fa-check"></i><b>3.1.2</b> Develop cumulative disturbance maps</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="disturbance-mapping.html"><a href="disturbance-mapping.html#develop-value-added-products"><i class="fa fa-check"></i><b>3.2</b> Develop value added products</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="disturbance-mapping.html"><a href="disturbance-mapping.html#create-human-footprint-maps-optional"><i class="fa fa-check"></i><b>3.2.1</b> Create human footprint maps (optional)</a></li>
+<li class="chapter" data-level="3.2.2" data-path="disturbance-mapping.html"><a href="disturbance-mapping.html#create-intactness-maps"><i class="fa fa-check"></i><b>3.2.2</b> Create intactness maps</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="disturbance-mapping.html"><a href="disturbance-mapping.html#validate-and-enhance-map-products"><i class="fa fa-check"></i><b>3.3</b> Validate and enhance map products</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="disturbance-mapping.html"><a href="disturbance-mapping.html#fill-in-gaps-in-coverage"><i class="fa fa-check"></i><b>3.3.1</b> Fill in gaps in coverage</a></li>
+<li class="chapter" data-level="3.3.2" data-path="disturbance-mapping.html"><a href="disturbance-mapping.html#remote-based-validation"><i class="fa fa-check"></i><b>3.3.2</b> Remote-based validation</a></li>
+<li class="chapter" data-level="3.3.3" data-path="disturbance-mapping.html"><a href="disturbance-mapping.html#field-based-validation"><i class="fa fa-check"></i><b>3.3.3</b> Field-based validation</a></li>
+<li class="chapter" data-level="3.3.4" data-path="disturbance-mapping.html"><a href="disturbance-mapping.html#long-term-disturbance-monitoring"><i class="fa fa-check"></i><b>3.3.4</b> Long term disturbance monitoring</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="connectivity-mapping.html"><a href="connectivity-mapping.html"><i class="fa fa-check"></i><b>4</b> Connectivity Mapping</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="connectivity-mapping.html"><a href="connectivity-mapping.html#assess-current-state-of-ecological-connectivity"><i class="fa fa-check"></i><b>4.1</b> Assess current state of ecological connectivity</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="connectivity-mapping.html"><a href="connectivity-mapping.html#protected-and-conserved-area-connectivity"><i class="fa fa-check"></i><b>4.1.1</b> Protected and conserved area connectivity</a></li>
+<li class="chapter" data-level="4.1.2" data-path="connectivity-mapping.html"><a href="connectivity-mapping.html#terrestrial-ecosystem-connectivity"><i class="fa fa-check"></i><b>4.1.2</b> Terrestrial ecosystem connectivity</a></li>
+<li class="chapter" data-level="4.1.3" data-path="connectivity-mapping.html"><a href="connectivity-mapping.html#aquatic-ecosystem-connectivity"><i class="fa fa-check"></i><b>4.1.3</b> Aquatic ecosystem connectivity</a></li>
+<li class="chapter" data-level="4.1.4" data-path="connectivity-mapping.html"><a href="connectivity-mapping.html#focal-species-habitat-connectivity"><i class="fa fa-check"></i><b>4.1.4</b> Focal species habitat connectivity</a></li>
+<li class="chapter" data-level="4.1.5" data-path="connectivity-mapping.html"><a href="connectivity-mapping.html#bio-cultural-connectivity"><i class="fa fa-check"></i><b>4.1.5</b> Bio-cultural connectivity</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="connectivity-mapping.html"><a href="connectivity-mapping.html#evaluate-projected-effects-of-climate-and-land-use-change"><i class="fa fa-check"></i><b>4.2</b> Evaluate projected effects of climate and land use change</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="connectivity-mapping.html"><a href="connectivity-mapping.html#effects-of-land-use-activities-on-connectivity"><i class="fa fa-check"></i><b>4.2.1</b> Effects of land use activities on connectivity</a></li>
+<li class="chapter" data-level="4.2.2" data-path="connectivity-mapping.html"><a href="connectivity-mapping.html#effects-of-climate-change-on-connectivity"><i class="fa fa-check"></i><b>4.2.2</b> Effects of climate change on connectivity</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>5</b> References</a></li>
+<li class="chapter" data-level="" data-path="appendix-1---spatial-database.html"><a href="appendix-1---spatial-database.html"><i class="fa fa-check"></i>Appendix 1 - Spatial database</a>
+<ul>
+<li class="chapter" data-level="" data-path="appendix-1---spatial-database.html"><a href="appendix-1---spatial-database.html#study-region-fdas"><i class="fa fa-check"></i>Study region FDAs</a></li>
+<li class="chapter" data-level="" data-path="appendix-1---spatial-database.html"><a href="appendix-1---spatial-database.html#yukon-datasets"><i class="fa fa-check"></i>Yukon datasets</a></li>
+<li class="chapter" data-level="" data-path="appendix-1---spatial-database.html"><a href="appendix-1---spatial-database.html#canada-datasets"><i class="fa fa-check"></i>Canada datasets</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="appendix-2---disturbance-mapping.html"><a href="appendix-2---disturbance-mapping.html"><i class="fa fa-check"></i>Appendix 2 - Disturbance mapping</a>
+<ul>
+<li class="chapter" data-level="" data-path="appendix-2---disturbance-mapping.html"><a href="appendix-2---disturbance-mapping.html#footprint-datasets"><i class="fa fa-check"></i>Footprint datasets</a></li>
+<li class="chapter" data-level="" data-path="appendix-2---disturbance-mapping.html"><a href="appendix-2---disturbance-mapping.html#disturbance-types"><i class="fa fa-check"></i>Disturbance types</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="appendix-3---connectivity-mapping.html"><a href="appendix-3---connectivity-mapping.html"><i class="fa fa-check"></i>Appendix 3 - Connectivity mapping</a>
+<ul>
+<li class="chapter" data-level="" data-path="appendix-3---connectivity-mapping.html"><a href="appendix-3---connectivity-mapping.html#features-to-connect"><i class="fa fa-check"></i>Features to connect</a></li>
+<li class="chapter" data-level="" data-path="appendix-3---connectivity-mapping.html"><a href="appendix-3---connectivity-mapping.html#home-range-sizes-and-dispersal-distances"><i class="fa fa-check"></i>Home range sizes and dispersal distances</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Disturbance &amp; Connectivity Mapping</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="connectivity-mapping" class="section level1" number="4">
+<h1><span class="header-section-number">Chapter 4</span> Connectivity Mapping</h1>
+<p>General tasks to discuss and integrate under the objectives below:</p>
+<ul>
+<li>Engage partners / collaborators</li>
+<li>Organize and implement scoping / planning workshops</li>
+</ul>
+<div id="assess-current-state-of-ecological-connectivity" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Assess current state of ecological connectivity</h2>
+<div id="protected-and-conserved-area-connectivity" class="section level3" number="4.1.1">
+<h3><span class="header-section-number">4.1.1</span> Protected and conserved area connectivity</h3>
+<p>The overall goal is to evaluate the connectivity of existing and/or proposed PCA networks.  The features of interest are PCAs and the PCA networks, but some species-level information is also needed to run the analysis i.e., dispersal distance of generic species. The permeability of the matrix also needs to be taken into consideration.  Specific objectives include:</p>
+<ol style="list-style-type: decimal">
+<li>Evaluate the ecological connectivity of existing and proposed PCA networks</li>
+<li>Quantify and rank the contribution of individual existing or proposed sites (PAs, IPCAs, BAs) to network connectivity (this includes extensions to existing PCAs)</li>
+<li>Assess the sensitivity of network connectivity to assumptions about dispersal capability and matrix permeability</li>
+<li>Identify and prioritize areas of high landscape integrity between PCAs that can serve as corridors or stepping stones (climate change)</li>
+<li>Develop a shiny app to visualize the effects of i) adding/removing individual PCAs and ii) changing assumptions about dispersal/permeability on network connectivity</li>
+</ol>
+<p><strong>Datasets:</strong></p>
+<ul>
+<li>Intactness layer - to be developed in conjunction with the Disturbance Mapping project. See also “Terrestrial ecosystem connectivity” section</li>
+<li>Land cover e.g. NALC 2015, ESRI land cover 2020</li>
+<li>High-resolution annual forest land cover maps for Canada’s forested ecosystems (1984-2019)</li>
+<li>Ecozones and ecoregions; major drainage areas</li>
+<li><a href="https://www.canada.ca/en/environment-climate-change/services/national-wildlife-areas/protected-conserved-areas-database.html">Canadian Protected and Conserved Areas Database - Canada.ca</a></li>
+</ul>
+<p><strong>Tools:</strong></p>
+<ul>
+<li>R Makurhini package (calculates numerous relevant metrics)</li>
+<li>GrapHab (graph-based methods)</li>
+</ul>
+<p><strong>Tasks:</strong></p>
+<ul>
+<li>Define a planning region based on e.g., ecozones, drainage areas, KDTT with buffer, or northern Y2Y region</li>
+<li>Acquire datasets (ecoregions, protected areas, land cover, etc.) and create a database with common extent, resolution, and projection</li>
+<li>Work in conjunction with Disturbance Mapping project to create/acquire cumulative disturbance and intactness datasets</li>
+<li>Define parameters for generic species (e.g., minimum patch sizes, median dispersal distances) based on literature review and indigenous knowledge</li>
+<li>Prepare resistance surface using land cover and/or footprint map
+<ul>
+<li>Review previous work on defining resistance values</li>
+</ul></li>
+<li>Select connectivity metrics (see Keeley et al. 2021 and references listed within and below)</li>
+<li>Perform connectivity analysis
+<ul>
+<li>Review recent papers on protected area connectivity</li>
+<li>Develop procedures for conducting all required analyses</li>
+<li>Run analyses</li>
+</ul></li>
+<li>Summarize outputs of connectivity analyses
+<ul>
+<li>Prepare summary tables, plots and maps</li>
+<li>Develop shiny app to visualize sensitivity of results to assumptions and PCA inclusions</li>
+</ul></li>
+</ul>
+<p><strong>References:</strong></p>
+<ul>
+<li>Saura et al. 2017, Ward et al. 2020</li>
+</ul>
+</div>
+<div id="terrestrial-ecosystem-connectivity" class="section level3" number="4.1.2">
+<h3><span class="header-section-number">4.1.2</span> Terrestrial ecosystem connectivity</h3>
+<p>The overall goal is to evaluate landscape connectivity as well as connectivity of specific habitat or ecosystem types e.g., old forests, shrublands, grasslands, wetlands. Species-level information could be used if we assume that certain habitat types could be linked to species, in which case we could use dispersal distances to measure effective distance between patches. The permeability of the matrix also needs to be taken into consideration. Specific objectives include:</p>
+<ul>
+<li>Evaluate landscape connectivity</li>
+<li>Evaluate connectivity of specific habitat (ecosystem) types</li>
+</ul>
+<p><strong>Datasets:</strong></p>
+<ul>
+<li>Datasets required to develop disturbance/intactness maps
+<ul>
+<li>Canadian human footprint (300m)</li>
+<li>National linear disturbances (seismic lines and roads)
+<ul>
+<li>ACTION ITEM: acquire linear disturbances from Lucy Poley</li>
+</ul></li>
+<li>Wildfire and forest harvest maps for 1985-2015 (30m) from <a href="https://opendata.nfis.org/mapserver/nfis-change_eng.html">Satellite Forest Information for Canada</a></li>
+<li>Regional disturbance map for SE Yukon and NE BC (future)
+<ul>
+<li>ACTION ITEM: connect with BEACONs disturbance mapping project</li>
+</ul></li>
+</ul></li>
+<li>Habitat types
+<ul>
+<li>NALC 2015 (30m)</li>
+<li>High-resolution annual forest land cover maps for Canada’s forested ecosystems (1984-2019)</li>
+</ul></li>
+</ul>
+<p><strong>Tools:</strong></p>
+<ul>
+<li>Circuitscape (Omniscape); Appropriate for 1) multiple species, 2) no clear binary nodes, 3) more intact landscapes, and 4) widespread/ranging generalist species</li>
+<li>Linkage Mapper (more suited to identifying specific corridors between IPCAs)</li>
+</ul>
+<p><strong>References:</strong></p>
+<ul>
+<li>TNC - Resilient and Connected Landscapes (Anderson et al. 2016)</li>
+</ul>
+<p><strong>Tasks:</strong></p>
+<ul>
+<li>Identify important habitat and ecosystem types
+<ul>
+<li>ACTION ITEM: which are important in our region?</li>
+</ul></li>
+<li>Develop resistance grid comprising intactness and land cover</li>
+<li>Map connectivity using Circuitscape. TNC report details this approach and a novel Circuitscape analysis to get ‘flow’ across a large landscape. ‘Flow’ can then be used as an input to other connectivity analyses (e.g. prioritising riparian areas).</li>
+</ul>
+</div>
+<div id="aquatic-ecosystem-connectivity" class="section level3" number="4.1.3">
+<h3><span class="header-section-number">4.1.3</span> Aquatic ecosystem connectivity</h3>
+<p>The overall goal is to evaluate aquatic connectivity as a system or its individual components:  i) wetland connectivity, ii) riparian connectivity, iii) lotic connectivity.</p>
+<p><strong>Datasets:</strong></p>
+<ul>
+<li>Wetlands
+<ul>
+<li>ACTION ITEM: Ask Kim about wetland products in SE Yukon (DUCs?)</li>
+<li>1:50,000 LED map</li>
+</ul></li>
+<li>Riparian
+<ul>
+<li>ACTION ITEM: Are there any maps in Yukon of riparian areas. Often mapped as potential riparian habitat based on stream data and DEMs.</li>
+</ul></li>
+<li>Lotic
+<ul>
+<li>Stream network</li>
+</ul></li>
+</ul>
+<p><strong>Tools:</strong></p>
+<ul>
+<li>Wetlands
+<ul>
+<li>Circuitscape between wetlands. Could use LED to make a resistance surface.</li>
+</ul></li>
+<li>Riparian
+<ul>
+<li>TNC/Krosby 2018 analysis (requires mapped riparian areas) methods to rank riparian areas</li>
+</ul></li>
+<li>Lotic
+<ul>
+<li>Dendritic connectivity index</li>
+</ul></li>
+</ul>
+<p><strong>References:</strong></p>
+<ul>
+<li>Riparian corridors
+<ul>
+<li>TNC - Resilient and Connected Landscapes</li>
+<li>Krosby 2018 - Identifying riparian climate corridors to inform climate adaptation planning</li>
+</ul></li>
+</ul>
+<p><strong>Tasks:</strong></p>
+<ul>
+<li>Develop methods for assessing wetland connectivity. This could be a similar analysis to ‘Terrestrial ecosystem connectivity’ above.</li>
+<li>Develop methods for assessing riparian connectivity. General approach for riparian corridors is to map potential riparian areas then rank them based on connectivity flow, intactness, size, temperature gradients, tree cover etc. Creating our own riparian areas map would be possible but probably quite a lot of work.</li>
+<li>Develop methods for assessing lotic connectivity. Dendritic connectivity within reserves or areas of interest (i.e. corridors).</li>
+</ul>
+</div>
+<div id="focal-species-habitat-connectivity" class="section level3" number="4.1.4">
+<h3><span class="header-section-number">4.1.4</span> Focal species habitat connectivity</h3>
+<p>The overall goal is to evaluate connectivity for i) culturally significant species, ii) species at risk and iii) indicator species e.g.,  surrogates, umbrella, and ecosystem engineers. Developing resistance surfaces for individual species will be a key component. Specific objectives include:</p>
+<ul>
+<li>Evaluate ecological connectivity for selected culturally significant species</li>
+<li>Evaluate ecological connectivity for species at risk</li>
+<li>Evaluate ecological connectivity for indicator species</li>
+</ul>
+<p><strong>Datasets:</strong></p>
+<ul>
+<li>Datasets to develop species-specific resistance surfaces</li>
+<li>Existing predicted species distribution maps</li>
+<li>Input datasets that can be used to created predicted species distribution maps from existing SDM or RSF models</li>
+</ul>
+<p><strong>Tools:</strong></p>
+<ul>
+<li>Circuitscape (Omniscape)</li>
+<li>GrapHab</li>
+</ul>
+<p><strong>References:</strong></p>
+<p><strong>Tasks:</strong></p>
+<ul>
+<li>Select focal species with LFN and other collaborators and partners</li>
+<li>Identify and acquire species distribution models for selected focal species
+<ul>
+<li>Peer reviewed literature and published reports</li>
+<li>Indigenous knowledge</li>
+</ul></li>
+<li>Develop species-specifi intactness/disturbance maps and quantify resistance values for focal species</li>
+</ul>
+</div>
+<div id="bio-cultural-connectivity" class="section level3" number="4.1.5">
+<h3><span class="header-section-number">4.1.5</span> Bio-cultural connectivity</h3>
+<p>The focus here could be on something like using land use and occupancy maps, or culturally important sites, creating a ‘heat map’ from this and overlaying.. perhaps.. prelim idea. Such maps -have- been created for TH and NND to an extent, but would require data sharing agreements.</p>
+<p>From Beazley et al. 2021 on Transboundary Connectivity Conservation: “Bison, caribou, and other such species are biocultural keystones, important to Indigenous food, lifeways, spirituality, and other reciprocal cultural and stewardship responsibilities and land-based systems and practices.”</p>
+<p><strong>Note:</strong> One consideration I’ve been grappling with is <em>if</em> FN knowledge is part of a process, how is the process helping continually regenerate/enforce that knowledge system? The science systems we use, in ways, reinforce themselves by their very nature (need to go out and monitor, need expertise that requires training in sciences). Maybe beyond all this but something to keep in mind.</p>
+<p><strong>Datasets:</strong></p>
+<ul>
+<li>Land Use and Occupancy maps which may include but limited to: trails, sites of cultural importance, sites of harvest
+<ul>
+<li>Seems some of this knowledge is out there, unsure where.</li>
+</ul></li>
+<li>Could use ‘cultural species information’ to create mapping products from a ‘traditional ecological knowledge’ perspective, as Jean Polfus and Round River have done with TRT.</li>
+<li>Cultural ‘beliefs’ about the land - been considering how to do this, and think it’s more of a framing problem in ways, for example - there is some animism attributed to the land and animals in some Kaska knowledge, this can be integrated into the way ‘science’ is communicated and what options may or may not be possible through science.
+<ul>
+<li>YESAB Submissions may have some of this, public documents also.</li>
+</ul></li>
+</ul>
+<p><strong>Tools:</strong></p>
+<ul>
+<li>The land use and occupancy maps could be folded into a spatial analysis, some values could be critical, ie. ‘cultural keystone places.’</li>
+<li>Nvivo? - Excel could serve this purpose in ways too.</li>
+</ul>
+<p><strong>References:</strong></p>
+<p><strong>Tasks:</strong></p>
+<ul>
+<li>Important habitat and species should arise from community working with, some of this could be gathered from existing documents.</li>
+<li>This could be a ‘thought piece’ development, where biocultural information is informing parts of the process.</li>
+<li>Potential task could be review of publicly available knowledge in an area I am currently considering a ‘Qualitative Content Analysis’ methodology.</li>
+</ul>
+</div>
+</div>
+<div id="evaluate-projected-effects-of-climate-and-land-use-change" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Evaluate projected effects of climate and land use change</h2>
+<div id="effects-of-land-use-activities-on-connectivity" class="section level3" number="4.2.1">
+<h3><span class="header-section-number">4.2.1</span> Effects of land use activities on connectivity</h3>
+<p>The overall goal is to evaluate past, present, and future changes in land use and land cover on ecological connectivity. Features to be connected can be selected from the ones used for the other objectives. The permeability/resistance of the surface is another key component that also has overlap with the previous objectives. Specific objectives include:</p>
+<ul>
+<li>Evaluate the effects of recent changes (~30 years) in land use / land cover on connectivity</li>
+<li>Evaluate the effects of proposed land use activities on connectivity e.g., proposed road or mine</li>
+<li>Evaluate the effect of simulated land cover changes on connectivity</li>
+</ul>
+<p><strong>Datasets:</strong></p>
+<ul>
+<li>Multi-year land cover dataset (e.g., ESA 1986-2015)</li>
+<li>Disturbance/intactness maps for past and present</li>
+</ul>
+<p><strong>Tools:</strong></p>
+<ul>
+<li>To be determined (see Tasks)</li>
+</ul>
+<p><strong>References:</strong></p>
+<p><strong>Tasks:</strong></p>
+<ul>
+<li>Assess changes in land cover during the past 30 years
+<ul>
+<li>Use CEC land cover data to quantify changes in natural and anthropogenic land cover classes.</li>
+</ul></li>
+<li>Evaluate effects of proposed land use activities
+<ul>
+<li>Identify proposed land use activities of concern e.g., mining and/or roads.</li>
+<li>Use methods developed above to evaluate impacts of proposed activities on ecological connectivity i.e., CPA/terrestrial/aquative connectivity.</li>
+</ul></li>
+<li>Develop tool to evaluate proposed or simulated land use change
+<ul>
+<li>Three possible approaches: i) adapt CONSERV, ii) develop SPADES module, or iii) develop standalone R/Shiny app.</li>
+</ul></li>
+</ul>
+</div>
+<div id="effects-of-climate-change-on-connectivity" class="section level3" number="4.2.2">
+<h3><span class="header-section-number">4.2.2</span> Effects of climate change on connectivity</h3>
+<p>The overall goal is to evaluate the potential effects of climate change scenarios on ecological connectivity and to develop methods for incorporating climate-resilient design into BEACONs conservation planning approach. Specific objectives include:</p>
+<ol style="list-style-type: decimal">
+<li>Identify and prioritize areas of high landscape integity between PCAs that can serve as corridors or stepping stones (also listed under “Protected and Conserved Area Connectivity”)</li>
+<li>Identify corridors that follow temperature and precipitation gradients that may assist individuals tracking suitable climates</li>
+<li>Identify areas that are expected to remain climatically suitable (stable) for individual species over a given planning horizon</li>
+<li>Identify areas that provide dispersal pathways between stable habitat and locations that will be climatically suitable in the future</li>
+</ol>
+<p><strong>Datasets:</strong></p>
+<ul>
+<li>Existing North America wide climate analogs, refugia, and velocity datasets from AdaptWest.</li>
+<li>Intactness map (combination of existing maps or new map (see disturbance mapping project)</li>
+</ul>
+<p><strong>Tools:</strong></p>
+<ul>
+<li>Circuitscape</li>
+</ul>
+<p><strong>References:</strong></p>
+<ul>
+<li>Parks et al. 2020, Dobrowski et al. 2021</li>
+</ul>
+<p><strong>Tasks:</strong></p>
+<ul>
+<li>Define planning region and baseline and projected time periods for analyses.</li>
+<li>Evaluate “usefulness” of existing baseline and projected datasets for regional connectivity planning (criteria: resolution, range of variability).</li>
+<li>If desired, develop regional-scale climate change datasets
+<ul>
+<li>Acquire information on methods for creating regional datasets</li>
+<li>Evaluate feasibility of creating regional datasets</li>
+<li>Develop regional-scale datasets</li>
+</ul></li>
+<li>Create multi-temporal database with common extent, resolution, and projection.</li>
+<li>Obj 1: Identify and prioritize high intactness areas e.g., corridors, stepping stones
+<ul>
+<li>See detailed methods under “Protected and Conserved Area Connectivity”</li>
+</ul></li>
+<li>Obj 2: Identify corridors that follow temperature and precipitation gradients
+<ul>
+<li>Methods to be developed</li>
+</ul></li>
+<li>Obj 3: Identify areas that are expected to remain climatically suitable
+<ul>
+<li>Select focal species (see Focal Species Habitat Connectivity)</li>
+<li>Acquire or develop SDM for selected focal species</li>
+<li>Can also evaluate ‘general’ suitability using refugia datasets from Adaptwest</li>
+<li>Develop methods to evaluate connectivity (e.g., Dobrowski et al. 2021)</li>
+</ul></li>
+<li>Obj 4: Identify areas that provide dispersal pathways
+<ul>
+<li>Use same focal species and SDMs as above</li>
+<li>Develop methods to evaluate connectivity (e.g., Dobrowski et al. 2021)</li>
+</ul></li>
+<li>Develop and implement methods for quantifying the effects of uncertainty in existing and projected datasets.</li>
+</ul>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="disturbance-mapping.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/03-connectivity.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

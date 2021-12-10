@@ -1,0 +1,15 @@
+Category,Dataset,Spatial coverage,Temporal coverage,Type,Resolution,Source,Notes
+Intactness,Biotic integrity,Canada,,Vector,,,HydroBasins level 12
+,Intact forest landscape,Canada,"2000, 2013",Vector,,,
+,Global intact forest landscape,Global,"2000, 2013, 2016",Vector,,,
+,Forest landscape integrity index,Global,2019,Raster,300-m,,Describes the degree of forest modification for the beginning of 2019
+Multiple disturbances,Human footprint,Canada,,Raster,300-m,,
+,Global Human Modification,Global,2015,Raster,1-km,,
+,Low Impact Areas,Global,2015,Raster,1-km,,
+,Canada Human Access,Canada,2010,Vector,,,
+,BEAD,Canada,"2010, 2015",Vector,,,Covers boreal caribou ranges
+,Human footprint (ABMI),Alberta,,,,,
+,Multiple disturbances,Northeast BC,Current,Vector,,,
+Single disturbances,National road network,Canada,,Vector,,,
+,Forest change,Canada,,Raster,30-m,,
+,Fires,Canada,,Vector,,https://cwfis.cfs.nrcan.gc.ca/datamart,"Points, polygons, polygons with refugia"

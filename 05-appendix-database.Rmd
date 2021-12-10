@@ -1,0 +1,24 @@
+# Appendix 1 - Spatial database {-}
+
+## Study region FDAs {-}
+
+```{r echo=FALSE}
+x <- read.csv('data/database_region.csv')
+knitr::kable(x)
+```
+
+## Yukon datasets {-}
+
+```{r echo=FALSE}
+x <- read.csv('data/database_yukon.csv')
+knitr::kable(x)
+```
+
+## Canada datasets {-}
+
+```{r echo=FALSE}
+x <- read.csv('data/database_canada.csv')
+knitr::kable(x)
+```
+
+

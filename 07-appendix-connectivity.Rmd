@@ -1,0 +1,17 @@
+# Appendix 3 - Connectivity mapping {-}
+
+## Features to connect {-}
+
+Table 1. Candidate features for connectivity mapping and analysis.
+```{r echo=FALSE}
+x <- read.csv('data/connectivity_features.csv')
+knitr::kable(x)
+```
+
+## Home range sizes and dispersal distances {-}
+
+Table 2. Home range sizes and dispersal distances for selected species.
+```{r echo=FALSE}
+x <- read.csv('data/connectivity_dispersal.csv')
+knitr::kable(x)
+```
