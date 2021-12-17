@@ -28,18 +28,18 @@ Conserving wilderness and intact areas is a top priority for conservation in the
 
 ## Appendices
 
-### Appendix 1 - Spatial database
+### Spatial database
 
 - [Study region FDAs](data/database_region.csv)
 - [Yukon datasets](data/database_yukon.csv)
 - [Canada datasets](data/database_canada.csv)
 
-# Appendix 2 - Disturbance mapping {-}
+### Disturbance mapping
 
 - [Footprint datasets](data/disturbance_footprint.csv)
-- [Disturbance types](data/disturbance_types.csv). Description of disturbance types organized by feature type (areal or linear) and industry type. The table was adapted from the recently published document prepared by Kate Powell with the Fish and Wildlife Branch, Environment Yukon ("SurfaceDisturbance_MappingStandards_forContractors_v4-0-1.pdf").
+- [Disturbance types](data/disturbance_types.csv) - Description of disturbance types organized by feature type (areal or linear) and industry type. The table was adapted from the recently published document prepared by Kate Powell with the Fish and Wildlife Branch, Environment Yukon ("SurfaceDisturbance_MappingStandards_forContractors_v4-0-1.pdf").
 
-# Appendix 3 - Connectivity mapping
+### Connectivity mapping
 
-- [Features to connect](data/connectivity_features.csv). Candidate features for connectivity mapping and analysis.
-- [Home range sizes and dispersal distances](data/connectivity_dispersal.csv). Home range sizes and dispersal distances for selected species.
+- [Features to connect](data/connectivity_features.csv) - Candidate features for connectivity mapping and analysis.
+- [Home range sizes and dispersal distances](data/connectivity_dispersal.csv) - Home range sizes and dispersal distances for selected species.
