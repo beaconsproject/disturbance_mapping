@@ -1,4 +1,4 @@
-# Disturbance and Conservation Mapping
+# Disturbance and Connectivity Mapping
 
 Updated: December 17, 2021
 
