@@ -1,20 +1,3 @@
---- 
-title: "Disturbance & Connectivity Mapping"
-author: "Pierre Vernier"
-date: "`r Sys.Date()`"
-site: bookdown::bookdown_site
-documentclass: book
-bibliography: [book.bib, packages.bib]
-# url: your book url like https://bookdown.org/yihui/bookdown
-# cover-image: path to the social sharing image like images/cover.jpg
-description: |
-  This is a minimal example of using the bookdown package to write a book.
-  The HTML output format for this example is bookdown::gitbook,
-  set in the _output.yml file.
-link-citations: yes
-github-repo: rstudio/bookdown-demo
----
-
 # Introduction
 
 Conserving wilderness and intact areas is a top priority for conservation in the boreal region, and cumulative disturbance and ecological connectivity maps are practical ways to identify such areas. Our overall goal is to develop and validate disturbance and connectivy maps at a regional scale for a pilot planning region in southeast Yukon and northwest BC that could be used for conservation and land use planning. Specifically, our objectives are to:
@@ -22,22 +5,22 @@ Conserving wilderness and intact areas is a top priority for conservation in the
 **Spatial database**
 
 - Develop spatial database using national and regional scale datasets
+- [Go to workplan](database.md)
 
 **Disturbance mapping**
 
 - Develop individual and cumulative disturbance maps
 - Develop value-added products such as human footprint and intactness maps
 - Validate and enhance map products using remote sensing and field based data
+- [Go to workplan](disturbance.md)
 
 **Connectivity mapping**
 
 - Assess current state of ecological connectivity
 - Evaluate projected effects of climate and land use change
+- [Go to workplan](connectivity.md)
 
 
 ## Workplan
 
-```{r echo=FALSE}
-x <- read.csv('data/workplan.csv')
-knitr::kable(x)
-```
+- [workplan - timelines](data/workplan.csv)
