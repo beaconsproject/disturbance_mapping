@@ -4,7 +4,7 @@ Updated: December 17, 2021
 
 Conserving wilderness and intact areas is a top priority for conservation in the boreal region, and cumulative disturbance and ecological connectivity maps are practical ways to identify such areas. Our overall goal is to develop and validate disturbance and connectivy maps at a regional scale for a pilot planning region in southeast Yukon and northwest BC that could be used for conservation and land use planning.
 
-- [View project timeline](https://docs.google.com/spreadsheets/d/1zUy7QgPnn-Cp8nlaxmCUR9VXAgbjTT3KI0Ad4XHlUiU/edit?usp=sharing)
+- [View project timeline](data/workplan.csv)
 
 The project is divided into three related components:
 
