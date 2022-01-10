@@ -1,86 +1,14 @@
-body {
-	margin: 20pt;
-	padding: 0pt;
-	font-family: verdana,arial;
-	background-color: white;
-	font-size: 10pt;
-	line-height: 20px;
+p.caption {
+  color: #777;
+  margin-top: 10px;
 }
-#header h1,
-#header h2,
-#header p {
-	margin-left:2%;
-	padding-right:2%;
+p code {
+  white-space: inherit;
 }
-h1 {
-  font-family: verdana,arial;
-  font-weight: normal;
-  font-size: 18pt;
-  line-height: 24pt;
+pre {
+  word-break: normal;
+  word-wrap: normal;
 }
-h2 {
-  font-family: arial;
-  font-weight: normal;
-  font-style: normal;
-  font-variant:small-caps;
-  font-size: 12pt;
-}
-h3 {
-  font-family: arial;
-  font-weight: emphasis;
-  font-style: normal;
-  font-size: 10pt;
-}
-ul {
-  list-style-type: square;
-}
-a:link {
-  font-weight: normal;
-  font-size: 9pt;
-  color: blue;
-  line-height: 18px;
-  font-family: verdana,arial;
-  text-decoration: none;
-}
-a:visited {
-  font-weight: normal;
-  font-size: 9pt;
-  color: blue;
-  line-height: 18px;
-  font-family: verdana,arial;
-  text-decoration: none;
-}
-a:hover {
-  font-weight: normal;
-  font-size: 9pt;
-  color: red;
-  font-family: verdana,arial;
-}
-#active2 #tab2,
-#active3 #tab3,
-#active4 #tab4,
-#active5 #tab5 {
-	font-weight:bold;
-	text-decoration:none;
-	color:#000;
-}
-#footer {
-	clear:both;
-	float:left;
-	width:100%;
-	text-align: center;
-}
-#footer p {
-	margin-left:2%;
-	padding-right:2%;
-}
-fieldset {
-	font-size:9pt;
-	line-height: 18px;
-	text-align: justify;
-	padding: 10px;
-	border: 1px solid rgb(128,128,128);
-	#width: 775px;
-	margin:auto;
-	background: rgb(250,250,250);
+pre code {
+  white-space: inherit;
 }
