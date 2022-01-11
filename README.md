@@ -1,13 +1,35 @@
-Welcome! 
+# Disturbance and Connectivity Mapping
 
-This is a minimal example of a book based on R Markdown and **bookdown** (https://github.com/rstudio/bookdown). 
+Updated: January 11, 2022
 
-This template provides a skeleton file structure that you can edit to create your book. 
+Conserving wilderness and intact areas is a top priority for conservation in the boreal region, and cumulative disturbance and ecological connectivity maps are practical ways to identify such areas. Our overall goal is to develop and validate disturbance and connectivity maps at a regional scale for a pilot planning region in southeast Yukon and northwest BC that could be used for conservation and land use planning.
 
-The contents inside the .Rmd files provide some pointers to help you get started, but feel free to also delete the content in each file and start fresh.
+The project is divided into three related components:
 
-Additional resources:
+**Spatial database**
 
-The **bookdown** book: https://bookdown.org/yihui/bookdown/
+- Objectives:
+    - Develop spatial database using national and regional scale datasets
+- Appendices
+    - [Study region FDAs](docs/database_region.csv)
+    - [Yukon datasets](docs/database_yukon.csv)
+    - [Canada datasets](docs/database_canada.csv)
 
-The **bookdown** package reference site: https://pkgs.rstudio.com/bookdown
+**Disturbance mapping**
+
+- Objectives:
+    - Develop individual and cumulative disturbance maps
+    - Develop value-added products such as human footprint and intactness maps
+    - Validate and enhance map products using remote sensing and field based data
+- Appendices:
+    - [Footprint datasets](docs/disturbance_footprint.csv)
+    - [Disturbance types](docs/disturbance_types.csv) - Description of disturbance types organized by feature type (areal or linear) and industry type. The table was adapted from the recently published document prepared by Kate Powell with the Fish and Wildlife Branch, Environment Yukon ("SurfaceDisturbance_MappingStandards_forContractors_v4-0-1.pdf").
+
+**Connectivity mapping**
+
+- Objectives:
+    - Assess current state of ecological connectivity
+    - Evaluate projected effects of climate and land use change
+- Appendices:
+    - [Features to connect](docs/connectivity_features.csv) - Candidate features for connectivity mapping and analysis.
+    - [Home range sizes and dispersal distances](docs/connectivity_dispersal.csv) - Home range sizes and dispersal distances for selected species.
