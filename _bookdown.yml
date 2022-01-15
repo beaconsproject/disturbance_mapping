@@ -1,5 +1,17 @@
+book_filename: "workbook"
 output_dir: "docs"
 delete_merged_file: true
 language:
   ui:
     chapter_name: ""
+
+rmd_files:
+  [
+    "index.Rmd",
+
+    "database.Rmd",
+    "disturbance.Rmd",
+    "connectivity.Rmd",
+
+    "references.Rmd",
+  ]

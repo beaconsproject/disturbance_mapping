@@ -5,32 +5,25 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Disturbance &amp; Connectivity Mapping</title>
-  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
-The HTML output format for this example is bookdown::gitbook,
-set in the _output.yml file.</p>" />
+  <meta name="description" content="Disturbance &amp; Connectivity Mapping" />
   <meta name="generator" content="bookdown 0.24.4 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Disturbance &amp; Connectivity Mapping" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
-The HTML output format for this example is bookdown::gitbook,
-set in the _output.yml file.</p>" />
-  <meta name="github-repo" content="rstudio/bookdown-demo" />
+  
+  
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Disturbance &amp; Connectivity Mapping" />
   
-  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
-The HTML output format for this example is bookdown::gitbook,
-set in the _output.yml file.</p>" />
+  
   
 
-<meta name="author" content="Pierre Vernier" />
+<meta name="author" content="The BEACONs Project" />
 
 
-<meta name="date" content="2022-01-11" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -126,9 +119,6 @@ set in the _output.yml file.</p>" />
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>5</b> References</a></li>
-<li class="divider"></li>
-<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
-
 </ul>
 
       </nav>
@@ -148,21 +138,26 @@ set in the _output.yml file.</p>" />
             <section class="normal" id="section-">
 <div id="header">
 <h1 class="title">Disturbance &amp; Connectivity Mapping</h1>
-<p class="author"><em>Pierre Vernier</em></p>
-<p class="date"><em>2022-01-11</em></p>
+<p class="author"><em>The BEACONs Project</em></p>
 </div>
 <div id="introduction" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Introduction</h1>
 <p>Conserving wilderness and intact areas is a top priority for conservation in the boreal region, and cumulative disturbance and ecological connectivity maps are practical ways to identify such areas. Our overall goal is to develop and validate disturbance and connectivity maps at a regional scale for a pilot planning region in southeast Yukon and northwest BC that could be used for conservation and land use planning. This intent of this workbook is to serve as a detailed record to regional scale disturbance and connectivity mapping and monitoring. The project is divided into three related components, each with its own set of objectives:</p>
 <p><strong>Spatial database</strong></p>
-<pre><code>- Develop a multi-scale spatial database using national and regional scale datasets for use in regional disturbance and connectivity mapping and analysis.</code></pre>
-<p><strong>Disturbance mapping</strong>
-- Develop individual and cumulative disturbance maps
-- Develop value-added products such as human footprint and intactness maps
-- Validate and enhance map products using remote sensing and field based data</p>
-<p><strong>Connectivity mapping</strong></p>
-<pre><code>- Assess current state of ecological connectivity
-- Evaluate projected effects of climate and land use change</code></pre>
+<ul>
+<li>Develop a multi-scale spatial database using national and regional scale datasets for use in regional disturbance and connectivity mapping and analysis.</li>
+</ul>
+<p><strong>Disturbance mapping</strong></p>
+<ul>
+<li>Develop individual and cumulative disturbance maps</li>
+<li>Develop value-added products such as human footprint and intactness maps</li>
+<li>Validate and enhance map products using remote sensing and field based data</li>
+</ul>
+<p><strong>Connectivity analysis</strong></p>
+<ul>
+<li>Assess current state of ecological connectivity</li>
+<li>Evaluate projected effects of climate and land use change</li>
+</ul>
 
 </div>
             </section>
@@ -186,15 +181,15 @@ set in the _output.yml file.</p>" />
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
 "sharing": {
-"github": false,
-"facebook": true,
-"twitter": true,
+"github": true,
+"facebook": false,
+"twitter": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
 "whatsapp": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+"all": {}
 },
 "fontsettings": {
 "theme": "white",
@@ -202,7 +197,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/prvernier/dc-mapping/edit/MASTER/index.Rmd",
+"link": "https://github.com/prvernier/dc-mapping/edit/master/index.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -213,13 +208,13 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["_main.pdf", "_main.epub"],
+"download": {},
 "search": {
 "engine": "fuse",
 "options": null
 },
 "toc": {
-"collapse": "subsection"
+"collapse": "section"
 }
 });
 });

@@ -1,19 +1,14 @@
 --- 
 title: "Disturbance & Connectivity Mapping"
-author: "Pierre Vernier"
-date: "`r Sys.Date()`"
+author: "The BEACONs Project"
 site: bookdown::bookdown_site
-documentclass: book
-bibliography: [book.bib, packages.bib]
-# url: your book url like https://bookdown.org/yihui/bookdown
-# cover-image: path to the social sharing image like images/cover.jpg
-description: |
-  This is a minimal example of using the bookdown package to write a book.
-  The HTML output format for this example is bookdown::gitbook,
-  set in the _output.yml file.
-link-citations: yes
-github-repo: rstudio/bookdown-demo
+
+bibliography: references.bib
+csl: ecosphere.csl
+suppress-bibliography: true
 ---
+
+`r if (knitr::is_latex_output()) '<!--'`
 
 # Introduction
 
@@ -21,21 +16,17 @@ Conserving wilderness and intact areas is a top priority for conservation in the
 
 **Spatial database**
 
-    - Develop a multi-scale spatial database using national and regional scale datasets for use in regional disturbance and connectivity mapping and analysis.
+- Develop a multi-scale spatial database using national and regional scale datasets for use in regional disturbance and connectivity mapping and analysis.
 
 **Disturbance mapping**
-    - Develop individual and cumulative disturbance maps
-    - Develop value-added products such as human footprint and intactness maps
-    - Validate and enhance map products using remote sensing and field based data
 
-**Connectivity mapping**
+- Develop individual and cumulative disturbance maps
+- Develop value-added products such as human footprint and intactness maps
+- Validate and enhance map products using remote sensing and field based data
 
-    - Assess current state of ecological connectivity
-    - Evaluate projected effects of climate and land use change
+**Connectivity analysis**
 
-```{r include=FALSE}
-# automatically create a bib database for R packages
-knitr::write_bib(c(
-  .packages(), 'bookdown', 'knitr', 'rmarkdown'
-), 'packages.bib')
-```
+- Assess current state of ecological connectivity
+- Evaluate projected effects of climate and land use change
+
+`r if (knitr::is_latex_output()) '-->'`
