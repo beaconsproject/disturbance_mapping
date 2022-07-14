@@ -1,12 +1,13 @@
 library(sf)
 library(dplyr)
-library(mapview)
+#library(mapview)
 
 # Select FDA, input, and output files
-fda_name <- "10AB" # "09EA"
+fda_name <- "09EA" # "09EA", "10AB"
+yg_dir <- "C:/Users/PIVER37/Documents/gisdata/YT/"
 canada_gpkg <- "C:/Users/PIVER37/Documents/gisdata/123/canada.gpkg"
-yg_gpkg <- "C:/Users/PIVER37/Documents/github/dc-mapping/gisdata/yg_disturbances.gpkg"
-fda_gpkg <- paste0("C:/Users/PIVER37/Documents/github/dc-mapping/disturbanceViewer/data/fda_",tolower(fda_name),".gpkg")
+yg_gpkg <- "C:/Users/PIVER37/Documents/gisdata/123/yg_disturbances.gpkg"
+fda_gpkg <- paste0("C:/Users/PIVER37/Documents/github/dc-mapping/data/fda_",tolower(fda_name),".gpkg")
 
 # View available layers in Canada.gpkg
 st_layers(canada_gpkg)
@@ -28,7 +29,7 @@ ifl2000 <- st_read(canada_gpkg, "GIFL_2000") %>%
     st_transform(crs=3578)
 st_write(ifl2000, fda_gpkg, "IFL_2000", delete_layer=T)
 
-ifl2020 <- st_read(canada_gpkg, "GIFL_2000") %>%
+ifl2020 <- st_read(canada_gpkg, "GIFL_2020") %>%
     st_intersection(x) %>%
     st_transform(crs=3578)
 st_write(ifl2020, fda_gpkg, "IFL_2020", delete_layer=T)
@@ -47,7 +48,15 @@ point <- st_read(yg_gpkg, "Point_Features") %>%
 st_write(point, fda_gpkg, "Point_Features", delete_layer=T)
 
 # Fires
+fires <- st_read(paste0(yg_dir,'Emergency_Management/Fire_History.gdb'), 'Fire_History') %>%
+    st_cast("MULTIPOLYGON") %>%
+    st_intersection(fda)
+st_write(fires, fda_gpkg, "Fire_History", delete_layer=T)
 
 # Claims
+quartz <- st_read(paste0(yg_dir,'Mining/Quartz_Claims_50k.gdb'), 'Quartz_Claims_50k') %>%
+    st_cast("MULTIPOLYGON") %>%
+    st_intersection(fda)
+st_write(quartz, fda_gpkg, "Quartz_Claims", delete_layer=T)
 
 # HydroBasins

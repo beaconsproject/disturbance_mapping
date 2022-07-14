@@ -8,9 +8,9 @@ ui = dashboardPage(skin="blue",
   dashboardSidebar(
     sidebarMenu(
         menuItem("Overview", tabName = "overview", icon = icon("dashboard")),
-        menuItem("Mapping intactness", tabName = "fri", icon = icon("th")),
-        menuItem("Effects on hydrology", tabName = "hydro", icon = icon("th")),
-        menuItem("Effects on landcover", tabName = "land", icon = icon("th"))
+        menuItem("Mapping intactness", tabName = "fri", icon = icon("th"))
+        #menuItem("Effects on hydrology", tabName = "hydro", icon = icon("th")),
+        #menuItem("Effects on landcover", tabName = "land", icon = icon("th"))
     ),
     hr(),
     selectInput("fda", label="Select FDA:", choices=c("10AB","09EA")),
@@ -113,9 +113,9 @@ server = function(input, output) {
         lakesrivers <- st_read(fda(), 'lakes_rivers', quiet=T)
     })
 
-    #fires <- reactive({
-    #    fires <- st_read(fda(), 'fires', quiet=T)
-    #})
+    fires <- reactive({
+        fires <- st_read(fda(), 'Fire_History', quiet=T)
+    })
 
     ifl2000 <- reactive({
         ifl2000 <- st_read(fda(), 'ifl_2000', quiet=T)
@@ -129,9 +129,9 @@ server = function(input, output) {
         linear <- st_read(fda(), 'linear_features', quiet=T)
     })
 
-    #quartz <- reactive({
-    #    quartz <- st_read(fda(), 'quartz_claims', quiet=T)
-    #})
+    quartz <- reactive({
+        quartz <- st_read(fda(), 'quartz_claims', quiet=T)
+    })
 
     areal <- reactive({
         areal <- st_read(fda(), 'areal_features', quiet=T)
@@ -151,42 +151,33 @@ server = function(input, output) {
         bnd <- st_transform(bnd(), 4326)
         ifl2000 <- st_transform(ifl2000(), 4326)
         ifl2020 <- st_transform(ifl2020(), 4326)
+        fires <- st_transform(fires(), 4326)
+        quartz <- st_transform(quartz(), 4326)
+        areal <- st_transform(areal(), 4326)
+        linear <- st_transform(linear(), 4326)
         m <- leaflet(bnd) %>% 
     		addProviderTiles("Esri.NatGeoWorldMap", group="Esri.NatGeoWorldMap") %>%
 	    	addProviderTiles("Esri.WorldImagery", group="Esri.WorldImagery") %>%
             addPolygons(data=bnd, color='black', fill=F, weight=2, group="FDA") %>%
+            addPolygons(data=fires, color='red', fill=T, stroke=F, group="Fires", fillOpacity=input$alpha) %>%
+            addPolygons(data=quartz, color='yellow', fill=F, weight=1, group="Quartz") %>%
+            addPolylines(data=linear, color='black', group="Linear features") %>%
+            addPolygons(data=areal, color='black', fill=T, stroke=F, group="Areal features", fillOpacity=input$alpha) %>%
             addPolygons(data=ifl2020, color='darkgreen', fillOpacity=input$alpha, group="IFL 2020") %>%
             addPolygons(data=ifl2000, color='darkgreen', fillOpacity=input$alpha, group="IFL 2000")
-            #addLegend(pal=pal, values(agePrj), position=c("bottomright"), title="Forest age", opacity=0.8) %>%
-            #addLayersControl(position = "topright",
-            #    baseGroups=c("Esri.NatGeoWorldMap", "Esri.WorldImagery"),
-            #    overlayGroups = c("IFL 2020","IFL 2000"),
-            #options = layersControlOptions(collapsed = FALSE)) %>%
-            #    hideGroup(c("IFL 2020","IFL 2000"))
-        #m <- tm_shape(bnd()) + tm_borders(col='black', lwd=2, group="10AB")
             if (input$goButton) {
-                #bnd <- st_transform(bnd(), 4326)
                 v <- st_transform(v(), 4326)
                 vv <- st_transform(vv(), 4326)
-                m <- m %>% addPolygons(data=v, color='blue', fillOpacity=input$alpha, group='Intactness') %>%
-                    addPolygons(data=vv, color='black', fillOpacity=input$alpha, group='Footprint')
-        #        m <- m + tm_shape(v()) + tm_fill(col='blue', alpha=input$alpha, group="Intactness") +
-        #            tm_shape(vv()) + tm_fill(col='black', alpha=input$alpha, group="Footprint")
+                m <- m %>% addPolygons(data=v, color='blue', stroke=F, fillOpacity=input$alpha, group='Intactness') %>%
+                    addPolygons(data=vv, color='black', stroke=F, fillOpacity=input$alpha, group='Footprint')
             }
+        #m <- m %>% addLegend(pal=pal, values(agePrj), position=c("bottomright"), title="Forest age", opacity=0.8)
         m <- m %>% addLayersControl(position = "topright",
                 baseGroups=c("Esri.NatGeoWorldMap", "Esri.WorldImagery"),
-                overlayGroups = c("IFL 2020","IFL 2000","Intactness","Footprint"),
-            options = layersControlOptions(collapsed = FALSE)) %>%
-                hideGroup(c("IFL 2020","IFL 2000","Intactness","Footprint"))
+                overlayGroups = c("IFL 2020","IFL 2000","Intactness","Footprint","Fires","Quartz","Areal features","Linear features"),
+            options = layersControlOptions(collapsed = TRUE)) %>%
+                hideGroup(c("IFL 2020","IFL 2000","Intactness","Footprint","Fires","Quartz","Areal features","Linear features"))
         m
-        #    m <- m + tm_shape(ifl2020()) + tm_fill(col='darkgreen', alpha=input$alpha, group="IFL 2020") +
-        #    tm_shape(ifl2000()) + tm_fill(col='green', alpha=input$alpha, group="IFL 2000") +
-        #    #tm_shape(fires()) + tm_fill(col='red', alpha=input$alpha, group="Fires") +
-        #    #tm_shape(quartz()) + tm_borders(col='yellow', group="Quartz") +
-        #    tm_shape(areal()) + tm_fill(col='red', alpha=input$alpha, group="Areal") +
-        #    tm_shape(linear()) + tm_lines(col='red', group="Linear", lwd=1)
-        #lf <- tmap_leaflet(m)
-        #lf %>% leaflet::hideGroup(c("IFL 2000","IFL 2020","Intactness","Footprint","Fires","Areal","Quartz","Linear"))
     })
 
     output$map2 <- renderLeaflet({
