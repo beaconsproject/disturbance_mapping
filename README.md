@@ -6,10 +6,6 @@
 
 ## Case studies
 
-### Yukon - Frances Lake
-
-### Yukon - Indian river
-
 
 ## Shiny app
 
