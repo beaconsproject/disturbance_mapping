@@ -106,43 +106,35 @@ server = function(input, output) {
     })
 
     bnd <- reactive({
-        bnd <- st_read(fda(), 'fda', quiet=T) %>%
-            st_transform(4326)
+        bnd <- st_read(fda(), 'fda', quiet=T)
     })
 
     lakesrivers <- reactive({
-        lakesrivers <- st_read(fda(), 'lakes_rivers', quiet=T) %>%
-            st_transform(4326)
+        lakesrivers <- st_read(fda(), 'lakes_rivers', quiet=T)
     })
 
     #fires <- reactive({
-    #    fires <- st_read(fda(), 'fires', quiet=T) %>%
-    #        st_transform(4326)
+    #    fires <- st_read(fda(), 'fires', quiet=T)
     #})
 
     ifl2000 <- reactive({
-        ifl2000 <- st_read(fda(), 'ifl_2000', quiet=T) %>%
-            st_transform(4326)
+        ifl2000 <- st_read(fda(), 'ifl_2000', quiet=T)
     })
 
     ifl2020 <- reactive({
-        ifl2020 <- st_read(fda(), 'ifl_2020', quiet=T) %>%
-            st_transform(4326)
+        ifl2020 <- st_read(fda(), 'ifl_2020', quiet=T)
     })
 
     linear <- reactive({
-        linear <- st_read(fda(), 'linear_features', quiet=T) %>%
-            st_transform(4326)
+        linear <- st_read(fda(), 'linear_features', quiet=T)
     })
 
     #quartz <- reactive({
-    #    quartz <- st_read(fda(), 'quartz_claims', quiet=T) %>%
-    #        st_transform(4326)
+    #    quartz <- st_read(fda(), 'quartz_claims', quiet=T)
     #})
 
     areal <- reactive({
-        areal <- st_read(fda(), 'areal_features', quiet=T) %>%
-            st_transform(4326)
+        areal <- st_read(fda(), 'areal_features', quiet=T)
     })
 
     vv <- eventReactive(input$goButton, {
@@ -156,23 +148,37 @@ server = function(input, output) {
     })
 
     output$map <- renderLeaflet({
-        leaflet(bnd()) %>% 
+        bnd <- st_transform(bnd(), 4326)
+        ifl2000 <- st_transform(ifl2000(), 4326)
+        ifl2020 <- st_transform(ifl2020(), 4326)
+        m <- leaflet(bnd) %>% 
     		addProviderTiles("Esri.NatGeoWorldMap", group="Esri.NatGeoWorldMap") %>%
 	    	addProviderTiles("Esri.WorldImagery", group="Esri.WorldImagery") %>%
-            addPolygons(data=bnd(), color='black', fill=F, weight=2, group="FDA") %>%
-            addPolygons(data=ifl2020(), color='darkgreen', fillOpacity=input$alpha, group="IFL 2020") %>%
-            addPolygons(data=ifl2000(), color='darkgreen', fillOpacity=input$alpha, group="IFL 2000") %>%
+            addPolygons(data=bnd, color='black', fill=F, weight=2, group="FDA") %>%
+            addPolygons(data=ifl2020, color='darkgreen', fillOpacity=input$alpha, group="IFL 2020") %>%
+            addPolygons(data=ifl2000, color='darkgreen', fillOpacity=input$alpha, group="IFL 2000")
             #addLegend(pal=pal, values(agePrj), position=c("bottomright"), title="Forest age", opacity=0.8) %>%
-            addLayersControl(position = "topright",
-                baseGroups=c("Esri.NatGeoWorldMap", "Esri.WorldImagery"),
-                overlayGroups = c("IFL 2020","IFL 2000"),
-            options = layersControlOptions(collapsed = FALSE)) %>%
-                hideGroup(c("IFL 2020","IFL 2000"))
+            #addLayersControl(position = "topright",
+            #    baseGroups=c("Esri.NatGeoWorldMap", "Esri.WorldImagery"),
+            #    overlayGroups = c("IFL 2020","IFL 2000"),
+            #options = layersControlOptions(collapsed = FALSE)) %>%
+            #    hideGroup(c("IFL 2020","IFL 2000"))
         #m <- tm_shape(bnd()) + tm_borders(col='black', lwd=2, group="10AB")
-        #    if (input$goButton) {
+            if (input$goButton) {
+                #bnd <- st_transform(bnd(), 4326)
+                v <- st_transform(v(), 4326)
+                vv <- st_transform(vv(), 4326)
+                m <- m %>% addPolygons(data=v, color='blue', fillOpacity=input$alpha, group='Intactness') %>%
+                    addPolygons(data=vv, color='black', fillOpacity=input$alpha, group='Footprint')
         #        m <- m + tm_shape(v()) + tm_fill(col='blue', alpha=input$alpha, group="Intactness") +
         #            tm_shape(vv()) + tm_fill(col='black', alpha=input$alpha, group="Footprint")
-        #    }
+            }
+        m <- m %>% addLayersControl(position = "topright",
+                baseGroups=c("Esri.NatGeoWorldMap", "Esri.WorldImagery"),
+                overlayGroups = c("IFL 2020","IFL 2000","Intactness","Footprint"),
+            options = layersControlOptions(collapsed = FALSE)) %>%
+                hideGroup(c("IFL 2020","IFL 2000","Intactness","Footprint"))
+        m
         #    m <- m + tm_shape(ifl2020()) + tm_fill(col='darkgreen', alpha=input$alpha, group="IFL 2020") +
         #    tm_shape(ifl2000()) + tm_fill(col='green', alpha=input$alpha, group="IFL 2000") +
         #    #tm_shape(fires()) + tm_fill(col='red', alpha=input$alpha, group="Fires") +
@@ -184,10 +190,11 @@ server = function(input, output) {
     })
 
     output$map2 <- renderLeaflet({
-        leaflet(bnd()) %>% 
+        bnd <- st_transform(bnd(), 4326)
+        leaflet(bnd) %>% 
     		addProviderTiles("Esri.NatGeoWorldMap", group="Esri.NatGeoWorldMap") %>%
 	    	addProviderTiles("Esri.WorldImagery", group="Esri.WorldImagery") %>%
-            addPolygons(data=bnd(), color='black', fill=F, weight=2, group="FDA") %>%
+            addPolygons(data=bnd, color='black', fill=F, weight=2, group="FDA") %>%
             #addLegend(pal=pal, values(agePrj), position=c("bottomright"), title="Forest age", opacity=0.8) %>%
             addLayersControl(position = "topright",
                 baseGroups=c("Esri.NatGeoWorldMap", "Esri.WorldImagery"),
@@ -201,10 +208,11 @@ server = function(input, output) {
     })
 
     output$map3 <- renderLeaflet({
-        leaflet(bnd()) %>% 
+        bnd <- st_transform(bnd(), 4326)
+        leaflet(bnd) %>% 
     		addProviderTiles("Esri.NatGeoWorldMap", group="Esri.NatGeoWorldMap") %>%
 	    	addProviderTiles("Esri.WorldImagery", group="Esri.WorldImagery") %>%
-            addPolygons(data=bnd(), color='black', fill=F, weight=2, group="FDA") %>%
+            addPolygons(data=bnd, color='black', fill=F, weight=2, group="FDA") %>%
             #addLegend(pal=pal, values(agePrj), position=c("bottomright"), title="Forest age", opacity=0.8) %>%
             addLayersControl(position = "topright",
                 baseGroups=c("Esri.NatGeoWorldMap", "Esri.WorldImagery"),
