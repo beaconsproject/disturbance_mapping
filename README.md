@@ -14,9 +14,9 @@ The shiny app enables regional conservation planners in the boreal region to exp
   1. Install R (download from r-project.org and follow instructions)
   2. Install the following additional packages:
 
-    >install.packages(c("sf","dplyr","leaflet","shinydashboard"))
+    install.packages(c("sf","dplyr","leaflet","shinydashboard"))
 
   3. Start the Shiny app:
 
-    >library(shiny)
-    >runGitHub("beaconsproject/dc-mapping", subdir="shiny")
+    library(shiny)
+    runGitHub("beaconsproject/dc-mapping", subdir="")
