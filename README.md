@@ -19,4 +19,4 @@ The shiny app enables regional conservation planners in the boreal region to exp
   3. Start the Shiny app:
 
     library(shiny)
-    runGitHub("beaconsproject/dc-mapping", subdir="")
+    runGitHub("beaconsproject/dc-mapping")
