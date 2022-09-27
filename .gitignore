@@ -1,6 +1,6 @@
 apps
 apps_dev
-code
+code_dev
 dash
 data_dev
 docs
@@ -9,4 +9,5 @@ quarto
 vignettes
 website
 workbook
+workflow
 Rgui.lnk
