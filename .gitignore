@@ -1,7 +1,8 @@
 apps
+apps_dev
 code
 dash
-data
+data_dev
 docs
 manuscript
 quarto
