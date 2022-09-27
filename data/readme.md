@@ -1,5 +1,7 @@
 # Datasets
 
+The following regional disturbance datasets are listed below. The key layers are "Areal_Features+" and "Linear_Features+". They combine YG and BEACONs disturbance features.
+
 ## fda_10ab.gpkg
 
 ### Layers
@@ -18,3 +20,11 @@ Available layers:<br>
 10          nts_50k Multi Polygon       31      6 NAD83 / Yukon Albers<br>
 11  Areal_Features+       Polygon      506      5 NAD83 / Yukon Albers<br>
 12 Linear_Features+                   1034      5 NAD83 / Yukon Albers<br>
+
+## fda_10ab_shp
+
+Available shapefiles:<br>
+
+1. fda.shp (FDA)
+2. areal_disturbances.shp (Areal_Features+)
+3. linear_disturbances.shp (Linear_Features+)
