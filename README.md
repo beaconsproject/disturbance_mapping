@@ -1,6 +1,6 @@
 # Regional disturbance mapping
 
-The goal of the regional disturbance mapping project is to develop and validate regional scale disturbance maps for a pilot planning region in southeast Yukon and northwest BC that could be used for conservation and land use planning. Our specific objectives are to:
+The goal of the regional disturbance mapping project is to develop and validate a regional-scale disturbance map for a pilot planning region in southeast Yukon and northwest BC that can be used for conservation and land use planning. Our specific objectives are to:
 
 - Develop regional disturbance maps using existing datasets
 - Identify spatial and temporal gaps in disturbance maps
@@ -21,7 +21,7 @@ A number of existing disturbance and related existing datasets exist in both Yuk
 
 The third objective of the Regional Disturbance Mapping project is to fill gaps in the coverage of disturbances using high resolution remote sensing imagery. The procedures to do so were adapted from the YG Government Surface Disturbance Mapping protocol and are described here:
 
-- [Disturbance mapping procedure](https://docs.google.com/document/d/1ky6wQpCng_xjHoXmQWgfAO8EDmQNhslJ0nRq3b5YgwQ/edit?usp=sharing){target="_blank"}
+- [Disturbance mapping procedure](https://docs.google.com/document/d/1ky6wQpCng_xjHoXmQWgfAO8EDmQNhslJ0nRq3b5YgwQ/edit?usp=sharing)
 
 
 ## Regional footprint/intactness mapping app
