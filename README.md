@@ -35,7 +35,7 @@ The shiny app enables regional conservation planners to explore the effects of c
 
   3. Start the Shiny app:
 
-    shiny::runGitHub("beaconsproject/dc-mapping", subdir="app_footprint/")
+    shiny::runGitHub("beaconsproject/dc-mapping", subdir="apps/footprint.R")
 
 
 ## Regional resistance/permeability mapping app
