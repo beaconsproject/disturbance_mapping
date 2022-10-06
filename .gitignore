@@ -3,10 +3,8 @@ code_dev
 dash
 data_dev
 docs
-manuscript
-quarto
+manuscripts
+slides
 vignettes
-website
-workbook
 workflow
 Rgui.lnk
