@@ -4,23 +4,28 @@
 library(sf)
 library(dplyr)
 
+# Set drive directory
+#drive_dir <- "G"
+drive_dir <- "H"
+
 # COPY METADATA
 
 file.copy('C:/Users/PIVER37/Documents/github/dc-mapping/data/fda_10ab.txt',
     'G:/Shared drives/DC Mapping/gisdata/merged_disturbances/fda_10ab.txt')
-file.copy('G:/Shared drives/DC Mapping/gisdata/merged_disturbances/fda_10ab.gpkg',
-    'G:/Shared drives/DC Mapping/gisdata/merged_disturbances/fda_10ab (2022-10-06).gpkg')
+file.copy(paste0(drive_dir, ':/Shared drives/DC Mapping/gisdata/merged_disturbances/fda_10ab.gpkg'),
+          paste0(drive_dir, ':/Shared drives/DC Mapping/gisdata/merged_disturbances/fda_10ab (2022-10-20).gpkg'))
 
 ## SELECT FDA AND DISTURBANCE DATA
 
-fda_gpkg1 <- 'C:/Users/PIVER37/Documents/github/dc-mapping/data/fda_10ab.gpkg'
-fda_gpkg2 <- 'G:/Shared drives/DC Mapping/gisdata/merged_disturbances/fda_10ab.gpkg'
-shp_dir <- 'G:/Shared drives/DC Mapping/gisdata/merged_disturbances/fda_10ab_shp/'
-fda <- st_read(fda_gpkg, 'fda')
-bp_dir <- 'G:/Shared drives/DC Mapping/digitizing/SPOT_2020_21/FDA_10ab/'
+#fda_gpkg1 <- 'C:/Users/PIVER37/Documents/github/dc-mapping/data/fda_10ab.gpkg'
+fda_gpkg1 <- 'C:/Users/MAEDW7/Documents/BEACONs/dc-mapping/data/fda_10ab.gpkg'
+fda_gpkg2 <- paste0(drive_dir, ':/Shared drives/DC Mapping/gisdata/merged_disturbances/fda_10ab.gpkg')
+shp_dir <- paste0(drive_dir, ':/Shared drives/DC Mapping/gisdata/merged_disturbances/fda_10ab_shp/')
+fda <- st_read(fda_gpkg2, 'fda')
+bp_dir <- paste0(drive_dir, ':/Shared drives/DC Mapping/digitizing/SPOT_2020_21/FDA_10ab/')
 #yg_poly <- 'G:/Shared drives/DC Mapping/digitizing/SPOT_2020_21/FDA_10ab/YG_SurfaceDisturbance_July2022_polygon_BEACONs_EDIT.shp'
 #yg_line <- 'G:/Shared drives/DC Mapping/digitizing/SPOT_2020_21/FDA_10ab/YG_SurfaceDisturbance_July2022_line_BEACONs_EDIT.shp'
-yg_gpkg <- 'G:/Shared drives/DC Mapping/digitizing/SPOT_2020_21/FDA_10ab/YG_SurfaceDisturbance_July2022_BEACONS_EDIT.gpkg'
+yg_gpkg <- paste0(drive_dir, ':/Shared drives/DC Mapping/digitizing/SPOT_2020_21/FDA_10ab/YG_SurfaceDisturbance_July2022_BEACONS_EDIT.gpkg')
 
 ## POLYGONAL DISTURBANCES
 
@@ -32,7 +37,25 @@ p_hugues <- st_read(paste0(bp_dir, 'FDA10ab_digitize_polygons_HUGUES.shp')) %>%
 p_bp <- rbind(p_marc, p_hugues, p_maegan) %>%
     st_transform(3578) %>%
     st_intersection(fda) %>%
-    select(TYPE_IND, TYPE_DIST, CREATED_BY, IMAGE_DATE) %>%
+    arrange(DIGZ_DATE) %>%
+    mutate(CODE_POLY = paste0("bp", 1:nrow(.))) %>% # Add unique id in order of digitization date
+    mutate(IMAGE_NAME = case_when(IMAGE_NAME == "SPOT" ~ "SPOT 2021", # Set all image names to be consistent
+                                  IMAGE_NAME == "ESRI" ~ "ESRI basemap",
+                                  TRUE ~ IMAGE_NAME)) %>% 
+    select(CODE_POLY, 
+           TYPE_IND, 
+           TYPE_DIST, 
+           DIST_YEAR,
+           SCALE,
+           CREATED_BY, 
+           DIGZ_DATE,
+           IMAGE_NAME,
+           IMAGE_DATE,
+           RESOLUTION,
+           SENSOR,
+           FLAG,
+           VHR_ASSIST,
+           NOTES) %>%
     rename(TYPE_INDUSTRY=TYPE_IND, TYPE_DISTURBANCE=TYPE_DIST)
 
 table(p_bp$TYPE_INDUSTRY, p_bp$CREATED_BY)
@@ -56,11 +79,20 @@ table(p_bp$TYPE_DISTURBANCE, p_bp$CREATED_BY)
 p_yg <- st_read(yg_gpkg, 'YG_SurfaceDisturbance_July2022_polygon_BEACONS_EDIT') %>% 
     st_transform(3578) %>%
     st_intersection(fda) %>%
-    select(TYPE_INDUS, TYPE_DISTU, IMAGE_DATE) %>%
-    rename(TYPE_INDUSTRY=TYPE_INDUS, TYPE_DISTURBANCE=TYPE_DISTU, geometry=geom) %>%
-    mutate(CREATED_BY='Yukon Government')
+    select(REF_ID,
+           TYPE_INDUS, 
+           TYPE_DISTU,
+           SCALE_CAPT,
+           IMAGE_NAME,
+           IMAGE_DATE,
+           IMAGE_RESO,
+           IMAGE_SENS) %>%
+    rename(CODE_POLY=REF_ID, TYPE_INDUSTRY=TYPE_INDUS, TYPE_DISTURBANCE=TYPE_DISTU, RESOLUTION=IMAGE_RESO, SENSOR=IMAGE_SENS, geometry=geom, SCALE=SCALE_CAPT) %>%
+    mutate(CREATED_BY='Yukon Government', DIGZ_DATE=NA, FLAG=NA, VHR_ASSIST=NA, NOTES=NA, DIST_YEAR=NA,
+           IMAGE_DATE = as.Date(IMAGE_DATE))
+
 p_bp_yg <- rbind(p_bp, p_yg)
-p_bp_yg <- mutate(p_bp_yg, Area_ha=round(st_area(p_bp_yg)/10000,2))
+p_bp_yg <- mutate(p_bp_yg, Area_ha=round(as.numeric(st_area(p_bp_yg))/10000,2))
 
 table(p_bp_yg$TYPE_INDUSTRY, p_bp_yg$CREATED_BY)
 table(p_bp_yg$TYPE_DISTURBANCE, p_bp_yg$CREATED_BY)
@@ -68,6 +100,7 @@ table(p_bp_yg$TYPE_DISTURBANCE, p_bp_yg$CREATED_BY)
 # Save to fda_gpkg
 st_write(p_bp_yg, fda_gpkg1, 'Areal_Features+', delete_layer=T)
 st_write(p_bp_yg, fda_gpkg2, 'Areal_Features+', delete_layer=T)
+
 
 ## LINEAR DISTURBANCES
 
@@ -79,7 +112,26 @@ l_hugues <- st_read(paste0(bp_dir, 'FDA10ab_digitize_lines_HUGUES.shp')) %>%
 l_bp <- rbind(l_marc, l_hugues, l_maegan) %>%
     st_transform(3578) %>%
     st_intersection(fda) %>%
-    select(TYPE_IND, TYPE_DIST, CREATED_BY, IMAGE_DATE) %>%
+    arrange(DIGZ_DATE) %>%
+    mutate(CODE_LINE = paste0("bp", 1:nrow(.))) %>% # Add unique id in order of digitization date
+    mutate(IMAGE_NAME = case_when(IMAGE_NAME == "SPOT" ~ "SPOT 2021", # Set all image names to be consistent
+                                  IMAGE_NAME == "ESRI" ~ "ESRI basemap",
+                                  TRUE ~ IMAGE_NAME)) %>% 
+    select(CODE_LINE,
+           TYPE_IND, 
+           TYPE_DIST, 
+           DIST_YEAR,
+           WIDTH_M,
+           SCALE,
+           CREATED_BY, 
+           DIGZ_DATE,
+           IMAGE_NAME,
+           IMAGE_DATE,
+           RESOLUTION,
+           SENSOR,
+           FLAG,
+           VHR_ASSIST,
+           NOTES) %>%
     rename(TYPE_INDUSTRY=TYPE_IND, TYPE_DISTURBANCE=TYPE_DIST)
 
 table(l_bp$TYPE_INDUSTRY, l_bp$CREATED_BY)
@@ -104,11 +156,21 @@ table(l_bp$TYPE_DISTURBANCE, l_bp$CREATED_BY)
 l_yg <- st_read(yg_gpkg, 'YG_SurfaceDisturbance_July2022_line_BEACONS_EDIT') %>%
     st_transform(3578) %>%
     st_intersection(fda) %>%
-    select(TYPE_INDUS, TYPE_DISTU, IMAGE_DATE) %>%
-    rename(TYPE_INDUSTRY=TYPE_INDUS, TYPE_DISTURBANCE=TYPE_DISTU, geometry=geom) %>%
-    mutate(CREATED_BY='Yukon Government')
+    select(REF_ID,
+           TYPE_INDUS, 
+           TYPE_DISTU,
+           WIDTH_M,
+           SCALE_CAPT,
+           IMAGE_NAME,
+           IMAGE_DATE,
+           IMAGE_RESO,
+           IMAGE_SENS) %>%
+    rename(CODE_LINE=REF_ID, TYPE_INDUSTRY=TYPE_INDUS, TYPE_DISTURBANCE=TYPE_DISTU, RESOLUTION=IMAGE_RESO, SENSOR=IMAGE_SENS, geometry=geom, SCALE=SCALE_CAPT) %>%
+    mutate(CREATED_BY='Yukon Government', DIGZ_DATE=NA, FLAG=NA, VHR_ASSIST=NA, NOTES=NA, DIST_YEAR=NA,
+           IMAGE_DATE = as.Date(IMAGE_DATE))
+
 l_bp_yg <- rbind(l_bp, l_yg)
-l_bp_yg <- mutate(l_bp_yg, Length_km=round(st_length(l_bp_yg)/1000,2))
+l_bp_yg <- mutate(l_bp_yg, Length_km=round(as.numeric(st_length(l_bp_yg))/1000,2))
 
 table(l_bp_yg$TYPE_INDUSTRY, l_bp_yg$CREATED_BY)
 table(l_bp_yg$TYPE_DISTURBANCE, l_bp_yg$CREATED_BY)
@@ -122,14 +184,14 @@ st_write(l_bp_yg, fda_gpkg2, 'Linear_Features+', delete_layer=T)
 
 # Boundary
 lyr <- st_read(fda_gpkg2, 'FDA')
-st_write(lyr, shp_dir, 'fda.shp', driver='ESRI Shapefile', delete_layer=T)
+st_write(lyr, paste0(shp_dir, 'fda.shp'), driver='ESRI Shapefile', delete_layer=T)
 
 # Linear disturbances
 lyr <- st_read(fda_gpkg2, 'Linear_Features+') %>%
     dplyr::rename(INDUSTRY=TYPE_INDUSTRY, DISTURB=TYPE_DISTURBANCE, DATE=IMAGE_DATE, Len_km=Length_km)
-st_write(lyr, shp_dir, 'linear_disturbances.shp', driver='ESRI Shapefile', delete_layer=T)
+st_write(lyr, paste0(shp_dir, 'linear_disturbances.shp'), driver='ESRI Shapefile', delete_layer=T)
 
 # Areal disturbances
 lyr <- st_read(fda_gpkg2, 'Areal_Features+') %>%
     dplyr::rename(INDUSTRY=TYPE_INDUSTRY, DISTURB=TYPE_DISTURBANCE, DATE=IMAGE_DATE)
-st_write(lyr, shp_dir, 'areal_disturbances.shp', driver='ESRI Shapefile', delete_layer=T)
+st_write(lyr, paste0(shp_dir, 'areal_disturbances.shp'), driver='ESRI Shapefile', delete_layer=T)
