@@ -20,21 +20,42 @@ Available layers:
 
 ### Areal_Features+ Attributes
 
+CODE_POLY
 TYPE_INDUSTRY
 TYPE_DISTURBANCE
+DIST_YEAR
+SCALE
 CREATED_BY
-IMAGE_DATA
-Length_km
-geom
+DIGZ_DATE
+IMAGE_NAME
+IMAGE_DATE
+RESOLUTION
+SENSOR
+FLAG
+VHR_ASSIST
+NOTES
+geometry
+Area_ha
 
 ### Linear_Features+ Attributes
 
+CODE_LINE
 TYPE_INDUSTRY
 TYPE_DISTURBANCE
+DIST_YEAR
+WIDTH_M
+SCALE
 CREATED_BY
-IMAGE_DATA
+DIGZ_DATE
+IMAGE_NAME
+IMAGE_DATE
+RESOLUTION
+SENSOR
+FLAG
+VHR_ASSIST
+NOTES
+geometry
 Length_km
-geom
 
 ################################################################################
 # fda_10ab_shp folder
