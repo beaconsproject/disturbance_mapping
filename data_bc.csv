@@ -1,0 +1,14 @@
+Class,Layer,Coverage,Type,Year,Resolution,Source,Comments
+Landcover,Canada land cover,Canada,raster,1984-2019,30,https://opendata.nfis.org/mapserver/nfis-change_eng.html,
+Landcover,EOSD land cover,BC,raster,2000,30,https://ftp-env-public.gov.yk.ca/geo/EOSD/,
+Fire and harvest,Fires,Canada,vector,1980-2020,na,https://cwfis.cfs.nrcan.gc.ca/datamart,Register with datamart
+Fire and harvest,Fire and harvest,Canada,raster,1985-2011,30,https://open.canada.ca/data/en/dataset/7d8bd844-04f0-4b47-9864-857dff62215e,
+Fire and harvest,Fire and harvest,Canada,raster,2017,30,https://open.canada.ca/data/en/dataset/add1346b-f632-4eb9-a83d-a662b38655ad,
+Fire and harvest,Wildfire year/dNBR/mask,Canada,raster,1985-2015,30,https://open.canada.ca/data/en/dataset/9eb51c7b-5336-4b50-a9f8-a6791bad15a9,
+Topography,Lidar-based high resolution DEM,Canada,raster,2020,1-2,https://open.canada.ca/data/en/dataset/957782bf-847c-4644-a757-e383c0057995,
+Transportation,National road network,BC,vector,varies,na,https://ftp.maps.canada.ca/pub/nrcan_rncan/vector/geobase_nrn_rrn/bc/,
+Transportation,National railway network,BC,vector,varies,na,https://ftp.maps.canada.ca/pub/nrcan_rncan/vector/geobase_nrwn_rfn/bc/,
+Cumulative disturbances,Canada Human Access,Canada,vector,2010,na,https://databasin.org/datasets/0c54d369b225471ea7e9f7999ce94cc0/,Register with databasin
+Cumulative disturbances,Boreal ecosystem anthropogenic disturbances,Canada,vector,2008-2010,na,https://open.canada.ca/data/en/dataset/afd0ce47-17c3-445c-b823-2f86409da2e0,
+Cumulative disturbances,Boreal ecosystem anthropogenic disturbances,Canada,vector,2015,na,https://open.canada.ca/data/en/dataset/a71ab99c-6756-4e56-9d2e-2a63246a5e94,
+Cumulative disturbances,Multiple datasets from BCOAGC,NEBC,vector,Current,na,https://www.bcogc.ca/files/gis/Zips/BCOGC_OPEN_DATA_DAILY_SHP.zip,Updated nightly (https://data-bcogc.opendata.arcgis.com/)

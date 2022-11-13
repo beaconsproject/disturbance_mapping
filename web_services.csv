@@ -1,0 +1,7 @@
+Name,Description,Coverage,Service,URL
+HRDM Mosaic,Various topographic layers,Canada,WMS/WMTS,https://datacube.services.geo.ca/ows/elevation
+GeoYukon SPOT 2020-2021,GeoYukon SPOT 2020-2021,Yukon,WMS/WMTS,http://geocloud.blackbridge.com/service
+NHN Index,Boundaries of NHN work units,Canada,WMS/WMTS,http://maps.geogratis.gc.ca/wms/hydro_network_en
+NHN Index,Various hydrology layers,Canada,WMS/WMTS,http://maps.geogratis.gc.ca/wms/hydro_network_en
+Esri Satellite,Esri Satellite,Global,XYZ Tiles,https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}
+Google Satellite,Google Satellite,Global,XYZ Tiles,https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}
