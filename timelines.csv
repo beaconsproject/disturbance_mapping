@@ -1,49 +1,46 @@
-Building an Anthropogenic Disturbance Database,,,,,,,,,,,,,,,,,,,
-Goal: To develop an anthropogenic surface disturbance database for the KDTT planning region,,,,,,,,,,,,,,,,,,,
-,,,,Phase 1 (FDA 10AB),,,,,,,,,Phase 2 (other priority FDAs),,,,,,Products
-Objective,Task,Lead,Status,Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec,Jan,Feb,Mar,
-Acquire and prepare existing data,Define planning region boundary,ALL,done,X,,,,,,,,,,,,,,,
-,Acquire existing disturbance and non-disturbance datasets (YT),ALL,done,X,X,X,,,,,,,,,,,,,
-,Acquire existing disturbance and non-disturbance datasets (BC),PV,in process,,,,,,,,,X,X,X,X,,,,
-,"Process data by FDA i.e., clip, project, and align",PV,in process,X,X,X,,,,,,,,,,,,,
-,Map extent of disturbance mapping and identify gaps & overlap,"PV, ME",in process,,,X,X,,,,,,,,,,,,
-,"Secure access to repository and upload data e.g., Zenodo","PV, ME",to do,,,,,,,,,,,,X,,,,
-,Code and document all steps (GitHub repository),ALL,ongoing,,X,X,X,X,X,X,X,X,X,X,X,,,,
-Manual disturbance mapping,"Review existing approaches (documents, meetings)",ALL,done,X,X,X,X,X,X,X,X,,,,,,,,
-,Write procedures manual for mapping disturbances,ME,done,,X,X,X,,,,,,,,,,,,https://docs.google.com/document/d/1ky6wQpCng_xjHoXmQWgfAO8EDmQNhslJ0nRq3b5YgwQ/edit
-,Create digitizing template shapefiles + ancillary data,ME,done,,X,X,X,,,,,,,,,,,,
-,Create quality control workflow (visual + attribute queries),ME,to do,,,,,,,,,,,,X,X,,,
-,Test approach on FDA 10AB using SPOT / Planet,ME,done,,,,,X,X,,,,,,,,,,
-,Develop temporal component workflow,ME,in progress,,,,,X,X,,,,,,,,,,
-,Identify temporal LANDSAT imagery in QGIS,ME,in progress,,,,,,,,,,X,X,,,,,
-,Add temporal assignments for features in FDA 10ab,ME,to do,,,,,,,,,,,X,,,,,
-,Combine digitized maps with YG disturbance maps and compare products,"PV, ME",done,,,,,,,X,X,X,X,X,X,,,,
-,Revise procedures manual and identify priority FDAs,"PV, ME",in process,,,,,,,X,X,X,X,,,,,,
-,Evaluate cost of mapping per km2 (weighted by disturbances),ME,done,,,,,,,,X,X,,,,,,,
-,Write job description for GIS technician,PV,done,,X,,,,,,,,,,,,,,
-,Hire GIS technicians (university students),,,,,,,,,,,,,,,,,,
-,Train technicians using subset of test FDA,,,,,,,,,,,,,,,,,,
-,Allocate FDA(s) and supervise mapping by technicians,,,,,,,,,,,,,,,,,,
-,Evaluate quality of maps and revise if necessary,,,,,,,,,,,,,,,,,,
-Validate disturbance maps,Design validation plan (remote and/or field based),,,,,,,X,X,,,,,,,,,,
-,"LFN / Guardians / Youth training (field, drones, etc.)",,TBD,,,,,,,,,,,,,,,,
-,Identify and acquire validation datasets,,,,,,,,X,X,X,,,,,,,,
-,Validate random sample of locations (remotely or in field),,,,,,,,,X,X,,,,,,,,
-,Perform accuracy assessment,,,,,,,,,,X,X,,,,,,,
-,Code and document validation steps and results,,,,,,,,,,X,X,,,,,,,
-Automated disturbance mapping,"Review of relevant methods (literature, meetings)","PV, ME",in progress,,,,,X,X,X,X,,,,,,,,
-,Identify and rank opportunities (disturbance type x sensor x tool),"PV, ME",,,,,,X,X,,,,,,,,,,
-,Develop workflow for automated disturbance mapping,"PV, ME",,,,,,,X,X,,,,,,,,,
-,Implement methods on test FDA(s),"PV, ME",,,,,,,,X,X,X,,,,,,,
-,Evaluate workflow and make recommendations,"PV, ME",,,,,,,,,,X,,,,,,,
-Develop footprint & intactness app,Review methods used to create HFP and IFL datasets,PV,,,,,,,,,,,,,,,,,
-,Develop and code flexible workflow,PV,,,,,,,,,,,,,,,,,
-,Develop shiny app to allow users to create their own products,PV,,,,,,,,,,,,,,,,,
-,Document all procedures in workbook,PV,,,,,,,,,,,,,,,,,
-Develop resistance/permeability app,Review methods used to create HFP and IFL datasets,PV,,,,,,,,,,,,,,,,,
-,Develop and code flexible workflow,PV,,,,,,,,,,,,,,,,,
-,Develop shiny app to allow users to create their own products,PV,,,,,,,,,,,,,,,,,
-,Document all procedures in workbook,PV,,,,,,,,,,,,,,,,,
-Develop upstream disturbance app,Develop and code flexible workflow,MH,,,,,,,,,,,,,,,,,
-,Incorporate code in intactness shiny app as a tab to allow users to create their own products,MH,,,,,,,,,,,,,,,,,
-,Document procedures in workbook ,MH,,,,,,,,,,,,,,,,,
+Objective,Task,Lead,Status,Start,Finish
+Acquire and prepare existing data,Define planning region boundary,ALL,done,Jan-22,Jan-22
+,Acquire existing disturbance and non-disturbance datasets (YT),ALL,done,Jan-22,Mar-22
+,Acquire existing disturbance and non-disturbance datasets (BC),PV,in process,Sep-22,Dec-22
+,"Process data by FDA i.e., clip, project, and align",PV,in process,Jan-22,Mar-22
+,Map extent of disturbance mapping and identify gaps & overlap,"PV, ME",in process,Mar-22,Apr-22
+,"Secure access to repository and upload data e.g., Zenodo","PV, ME",to do,Dec-22,Dec-22
+,Code and document all steps (GitHub repository),ALL,ongoing,Feb-22,Dec-22
+Manual disturbance mapping,"Review existing approaches (documents, meetings)",ALL,done,Jan-22,Aug-22
+,Write procedures manual for mapping disturbances,ME,done,Feb-22,Apr-22
+,Create digitizing template shapefiles + ancillary data,ME,done,Feb-22,Apr-22
+,Create quality control workflow (visual + attribute queries),ME,to do,Dec-22,Jan-23
+,Test approach on FDA 10AB using SPOT / Planet,ME,done,May-22,Jun-22
+,Develop temporal component workflow,ME,in progress,May-22,Jun-22
+,Identify temporal LANDSAT imagery in QGIS,ME,in progress,Oct-22,Nov-22
+,Add temporal assignments for features in FDA 10ab,ME,to do,Nov-22,Nov-22
+,Combine digitized maps with YG disturbance maps and compare products,"PV, ME",done,Jul-22,Dec-22
+,Revise procedures manual and identify priority FDAs,"PV, ME",in process,Jul-22,Oct-22
+,Evaluate cost of mapping per km2 (weighted by disturbances),ME,done,Aug-22,Sep-22
+,Write job description for GIS technician,PV,done,Feb-22,Feb-22
+,Hire GIS technicians (university students),,,,
+,Train technicians using subset of test FDA,,,,
+,Allocate FDA(s) and supervise mapping by technicians,,,,
+,Evaluate quality of maps and revise if necessary,,,,
+Validate disturbance maps,Design validation plan (remote and/or field based),,,May-22,Jun-22
+,"LFN / Guardians / Youth training (field, drones, etc.)",,TBD,,
+,Identify and acquire validation datasets,,,Jun-22,Aug-22
+,Validate random sample of locations (remotely or in field),,,Jul-22,Aug-22
+,Perform accuracy assessment,,,Aug-22,Sep-22
+,Code and document validation steps and results,,,Aug-22,Sep-22
+Automated disturbance mapping,"Review of relevant methods (literature, meetings)","PV, ME",in progress,May-22,Aug-22
+,Identify and rank opportunities (disturbance type x sensor x tool),"PV, ME",,May-22,Jun-22
+,Develop workflow for automated disturbance mapping,"PV, ME",,Jun-22,Jul-22
+,Implement methods on test FDA(s),"PV, ME",,Jul-22,Sep-22
+,Evaluate workflow and make recommendations,"PV, ME",,Sep-22,Sep-22
+Develop footprint & intactness app,Review methods used to create HFP and IFL datasets,PV,,,
+,Develop and code flexible workflow,PV,,,
+,Develop shiny app to allow users to create their own products,PV,,,
+,Document all procedures in workbook,PV,,,
+Develop resistance/permeability app,Review methods used to create HFP and IFL datasets,PV,,,
+,Develop and code flexible workflow,PV,,,
+,Develop shiny app to allow users to create their own products,PV,,,
+,Document all procedures in workbook,PV,,,
+Develop upstream disturbance app,Develop and code flexible workflow,MH,,,
+,Incorporate code in intactness shiny app as a tab to allow users to create their own products,MH,,,
+,Document procedures in workbook ,MH,,,
