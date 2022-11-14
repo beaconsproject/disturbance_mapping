@@ -29,6 +29,18 @@ The third objective of the Regional Disturbance Mapping project is to fill gaps 
 
 # code folder
 
+gen_fda_data.R
+
+- generates a geopackage for a selected FDA that consists of various disturbance and other datasets
+
+gen_fda_hydro.R
+
+- generates a geopackage for a selected FDA that consists of streams, lakes, rivers, and FDA boundary
+
+merge_disturbances.R
+
+- merges existing anthropogenic disturbance (from YG) with newly digitized disturbances
+
 
 # data folder
 
