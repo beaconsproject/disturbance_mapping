@@ -52,6 +52,7 @@ The "xxxx" portion of the name refers to the unique alphanumeric id of the FDA e
 
 ### Layers
 
+<pre>
 Available layers:
          layer_name geometry_type features fields             crs_name
 1               FDA Multi Polygon        1     19 NAD83 / Yukon Albers
@@ -66,9 +67,11 @@ Available layers:
 10          nts_50k Multi Polygon       31      6 NAD83 / Yukon Albers
 11  Areal_Features+       Polygon      506      5 NAD83 / Yukon Albers
 12 Linear_Features+                   1034      5 NAD83 / Yukon Albers
+</pre>
 
 ### Attributes for areal and linear features
 
+<pre>
 CODE_POLY / CODE_LINE
 TYPE_INDUSTRY
 TYPE_DISTURBANCE
@@ -85,3 +88,4 @@ VHR_ASSIST
 NOTES
 geometry
 Area_ha / Length_km
+</pre>
