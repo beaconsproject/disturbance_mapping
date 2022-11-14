@@ -9,6 +9,8 @@ The goal of the regional disturbance mapping project is to develop and validate 
 - Develop value-added products:
   - [Regional Disturbance Mapping Explorer](https://github.com/beaconsproject/RDMExplorer)
 
+Project timelines can be viewed [here](timelines.csv).
+
 ## Disturbance datasets
 
 A number of existing disturbance and related datasets exist in both Yukon and British Columbia. We are currently compiling a list of the most relevant datasets:
