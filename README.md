@@ -2,11 +2,12 @@
 
 The goal of the regional disturbance mapping project is to develop and validate a regional-scale disturbance map for a pilot planning region in southeast Yukon and northwest BC that can be used for conservation and land use planning. Our specific objectives are to:
 
-- Develop regional disturbance maps using existing datasets
-- Identify spatial and temporal gaps in disturbance maps
-- Fill gaps in coverage using remote sensing imagery (digitizing)
-- Validate and update disturbance maps using high resolution remote sensing and field based data
-- Develop value-added products:
+- To develop an anthropogenic surface disturbance database for the KDTT planning region
+  - Develop regional disturbance maps using existing datasets
+  - Identify spatial and temporal gaps in disturbance maps
+  - Fill gaps in coverage using remote sensing imagery (digitizing)
+  - Validate and update disturbance maps using high resolution remote sensing and field based data
+- To develop map products based on disturbance datasets for use in conservation planning:
   - [Regional Disturbance Mapping Explorer](https://github.com/beaconsproject/RDMExplorer)
 
 Project timelines can be viewed [here](timelines.csv).
