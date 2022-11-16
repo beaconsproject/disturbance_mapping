@@ -12,3 +12,5 @@ Cumulative disturbances,Canada Human Access,Canada,vector,2010,na,https://databa
 Cumulative disturbances,Boreal ecosystem anthropogenic disturbances,Canada,vector,2008-2010,na,https://open.canada.ca/data/en/dataset/afd0ce47-17c3-445c-b823-2f86409da2e0,
 Cumulative disturbances,Boreal ecosystem anthropogenic disturbances,Canada,vector,2015,na,https://open.canada.ca/data/en/dataset/a71ab99c-6756-4e56-9d2e-2a63246a5e94,
 Cumulative disturbances,Multiple datasets from BCOAGC,NEBC,vector,Current,na,https://www.bcogc.ca/files/gis/Zips/BCOGC_OPEN_DATA_DAILY_SHP.zip,Updated nightly (https://data-bcogc.opendata.arcgis.com/)
+Transportation,Digital road atlas of BC,BC,vector,Current,na,ftp://ftp.geobc.gov.bc.ca/sections/outgoing/bmgs/DRA_Public/,
+Hydrology,Watershed atlas,BC,vector,Current,na,ftp://ftp.geobc.gov.bc.ca/sections/outgoing/bmgs/FWA_Public,
