@@ -1,47 +1,59 @@
-# Merge Beacons and YG disturbance maps and save to Github and Google drive
-# PV 2022-10-06
+# Merge BEACONs and YG disturbance datasets
+# To do: add code to run and save attribute validate to text file if validate=1
+# PV 2022-11-29
 
 library(sf)
 library(dplyr)
 
-# Set drive directory
-#drive_dir <- "G"
-drive_dir <- "H"
+################################################################################
+# USER DEFINED SETTINGS
+################################################################################
 
-# COPY METADATA
+# FDA id and geopackage
+fda_id <- '10ab'
+fda_gpkg <- 'data/fda_10ab.gpkg'
+fda <- st_read('data/fda_10ab.gpkg', 'fda')
 
-file.copy('C:/Users/PIVER37/Documents/github/dc-mapping/data/fda_10ab.txt',
-    'G:/Shared drives/DC Mapping/gisdata/merged_disturbances/fda_10ab.txt')
-file.copy(paste0(drive_dir, ':/Shared drives/DC Mapping/gisdata/merged_disturbances/fda_10ab.gpkg'),
-          paste0(drive_dir, ':/Shared drives/DC Mapping/gisdata/merged_disturbances/fda_10ab (2022-10-20).gpkg'))
+# Validate attribute names?
+validate <- 0 # if 1, tables will be saved to "data/validation/" folder
 
-## SELECT FDA AND DISTURBANCE DATA
+# Digitizing directory
+input_dir <- 'H:/Shared drives/DC Mapping/digitizing/SPOT_2020_21/FDA_10ab/'
 
-#fda_gpkg1 <- 'C:/Users/PIVER37/Documents/github/dc-mapping/data/fda_10ab.gpkg'
-fda_gpkg1 <- 'C:/Users/MAEDW7/Documents/BEACONs/dc-mapping/data/fda_10ab.gpkg'
-fda_gpkg2 <- paste0(drive_dir, ':/Shared drives/DC Mapping/gisdata/merged_disturbances/fda_10ab.gpkg')
-shp_dir <- paste0(drive_dir, ':/Shared drives/DC Mapping/gisdata/merged_disturbances/fda_10ab_shp/')
-fda <- st_read(fda_gpkg2, 'fda')
-bp_dir <- paste0(drive_dir, ':/Shared drives/DC Mapping/digitizing/SPOT_2020_21/FDA_10ab/')
-#yg_poly <- 'G:/Shared drives/DC Mapping/digitizing/SPOT_2020_21/FDA_10ab/YG_SurfaceDisturbance_July2022_polygon_BEACONs_EDIT.shp'
-#yg_line <- 'G:/Shared drives/DC Mapping/digitizing/SPOT_2020_21/FDA_10ab/YG_SurfaceDisturbance_July2022_line_BEACONs_EDIT.shp'
-yg_gpkg <- paste0(drive_dir, ':/Shared drives/DC Mapping/digitizing/SPOT_2020_21/FDA_10ab/YG_SurfaceDisturbance_July2022_BEACONS_EDIT.gpkg')
+# YG polygonal disturbances (edited by BEACONs) [note: why are names truncated?]
+poly0 <- st_read(paste0(input_dir, 'YG_SurfaceDisturbance_July2022_BEACONS_EDIT.gpkg'), 
+    'YG_SurfaceDisturbance_July2022_polygon_BEACONS_EDIT')
 
-## POLYGONAL DISTURBANCES
+# YG linear disturbances (edited by BEACONs) [note: why are names truncated?]
+line0 <- st_read(paste0(input_dir, 'YG_SurfaceDisturbance_July2022_BEACONS_EDIT.gpkg'), 
+    'YG_SurfaceDisturbance_July2022_line_BEACONS_EDIT')
 
-# Merge Marc, Maegan, and Hugues files
-p_marc <- st_read(paste0(bp_dir, 'FDA10ab_digitize_polygons_MARC.shp'))
-p_maegan <- st_read(paste0(bp_dir, 'FDA10ab_digitize_polygons_MAEGAN.shp')) %>% st_make_valid()
-p_hugues <- st_read(paste0(bp_dir, 'FDA10ab_digitize_polygons_HUGUES.shp')) %>%
-    mutate(CREATED_BY=ifelse(CREATED_BY=='Hugues', 'Hugues Bernasconi', CREATED_BY))
-p_bp <- rbind(p_marc, p_hugues, p_maegan) %>%
+# BEACONs polygonal disturbances (digitized by BEACONs)
+poly1 <- st_read(paste0(input_dir,'FDA',fda_id,'_digitize_polygons_MARC.shp'))
+poly2 <- st_read(paste0(input_dir,'FDA',fda_id,'_digitize_polygons_MAEGAN.shp')) %>% st_make_valid()
+poly3 <- st_read(paste0(input_dir,'FDA',fda_id,'_digitize_polygons_HUGUES.shp'))
+polyx <- rbind(poly1, poly2, poly3)
+
+# BEACONs linear disturbances (digitized by BEACONs)
+line1 <- st_read(paste0(input_dir,'FDA',fda_id,'_digitize_lines_MARC.shp'))
+line2 <- st_read(paste0(input_dir,'FDA',fda_id,'_digitize_lines_MAEGAN.shp'))
+line3 <- st_read(paste0(input_dir,'FDA',fda_id,'_digitize_lines_HUGUES.shp'))
+linex <- rbind(line1, line2, line3)
+
+################################################################################
+# MERGE POLYGONAL DISTURBANCES
+################################################################################
+
+# Merge BEACONs polygonal disturbances
+p_bp <- polyx %>%
     st_transform(3578) %>%
     st_intersection(fda) %>%
     arrange(DIGZ_DATE) %>%
     mutate(CODE_POLY = paste0("bp", 1:nrow(.))) %>% # Add unique id in order of digitization date
-    mutate(IMAGE_NAME = case_when(IMAGE_NAME == "SPOT" ~ "SPOT 2021", # Set all image names to be consistent
-                                  IMAGE_NAME == "ESRI" ~ "ESRI basemap",
-                                  TRUE ~ IMAGE_NAME)) %>% 
+    mutate(IMAGE_NAME = case_when(
+        IMAGE_NAME == "SPOT" ~ "SPOT 2021", # Set all image names to be consistent
+        IMAGE_NAME == "ESRI" ~ "ESRI basemap",
+        TRUE ~ IMAGE_NAME)) %>% 
     select(CODE_POLY, 
            TYPE_IND, 
            TYPE_DIST, 
@@ -58,26 +70,12 @@ p_bp <- rbind(p_marc, p_hugues, p_maegan) %>%
            NOTES) %>%
     rename(TYPE_INDUSTRY=TYPE_IND, TYPE_DISTURBANCE=TYPE_DIST)
 
-table(p_bp$TYPE_INDUSTRY, p_bp$CREATED_BY)
-table(p_bp$TYPE_DISTURBANCE, p_bp$CREATED_BY)
+# Uncomment to validate attribute spelling
+#table(p_bp$TYPE_INDUSTRY, p_bp$CREATED_BY)
+#table(p_bp$TYPE_DISTURBANCE, p_bp$CREATED_BY)
 
-
-# Fix some values - these have now been fixed
-#p_bp <- mutate(p_bp, 
-#    TYPE_INDUSTRY=ifelse(TYPE_INDUSTRY=='Unkown', 'Unknown', TYPE_INDUSTRY),
-#    TYPE_INDUSTRY=ifelse(TYPE_INDUSTRY=='forestry', 'Forestry', TYPE_INDUSTRY),
-#    TYPE_DISTURBANCE=ifelse(TYPE_DISTURBANCE=='Pullout', 'Pullout / Turn Area', TYPE_DISTURBANCE),
-#    TYPE_DISTURBANCE=ifelse(TYPE_DISTURBANCE=='Laydown Area', 'Laydown area', TYPE_DISTURBANCE),
-#    TYPE_DISTURBANCE=ifelse(TYPE_DISTURBANCE=='Dril Pad', 'Drill Pad', TYPE_DISTURBANCE),
-#    TYPE_DISTURBANCE=ifelse(TYPE_DISTURBANCE=='Cut and Fill', 'Road Cut and Fill', TYPE_DISTURBANCE),
-#    TYPE_DISTURBANCE=ifelse(TYPE_DISTURBANCE=='Uknown', 'Unknown', TYPE_DISTURBANCE),
-#    TYPE_DISTURBANCE=ifelse(TYPE_DISTURBANCE=='forestry', 'Forestry', TYPE_DISTURBANCE),
-#    TYPE_DISTURBANCE=ifelse(TYPE_DISTURBANCE %in% c('Quartz Mining - Signi','Quartz Mining - Signif','Quartz Mining - Significa'), 'Quartz Mining - Significant', TYPE_DISTURBANCE),
-#    TYPE_DISTURBANCE=ifelse(TYPE_DISTURBANCE %in% c('Gravel pit', 'Gravel Pit', 'Gravel Piyt / Quarry'), 'Gravel Pit / Quarry', TYPE_DISTURBANCE))
-
-# Merge with YG
-p_yg <- st_read(yg_gpkg, 'YG_SurfaceDisturbance_July2022_polygon_BEACONS_EDIT') %>% 
-    st_transform(3578) %>%
+# Transform and clip YG polygonal disturbances
+p_yg <- st_transform(poly0, 3578) %>%
     st_intersection(fda) %>%
     select(REF_ID,
            TYPE_INDUS, 
@@ -91,25 +89,23 @@ p_yg <- st_read(yg_gpkg, 'YG_SurfaceDisturbance_July2022_polygon_BEACONS_EDIT') 
     mutate(CREATED_BY='Yukon Government', DIGZ_DATE=NA, FLAG=NA, VHR_ASSIST=NA, NOTES=NA, DIST_YEAR=NA,
            IMAGE_DATE = as.Date(IMAGE_DATE))
 
+# Merge BEACONs and YG disturbance polygons
 p_bp_yg <- rbind(p_bp, p_yg)
 p_bp_yg <- mutate(p_bp_yg, Area_ha=round(as.numeric(st_area(p_bp_yg))/10000,2))
 
-table(p_bp_yg$TYPE_INDUSTRY, p_bp_yg$CREATED_BY)
-table(p_bp_yg$TYPE_DISTURBANCE, p_bp_yg$CREATED_BY)
+# Uncomment to validate attribute spelling
+#table(p_bp_yg$TYPE_INDUSTRY, p_bp_yg$CREATED_BY)
+#table(p_bp_yg$TYPE_DISTURBANCE, p_bp_yg$CREATED_BY)
 
 # Save to fda_gpkg
-st_write(p_bp_yg, fda_gpkg1, 'Areal_Features+', delete_layer=T)
-st_write(p_bp_yg, fda_gpkg2, 'Areal_Features+', delete_layer=T)
+st_write(p_bp_yg, fda_gpkg, 'Areal_Features+', delete_layer=T)
 
+################################################################################
+# MERGE LINEAR DISTURBANCES
+################################################################################
 
-## LINEAR DISTURBANCES
-
-# Merge Marc, Maegan, and Hugues files
-l_marc <- st_read(paste0(bp_dir, 'FDA10ab_digitize_lines_MARC.shp'))
-l_maegan <- st_read(paste0(bp_dir, 'FDA10ab_digitize_lines_MAEGAN.shp'))
-l_hugues <- st_read(paste0(bp_dir, 'FDA10ab_digitize_lines_HUGUES.shp')) %>%
-    mutate(CREATED_BY=ifelse(CREATED_BY=='Hugues', 'Hugues Bernasconi', CREATED_BY))
-l_bp <- rbind(l_marc, l_hugues, l_maegan) %>%
+# Merge BEACONs linear disturbances
+l_bp <- linex %>%
     st_transform(3578) %>%
     st_intersection(fda) %>%
     arrange(DIGZ_DATE) %>%
@@ -134,27 +130,12 @@ l_bp <- rbind(l_marc, l_hugues, l_maegan) %>%
            NOTES) %>%
     rename(TYPE_INDUSTRY=TYPE_IND, TYPE_DISTURBANCE=TYPE_DIST)
 
-table(l_bp$TYPE_INDUSTRY, l_bp$CREATED_BY)
-table(l_bp$TYPE_DISTURBANCE, l_bp$CREATED_BY)
+# Uncomment to validate attribute spelling
+#table(l_bp$TYPE_INDUSTRY, l_bp$CREATED_BY)
+#table(l_bp$TYPE_DISTURBANCE, l_bp$CREATED_BY)
 
-# Fix some values - these have now been fixed
-# Note 1: TYPE_INDUSTRY=='Transportation' & TYPE_DISTURBANCE=='Unknown NRN' does not exist - is this an additional value that we want to define?
-# Note 2: TYPE_INDUSTRY=='Mining' & TYPE_DISTURBANCE=='Mining' does not exist - should this be 'UNKNOWN'?
-#l_bp <- mutate(l_bp, 
-#    CREATED_BY=ifelse(CREATED_BY=='Maegan Elliott', 'Maegan', CREATED_BY), 
-#    CREATED_BY=ifelse(CREATED_BY=='Marc Edwards', 'Marc', CREATED_BY), 
-#    CREATED_BY=ifelse(CREATED_BY=='Hugues Bernasconi', 'Hugues', CREATED_BY), 
-#    TYPE_INDUSTRY=ifelse(TYPE_INDUSTRY=='Unkown', 'Unknown', TYPE_INDUSTRY),
-#    TYPE_INDUSTRY=ifelse(TYPE_INDUSTRY %in% c('Tranportation', 'Tranrportation', 'Transporation','Transportatioon'), 'Transportation', TYPE_INDUSTRY),
-#    TYPE_DISTURBANCE=ifelse(TYPE_DISTURBANCE=='unpaved Road', 'Unpaved Road', TYPE_DISTURBANCE),
-#    TYPE_DISTURBANCE=ifelse(TYPE_DISTURBANCE %in% c('Access road', 'Acccess Road'), 'Access Road', TYPE_DISTURBANCE),
-#    TYPE_DISTURBANCE=ifelse(TYPE_DISTURBANCE=='Survey / Cutline -s Quart', 'Survey / Cutline - Quartz', TYPE_DISTURBANCE),
-#    TYPE_DISTURBANCE=ifelse(TYPE_INDUSTRY %in% c('Mining','Unknown') & TYPE_DISTURBANCE %in% c('Cutline', 'Cut line', 'Survey  / Cutline'), 'Survey / Cutline', TYPE_DISTURBANCE),
-#    TYPE_DISTURBANCE=ifelse(TYPE_INDUSTRY=='Unknown' & TYPE_DISTURBANCE=='Right of way', 'Right of Way', TYPE_DISTURBANCE))
-
-# Merge with YG
-l_yg <- st_read(yg_gpkg, 'YG_SurfaceDisturbance_July2022_line_BEACONS_EDIT') %>%
-    st_transform(3578) %>%
+# Transform and clip YG linear disturbances
+l_yg <- st_transform(line0, 3578) %>%
     st_intersection(fda) %>%
     select(REF_ID,
            TYPE_INDUS, 
@@ -169,29 +150,13 @@ l_yg <- st_read(yg_gpkg, 'YG_SurfaceDisturbance_July2022_line_BEACONS_EDIT') %>%
     mutate(CREATED_BY='Yukon Government', DIGZ_DATE=NA, FLAG=NA, VHR_ASSIST=NA, NOTES=NA, DIST_YEAR=NA,
            IMAGE_DATE = as.Date(IMAGE_DATE))
 
+# Merge BEACONs and YG disturbance lines
 l_bp_yg <- rbind(l_bp, l_yg)
 l_bp_yg <- mutate(l_bp_yg, Length_km=round(as.numeric(st_length(l_bp_yg))/1000,2))
 
-table(l_bp_yg$TYPE_INDUSTRY, l_bp_yg$CREATED_BY)
-table(l_bp_yg$TYPE_DISTURBANCE, l_bp_yg$CREATED_BY)
+# Uncomment to validate attribute spelling
+#table(l_bp_yg$TYPE_INDUSTRY, l_bp_yg$CREATED_BY)
+#table(l_bp_yg$TYPE_DISTURBANCE, l_bp_yg$CREATED_BY)
 
 # Save to fda_gpkg
-st_write(l_bp_yg, fda_gpkg1, 'Linear_Features+', delete_layer=T)
-st_write(l_bp_yg, fda_gpkg2, 'Linear_Features+', delete_layer=T)
-
-
-# COPY SELECTED LAYERS TO SHAPEFILES
-
-# Boundary
-lyr <- st_read(fda_gpkg2, 'FDA')
-st_write(lyr, paste0(shp_dir, 'fda.shp'), driver='ESRI Shapefile', delete_layer=T)
-
-# Linear disturbances
-lyr <- st_read(fda_gpkg2, 'Linear_Features+') %>%
-    dplyr::rename(INDUSTRY=TYPE_INDUSTRY, DISTURB=TYPE_DISTURBANCE, DATE=IMAGE_DATE, Len_km=Length_km)
-st_write(lyr, paste0(shp_dir, 'linear_disturbances.shp'), driver='ESRI Shapefile', delete_layer=T)
-
-# Areal disturbances
-lyr <- st_read(fda_gpkg2, 'Areal_Features+') %>%
-    dplyr::rename(INDUSTRY=TYPE_INDUSTRY, DISTURB=TYPE_DISTURBANCE, DATE=IMAGE_DATE)
-st_write(lyr, paste0(shp_dir, 'areal_disturbances.shp'), driver='ESRI Shapefile', delete_layer=T)
+st_write(l_bp_yg, fda_gpkg, 'Linear_Features+', delete_layer=T)
