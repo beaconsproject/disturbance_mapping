@@ -7,6 +7,8 @@ library(dplyr)
 
 # Read NTS grid and project to latlong
 nts <- st_read('C:/Users/PIVER37/Documents/gisdata/YT/Reference/NTS_Index_50k.gdb', 'NTS_Index_50k')
+nts <- st_read('C:/Users/PIVER37/Documents/gisdata/canada/nts/nts_snrc_50k.shp')
+nts <- st_read('C:/Users/PIVER37/Documents/gisdata/KDTT/kdtt_nts50k.shp')
 nts_xy <- st_transform(nts, 4326)
 
 # Create 10 x 10 grid within each NTS grid

@@ -16,9 +16,9 @@ Project timelines can be viewed [here](https://docs.google.com/spreadsheets/d/1z
 
 A number of existing disturbance and related datasets exist in both Yukon and British Columbia. We are currently compiling a list of the most relevant datasets:
 
-- [Yukon datasets](data_yt.csv)
-- [BC datasets](data_bc.csv)
-- [Web services](web_services.csv)
+- [Yukon datasets](docs/data_yt.csv)
+- [BC datasets](docs/data_bc.csv)
+- [Web services](docs/web_services.csv)
 
 ## Protocol for manual disturbance mapping
 
