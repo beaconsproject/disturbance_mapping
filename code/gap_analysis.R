@@ -1,11 +1,16 @@
 # Calculate min and max image date (year) for each grid cell
 # There are 10x10 cells per 1:50k grid
-# PV 2022-11-19
+# PV 2023-01-08
 
 library(sf)
 library(dplyr)
 
-v <- st_read('data/yt_nts_n13_sub.shp') %>% 
+#input <- 'data/yt_nts_n13_sub.shp'
+#output <- '../../gisdata/YT2/gap_analysis/yt_nts_n13_sub_year.shp'
+input <- 'data/fda9_nts_n13.shp'
+output <- 'data/fda9_nts_n13_year.shp'
+
+v <- st_read(input) %>% 
     st_transform(3578)
 v <- mutate(v, id=1:nrow(v))
 af <- st_read('../../gisdata/YT2/YG_SurfaceDisturbance/YG_SurfaceDisturbance_July2022.gdb', 'SD_Polygon') %>%
@@ -41,7 +46,7 @@ val_minmax <- rowwise(val) %>% mutate(year_min=min(areal_min, linear_min, na.rm=
 val_mm <- mutate(val_minmax, areal_min=NULL, areal_max=NULL, linear_min=NULL, linear_max=NULL)
 val_year <- left_join(v, val_mm)
 
-st_write(val_year, '../../gisdata/YT2/gap_analysis/yt_nts_n13_sub_year.shp', delete_layer=T)
+st_write(val_year, output, delete_layer=T)
 
 #va <- left_join(v, xa) %>%
 #    mutate(year_min=as.numeric(ifelse(is.na(year_min),0,year_min)),

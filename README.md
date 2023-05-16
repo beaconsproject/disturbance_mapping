@@ -1,5 +1,7 @@
 # Regional disturbance mapping
 
+Updated: May 16, 2023
+
 The goal of the regional disturbance mapping project is to develop and validate a regional-scale disturbance map for a pilot planning region in southeast Yukon and northwest BC that can be used for conservation and land use planning. Our specific objectives are to:
 
 - To develop an anthropogenic surface disturbance database for the KDTT planning region
@@ -18,13 +20,18 @@ A number of existing disturbance and related datasets exist in both Yukon and Br
 
 - [Yukon datasets](docs/data_yt.csv)
 - [BC datasets](docs/data_bc.csv)
-- [Web services](docs/web_services.csv)
+- [NWT datasets](docs/data_nt.csv)
+- [Alberta datasets](docs/data_ab.csv)
+- [National datasets](docs/data_national.csv)
+- [Global datasets](docs/data_global.csv)
+- [Map products derived from remotely sensed data](docs/remote_sensing.md)
 
 ## Protocol for manual disturbance mapping
 
 The third objective of the Regional Disturbance Mapping project is to fill gaps in the coverage of disturbances using high resolution remote sensing imagery. The procedures to do so were adapted from the YG Government Surface Disturbance Mapping protocol and are described here:
 
-- [Disturbance mapping procedure](https://docs.google.com/document/d/1ky6wQpCng_xjHoXmQWgfAO8EDmQNhslJ0nRq3b5YgwQ/edit?usp=sharing)
+- [Disturbance mapping procedures v2](https://docs.google.com/document/d/1pVEeJe09dDMEV8KVDPm5VlvCeTs8LtK8vEzI-lGqiC8/edit)
+- [Disturbance mapping procedures v1](https://docs.google.com/document/d/1ky6wQpCng_xjHoXmQWgfAO8EDmQNhslJ0nRq3b5YgwQ/edit)
 
 
 # code folder
