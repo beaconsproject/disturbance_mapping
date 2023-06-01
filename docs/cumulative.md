@@ -1,6 +1,9 @@
 # Cumulative effects map
 
-See BC CEF document, for example.
+Examples:
+
+  - See BC CEF document, for example
+  - https://bc-er.ca/how-we-regulate/safeguard-the-environment/cumulative-effects/
 
 For each province/territory:
 
