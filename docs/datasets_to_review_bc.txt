@@ -1,0 +1,30 @@
+Raw_BC_btm_agriculture Agriculture Polygon Yes Agricultural footprints in BC https://catalogue.data.gov.bc.ca/dataset/baseline-thematic-mapping-present-land-use-version-1-spatial-layer
+Raw_BC_airports_point Airstrip Point For Reference Locations of airstrips in BC https://catalogue.data.gov.bc.ca/dataset/bc-airports/resource/03fdc03b-5487-4a2e-b7e3-a82e53db9ea1
+Raw_BC_airports_point Airstrip Point Yes Locations of airstrips in BC features are either digitized from Bing Maps imagery or copied from ‘urban’ features in BTM mapping
+Raw_BC_consolidated_cutblocks_171123 Cutblocks Polygon Yes Harvested areas in BC https://catalogue.data.gov.bc.ca/dataset/harvested-areas-of-bc-consolidated-cutblocks-
+Raw_BC_dams Dam Line Yes Locations of dams in BC https://catalogue.data.gov.bc.ca/dataset/b-c-dams/resource/c361739f-5514-457f-866a-b832ebaf06b3
+Raw_BC_SKE_MineFP_Jan2018 Mining Polygon Yes Mine footprints in NW BC digitized by Blair Ells BC FLNRO N/A
+Raw_BC_btm_mining Mining Polygon Yes Mine footprints in BC https://catalogue.data.gov.bc.ca/dataset/baseline-thematic-mapping-present-land-use-version-1-spatial-layer
+u_veg_comp_lyr_r1_poly_abiotic_disturbance_only Natural Abiotic Polygon Yes VRI derived abiotic disturbance https://catalogue.data.gov.bc.ca/dataset/vri-forest-vegetation-composite-polygons-and-rank-1-layer
+Raw_BC_Forest_Health_Aerial_Overview_Pest_Disturbance Natural Pest Polygon Yes Forest pest disturbance in BC, annual layers combined and any bark beetle polygon (FHF = IBB, IBM, or IBS) with a severe or very severe infestation level was considered a disturbance, records go back to 1999, no records meeting criteria show up in the study area before 2000 https://www.for.gov.bc.ca/ftp/HFP/external/!publish/Aerial_Overview/
+Raw_BC_well_surface_hole_locations_permitted Oil and Gas Point Yes Oil and gas well surface hole locations, points buffered by 50m to approximate clearings as per EC well site procedure https://data-bcogc.opendata.arcgis.com/datasets/9149cb556e694617970a5774621af8be_0
+Raw_BC_sump_locations Oil and Gas Point Yes Oil and gas sump locations in BC, points buffered by 50m to approximate clearings as per EC well site procedure https://data-bcogc.opendata.arcgis.com/datasets/01df1e822ff84ddc8d4808e68b322101_0
+Raw_BC_Pipeline_Rights_of_Way_Permitted Oil and Gas Polygon Yes Oil and gas pipelines in BC https://data-bcogc.opendata.arcgis.com/datasets/6434890915cd4d25817037c0600040b1_1
+Raw_BC_Geophysical_Ancillary_Points Oil and Gas Point No Oil and gas ancillary geophysical point locations (e.g. clearings) https://data-bcogc.opendata.arcgis.com/datasets/7fd246f6c212469eb07acf6467b2f8bd_0
+Raw_BC_Facility_Locations_Pre2016 Oil and Gas Point Yes Oil and gas facility point locations in BC, points buffered by 50m to approximate clearings as per EC well site procedure https://data-bcogc.opendata.arcgis.com/datasets/e2014a76454545abb0509afa2444876b_0
+Raw_BC_Associated_and_Ancillary_Areas_Permitted Oil and Gas Polygon Yes Oil and gas ancillary features in BC (e.g. campsites, workspaces, deck sites, etc.) https://data-bcogc.opendata.arcgis.com/datasets/bbd11f8029a949fb9ce6012f32111e31_1
+Raw_BC_NRWN_tracks_bc_Clip Railway Line Yes Railroads in BC http://ftp.geogratis.gc.ca/pub/nrcan_rncan/vector/geobase_nrwn_rfn/bc/
+Raw_BC Reservoirs Reservoir Polygon Yes Locations of man-made water reservoirs in BC https://catalogue.data.gov.bc.ca/dataset/freshwater-atlas-lakes/resource/9595d129-03cc-40bb-b216-6ce3a1337143
+Raw_BC_u_FTN_RD_SGM_line_Clip Roads Line Yes Forest tenure road segments in BC https://catalogue.data.gov.bc.ca/dataset/forest-tenure-road-segment-lines
+Raw_BC_SKE_Roads_Jan2018 Roads Line Yes Mining Roads digitized by Blair Ells BC FLNRO N/A
+Raw_BC_Petroleum_Development_Roads_Pre2006_Clip Roads Line Yes Petroleum development roads in BC approved pre-20061030 https://data-bcogc.opendata.arcgis.com/datasets/5861465cbe5649de93d521117cdf3a6a_0
+Raw_BC_OGC_Road_Segments_Permitted_Clip Roads Line Yes Road centre-lines associated with oil and gas approved after 20061030 https://data-bcogc.opendata.arcgis.com/datasets/b073031723eb44578e1e881939757fe2_0
+Raw_BC_DRA_Transport_Line_Clip Roads Line Yes Roads in BC https://catalogue.data.gov.bc.ca/dataset/digital-road-atlas-dra-master-partially-attributed-roads
+Raw_BC_Geophysical_Plans_20022006 Seismic Line Yes Seismic lines in BC https://data-bcogc.opendata.arcgis.com/datasets/c27b9f1a3754436cb7816b27ece5cb28_0
+Raw_BC_Geophysical_Plans_19962004 Seismic Line Yes Seismic lines in BC https://data-bcogc.opendata.arcgis.com/datasets/81d619920b6848e9a3f0f0201d126cae_0
+Raw_BC_Geophysical_Lines_Permitted Seismic Line Yes Seismic lines in BC https://data-bcogc.opendata.arcgis.com/datasets/bd0a685c1f614b4b89ace6564e5e3cc4_0
+Raw_BC_btm_urban Settlements Polygon Yes Footprint for human occupation https://catalogue.data.gov.bc.ca/dataset/baseline-thematic-mapping-present-land-use-version-1-spatial-layer
+RAW_BC_Trails_FTN_REC_LN Trails Line Yes Trails in BC https://catalogue.data.gov.bc.ca/dataset/forest-tenure-recreation-lines
+RAW_BC_u_bc_transmission_lines_Clip Transmission Lines Line Yes Electricity transmission lines in BC https://catalogue.data.gov.bc.ca/dataset/bc-transmission-lines
+Raw_BC_u_mofr_fire_polygons Wildfire Polygon Yes Wildfire boundaries in BC <=40 years old, and <=50 years old (evaluated separately) https://catalogue.data.gov.bc.ca/dataset/fire-perimeters-historical
+Raw_BC_C_FIRE_PLY_2017_clip Wildfire Polygon Yes Current wildfire boundaries in BC from 2017 https://catalogue.data.gov.bc.ca/dataset/bc-wildfire-fire-perimeters-current-internal

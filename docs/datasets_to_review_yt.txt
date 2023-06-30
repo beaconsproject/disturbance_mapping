@@ -1,0 +1,32 @@
+Raw_YT_Agriculture_Land_Dispositions Agriculture Polygon Yes Agricultural footprints in YT ftp://ftp.geomaticsyukon.ca/GeoYukon/Land_Tenure/Agriculture_Land_Dispositions/
+Raw_YT_Forest_Openings_Pre_1990 Cutblocks Polygon Yes Cutblocks pre-1990 in YT ftp://ftp.geomaticsyukon.ca/GeoYukon/Forestry/Forest_Openings_Pre_1990/
+Raw_YT_Forest_Openings Cutblocks Polygon Yes post-1990 cutblocks in YT ftp://ftp.geomaticsyukon.ca/GeoYukon/Forestry/Forest_Openings/
+Raw_YT_dams Dam Line Yes Locations of dams in YT 2 features digitized from Bing maps imagery
+Raw_YT_Placer_Land_Use_Permits_50k Mining Polygon Yes Placer mining land permits, active and expired ftp://ftp.geomaticsyukon.ca/GeoYukon/Mining/Placer_Land_Use_Permits_50k/
+Raw_YT_Gravel_Pits_25k Mining Point No Locations of gravel pits associated with roads, not polygonal and doesn’t add a lot of area, might not contribute much over roads alone ftp://ftp.geomaticsyukon.ca/GeoYukon/Transportation/Gravel_Pits_25k/
+Raw_YT_Cultural_Features_Mining_Areas_50k Mining Polygon Yes Mining perimeters on the landscape, mostly gravel pits ftp://ftp.geomaticsyukon.ca/GeoYukon/Culture_and_Heritage/Cultural_Features_Polygon_50k/
+Raw_YT_Utilities_Pipelines_50k Oil and Gas Line Yes Pipelines in YT, buffered by 15m (30m width) to closely simulate right-of-way to allow combination into single layer with BC data ftp://ftp.geomaticsyukon.ca/GeoYukon/Utilities_and_Communication/Utilities_Line_50k/
+Raw_YT_Oil_and_Gas_Wells_50k Oil and Gas Point Yes Locations of oil and gas well heads, points buffered by 50m to approximate clearings as per EC well site procedure ftp://ftp.geomaticsyukon.ca/GeoYukon/Oil_and_Gas/Oil_and_Gas_Wells_50k/
+Raw_YT_Railroads_50k_Canvec Railway Line Yes Railroads in YT ftp://ftp.geomaticsyukon.ca/GeoYukon/Transportation/Railroads_50k_Canvec/
+Raw_YT_Reservoirs Reservoir Polygon Yes Locations of man-made water reservoirs in YT 2 features digitized from Bing maps imagery
+Raw_YT_Roads_National_Road_Network Roads Line Yes Federal NRN road network in YT and BC ftp://ftp.geomaticsyukon.ca/GeoYukon/Transportation/Roads_National_Road_Network/
+Raw_YT_Bridges_25k Roads Point No point location of bridges in YT ftp://ftp.geomaticsyukon.ca/GeoYukon/Transportation/Bridges_25k/
+Raw_YT_Blocked_Road_Passages_National_Road_Network Roads Point No impassable points on existing roads in YT ftp://ftp.geomaticsyukon.ca/GeoYukon/Transportation/Blocked_Road_Passages_National_Road_Network/
+Raw_YT_Vegetation_Inventory_Roads_40k Roads Line Yes Forestry roads in YT ftp://ftp.geomaticsyukon.ca/GeoYukon/Forestry/Vegetation_Inventory_Roads_40k/
+Raw_YT_Oil_and_Gas_Seismic_Lines Seismic Line Yes Seismic lines in YT ftp://ftp.geomaticsyukon.ca/GeoYukon/Oil_and_Gas/Oil_and_Gas_Seismic_Lines/
+Raw_YT_Cut_Lines_50k_Canvec Seismic Line Yes Cut lines in YT ftp://ftp.geomaticsyukon.ca/GeoYukon/Transportation/Cut_Lines_50k_Canvec/
+Raw_YT_Yukon_Communities Settlements Point For Reference Locations of Yukon Communities ftp://ftp.geomaticsyukon.ca/GeoYukon/Reference/Yukon_Communities/
+Raw_YT_Places_1M Settlements Point For Reference Locations of communities across the study area ftp://ftp.geomaticsyukon.ca/GeoYukon/Base/Places_1M/
+Raw_YT_Municipal_Boundaries Settlements Polygon No Municipal boundaries in YT, poor reflection of developed area ftp://ftp.geomaticsyukon.ca/GeoYukon/Land_Planning/Municipal_Boundaries/
+Raw_YT_Cultural_Features_Camps_50k Settlements Polygon Yes Camps in YT ftp://ftp.geomaticsyukon.ca/GeoYukon/Culture_and_Heritage/Cultural_Features_Polygon_50k/
+Raw_YT_Cultural_Features_BuiltUp_Areas_50k Settlements Polygon Yes Built up areas in YT e.g. dumps, buildings, runways, etc., digitized 29 missing features noticed in the vicinity of Whitehorse ftp://ftp.geomaticsyukon.ca/GeoYukon/Culture_and_Heritage/Cultural_Features_Polygon_50k/
+Raw_YT_Community_Boundaries Settlements Polygon For Reference Community boundaries in YT ftp://ftp.geomaticsyukon.ca/GeoYukon/Land_Planning/Community_Boundaries/
+Raw_YT_Communities_and_Subdivisions_Surveyed Settlements Polygon Yes Built up areas in YT e.g. subdivisions ftp://ftp.geomaticsyukon.ca/GeoYukon/Land_Tenure/Communities_and_Subdivisions_Surveyed/
+Raw_YT_Whitehorse_Trails_10k Trails Line Yes Trails in and around Whitehorse ftp://ftp.geomaticsyukon.ca/GeoYukon/Transportation/Whitehorse_Trails_10k/
+Raw_YT_Trails_50k_Canvec Trails Line Yes Trails in YT ftp://ftp.geomaticsyukon.ca/GeoYukon/Transportation/Trails_50k_Canvec/
+Raw_YT_Trails_50k Trails Line Yes Trails in YT ftp://ftp.geomaticsyukon.ca/GeoYukon/Transportation/Trails_50k/
+Raw_YT_Utilities_Transmission_Line_50k Transmission Lines Line Yes Electricity transmission lines in YT ftp://ftp.geomaticsyukon.ca/GeoYukon/Utilities_and_Communication/Hydro_Energy/
+Raw_YT_Utilities_Polygon_50k Transmission Lines Polygon No Transformer station outside of Whitehorse, only one feature in a residential area, inconsequential ftp://ftp.geomaticsyukon.ca/GeoYukon/Utilities_and_Communication/Utilities_Polygon_50k/
+Raw_YT_Fire_History Wildfire Polygon Yes Wildfire boundaries in YT <=40 years old, and <=50 years old (evaluated separately) ftp://ftp.geomaticsyukon.ca/GeoYukon/Biophysical/Fire_History/
+Raw_YT_Forest_Health_Abiotic_Disturbance NaturalAbiotic Polygon Yes Abiotic forest disturbance in YT (e.g. flooding, windthrow, etc.) https://www.for.gov.bc.ca/ftp/HFP/external/!publish/Aerial_Overview/2016/
+Raw_YT_Forest_Health_Aerial_Overview_Pest_Disturbance Natural Pest Polygon Yes Forest pest disturbance in YT (records go back to 1994, none in our area before 2009 for bark beetles with a severe or very severe infestation rating) ftp://ftp.geomaticsyukon.ca/GeoYukon/Forestry/Forest_Health_Aerial_Overview_50k/

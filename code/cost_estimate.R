@@ -1,3 +1,8 @@
+# Estimate costs and calculate stats from digitizing_status spreadsheet
+# Number of features retired (YG) and added (BP)
+# Pierre Vernier
+# 2023-06-03
+
 library(sf)
 library(dplyr)
 
