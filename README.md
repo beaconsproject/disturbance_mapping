@@ -1,6 +1,6 @@
 # Regional disturbance mapping
 
-Updated: June 1, 2023
+Updated: July 10, 2023
 
 The goal of the regional disturbance mapping project is to develop and validate a regional-scale disturbance map for a pilot planning region in southeast Yukon and northwest BC that can be used for conservation and land use planning. Our specific objectives are to:
 
