@@ -1,8 +1,6 @@
-dashboard
+apps
 data/archive
-data_big
-datasets
-vignettes
-website
-workbook
+manuscript
+schema
+tmp
 Rgui.lnk
