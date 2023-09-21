@@ -12,7 +12,9 @@ The goal of the regional disturbance mapping project is to develop and validate 
 - To develop map products based on disturbance datasets for use in conservation planning:
   - [Regional Disturbance Mapping Explorer](https://github.com/beaconsproject/RDMExplorer)
 
-Project timelines can be viewed [here](https://docs.google.com/spreadsheets/d/1zUy7QgPnn-Cp8nlaxmCUR9VXAgbjTT3KI0Ad4XHlUiU/edit#gid=925452415) if you have permission.
+## Upcoming paper
+
+We are currently writing a paper describing a workflow for developing regional maps of disturbances and intactness. Authors can access the latest draft [here](https://docs.google.com/document/d/1odYaCYmW05E3kvzcx0dSBb5RGP6l5cOvKXGkJjK26jQ/edit?pli=1). In the paper, we describe our workflow, detailing its components includings its effectiveness in capturing previously overlooked disturbances. We then illustrate the workflow with two case studies from the Yukon.
 
 ## Disturbance datasets
 
