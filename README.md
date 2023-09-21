@@ -1,6 +1,6 @@
 # Regional disturbance mapping
 
-Updated: July 10, 2023
+Updated: September 21, 2023
 
 The goal of the regional disturbance mapping project is to develop and validate a regional-scale disturbance map for a pilot planning region in southeast Yukon and northwest BC that can be used for conservation and land use planning. Our specific objectives are to:
 
@@ -33,6 +33,11 @@ The third objective of the Regional Disturbance Mapping project is to fill gaps 
 - [Disturbance mapping procedures v2](https://docs.google.com/document/d/1pVEeJe09dDMEV8KVDPm5VlvCeTs8LtK8vEzI-lGqiC8/edit)
 - [Disturbance mapping procedures v1](https://docs.google.com/document/d/1ky6wQpCng_xjHoXmQWgfAO8EDmQNhslJ0nRq3b5YgwQ/edit)
 
+PDF versions of the manual along with the Yukon Government's manuals can be found in the "manuals folder:
+
+- BP_SurfaceDisturbance_Mapping_Procedures.pdf (BEACONs Project: Surface disturbance mapping procedures)
+- YG_SurfaceDisturbance_FeatureInterpretationKey_forContractors_v1-0-2.pdf (Yukon Government: Anthropogenic surface disturbance mapping in the Yukon. Standards and guidelines for contractors)
+- YG_SurfaceDisturbance_MappingStandards_forContractors_v4-0-2.pdf (Yukon Government: Anthropogenic surface disturbance mapping in the Yukon. Feature interpretation key for contractors)
 
 # code folder
 
