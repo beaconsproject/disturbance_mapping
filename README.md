@@ -41,11 +41,11 @@ The `disturbance validation` app can be run by pulling this repo or from a local
 1. Install R (download from r-project.org and follow instructions)
 2. Install the following additional packages:
 
-  install.packages(c("sf","leaflet","dplyr","shinydashboard",DT))
+    install.packages(c("sf","leaflet","dplyr","shinydashboard",DT))
 
 3. Start the Shiny app:
 
-  shiny::runGitHub("beaconsproject/disturbance_validation")
+    shiny::runGitHub("beaconsproject/disturbance_validation")
 
 
 # Project workflow
