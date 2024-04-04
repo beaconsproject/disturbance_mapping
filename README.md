@@ -36,7 +36,7 @@ The original Yukon Government's manuals can be viewed here:
 
 # Disturbance validation tool
 
-The `disturbance validation` app can be run by pulling this repo or from a local machine using the following steps (note, the first 2 steps only need to be run once):
+The `disturbance validation` app can be run [online](https://beaconsproject.shinyapps.io/disturbance_explorer) or from a local machine using the following steps (note, the first 2 steps only need to be run once):
 
 1. Install R (download from r-project.org and follow instructions)
 2. Install the following additional packages:
