@@ -1,7 +1,6 @@
-April 4, 2024
-
-
 # Introduction
+
+Updated: April 4, 2024
 
 The Regional Disturbance Mapping project provides access to data, methods and tools to develop and validate regional-scale disturbance maps that can be used for conservation and land use planning.
 
@@ -42,11 +41,11 @@ The `disturbance validation` app can be run by pulling this repo or from a local
 1. Install R (download from r-project.org and follow instructions)
 2. Install the following additional packages:
 
->install.packages(c("sf","leaflet","dplyr","shinydashboard",DT))
+  install.packages(c("sf","leaflet","dplyr","shinydashboard",DT))
 
 3. Start the Shiny app:
 
->shiny::runGitHub("beaconsproject/disturbance_mapping/validation/")
+  shiny::runGitHub("beaconsproject/disturbance_validation")
 
 
 # Project workflow
@@ -98,14 +97,14 @@ The fourth step is to open the digitizing status Google sheet and:
 - Copy the header row from another worksheet
 - Copy the NTS 50k grid IDs to the first column
 
-## While digitizing
+## 2. While digitizing
 
 The main section of this document provides detailed instructions on digitizing linear and areal disturbances. This comprises two main tasks:
 
 1. Digitize linear and areal anthropogenic disturbance features following the procedures described in the procedures manual.
 2. Update the digitizing status worksheet, ensuring all attributes are filled (including changing the status field from 0 to 1 once grid square has been digitized.
 
-## After digitizing
+## 3. After digitizing
 
 There are three broad steps to complete at the completion of a digitizing project: 1) update the digitizing status map layer to update the status of newly digitized cells, 2) merge the newly digitized layers with the existing YG datasets for the AOI, 3) validate the merged dataset, and 4) update the master surface disturbance database. 
 
