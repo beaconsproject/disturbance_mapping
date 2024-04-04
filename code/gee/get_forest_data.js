@@ -1,4 +1,4 @@
-var aoi = ee.FeatureCollection('projects/ee-vernier/assets/lrb_10k').geometry();
+var aoi = ee.FeatureCollection('projects/ee-vernier/assets/sda10ab_50k').geometry();
 
 // Forest harvest
 var ca_forest_harvest = ee.Image("projects/sat-io/open-datasets/CA_FOREST/CA_Forest_Harvest_1985-2020").clip(aoi);
@@ -7,7 +7,7 @@ Export.image.toDrive({
   folder: 'gee_data',
   description: 'harvest_1985-2020',
   maxPixels: 1e13,
-  crs: 'EPSG:4326',
+  crs: 'EPSG:3578',
   scale: 30,
   region: aoi
 });
@@ -21,7 +21,7 @@ Export.image.toDrive({
   folder: 'gee_data',
   description: 'tree_species',
   maxPixels: 1e13,
-  crs: 'EPSG:4326',
+  crs: 'EPSG:3578',
   scale: 30,
   region: aoi
 });
@@ -34,7 +34,7 @@ Export.image.toDrive({
   folder: 'gee_data',
   description: 'forest_age',
   maxPixels: 1e13,
-  crs: 'EPSG:4326',
+  crs: 'EPSG:3578',
   scale: 30,
   region: aoi
 });
@@ -47,7 +47,7 @@ Export.image.toDrive({
   folder: 'gee_data',
   description: 'fire_1985-2020',
   maxPixels: 1e13,
-  crs: 'EPSG:4326',
+  crs: 'EPSG:3578',
   scale: 30,
   region: aoi
 });

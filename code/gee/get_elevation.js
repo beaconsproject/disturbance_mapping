@@ -1,4 +1,4 @@
-var aoi = ee.FeatureCollection('projects/ee-vernier/assets/lrb_10k').geometry();
+var aoi = ee.FeatureCollection('projects/ee-vernier/assets/sda10ab_50k').geometry();
 var elevation = ee.ImageCollection('NRCan/CDEM').mosaic().clip(aoi);
 
 Export.image.toDrive({

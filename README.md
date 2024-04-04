@@ -1,105 +1,137 @@
-# Regional disturbance mapping
+April 4, 2024
 
-Updated: September 21, 2023
 
-The goal of the regional disturbance mapping project is to develop and validate a regional-scale disturbance map for a pilot planning region in southeast Yukon and northwest BC that can be used for conservation and land use planning. Our specific objectives are to:
+# Introduction
 
-- To develop an anthropogenic surface disturbance database for the KDTT planning region
-  - Develop regional disturbance maps using existing datasets
-  - Identify spatial and temporal gaps in disturbance maps
-  - Fill gaps in coverage using remote sensing imagery (digitizing)
-  - Validate and update disturbance maps using high resolution remote sensing and field based data
-- To develop map products based on disturbance datasets for use in conservation planning:
-  - [Regional Disturbance Mapping Explorer](https://github.com/beaconsproject/RDMExplorer)
+The Regional Disturbance Mapping project provides access to data, methods and tools to develop and validate regional-scale disturbance maps that can be used for conservation and land use planning.
 
-## Upcoming paper
+The primary components of the website are:
 
-We are currently writing a paper describing a workflow for developing regional maps of disturbances and intactness. Authors can access the latest draft [here](https://docs.google.com/document/d/1odYaCYmW05E3kvzcx0dSBb5RGP6l5cOvKXGkJjK26jQ/edit?pli=1). In the paper, we describe our workflow, detailing its components includings its effectiveness in capturing previously overlooked disturbances. We then illustrate the workflow with two case studies from the Yukon.
+- A growing list of regional and national disturbance and ancillary datasets
+- A procedures manual for digitizing linear and areal surface disturbances from satellite imagery
+- A detailed workflow for conducting a mapping project in a study area located in the Yukon and/or BC
+- A Shiny app for validating disturbance database attributes
+- Additional resources relevant to regional disturbance mapping
 
-## Disturbance datasets
+
+# Disturbance datasets
 
 A number of existing disturbance and related datasets exist in both Yukon and British Columbia. We are currently compiling a list of the most relevant datasets:
 
-- [Yukon datasets](docs/data_yt.csv)
-- [BC datasets](docs/data_bc.csv)
-- [NWT datasets](docs/data_nt.csv)
-- [Alberta datasets](docs/data_ab.csv)
-- [National datasets](docs/data_national.csv)
-- [Global datasets](docs/data_global.csv)
-- [Map products derived from remotely sensed data](docs/remote_sensing.md)
-
-## Protocol for manual disturbance mapping
-
-The third objective of the Regional Disturbance Mapping project is to fill gaps in the coverage of disturbances using high resolution remote sensing imagery. The procedures to do so were adapted from the YG Government Surface Disturbance Mapping protocol and are described here:
-
-- [Disturbance mapping procedures v2](https://docs.google.com/document/d/1pVEeJe09dDMEV8KVDPm5VlvCeTs8LtK8vEzI-lGqiC8/edit)
-- [Disturbance mapping procedures v1](https://docs.google.com/document/d/1ky6wQpCng_xjHoXmQWgfAO8EDmQNhslJ0nRq3b5YgwQ/edit)
-
-PDF versions of the manual along with the Yukon Government's manuals can be found in the "manuals folder:
-
-- BP_SurfaceDisturbance_Mapping_Procedures.pdf (BEACONs Project: Surface disturbance mapping procedures)
-- YG_SurfaceDisturbance_FeatureInterpretationKey_forContractors_v1-0-2.pdf (Yukon Government: Anthropogenic surface disturbance mapping in the Yukon. Standards and guidelines for contractors)
-- YG_SurfaceDisturbance_MappingStandards_forContractors_v4-0-2.pdf (Yukon Government: Anthropogenic surface disturbance mapping in the Yukon. Feature interpretation key for contractors)
-
-# code folder
-
-gen_fda_data.R
-
-- generates a geopackage for a selected FDA that consists of various disturbance and other datasets
-
-gen_fda_hydro.R
-
-- generates a geopackage for a selected FDA that consists of streams, lakes, rivers, and FDA boundary
-
-merge_disturbances.R
-
-- merges existing anthropogenic disturbance (from YG) with newly digitized disturbances
+- [Disturbance datasets](https://docs.google.com/spreadsheets/d/1jrF-9GxjVUxCpmETts-CGrAiqsv6Wm407Qsez8uCN8k/edit#gid=506214747)
 
 
-# data folder
+# Disturbance mapping manual
 
-The following regional disturbance datasets are listed below. The key layers are the areal and linear features ("Areal_Features", "Areal_Features+", "Linear_Features", "Linear_Features+"). Both versions of the disturbance features include YG surface disturbance data; a "+" suffix indicates that the data also include  features that were digitized by the BEACONs project and subsequently merged with the YG data.
+The primary objective of the project is to fill gaps in the coverage of disturbances using high resolution remote sensing imagery. The procedures to do so were adapted from the YG Government Surface Disturbance Mapping protocol and are described here:
 
-## fda_xxxx.gpkg
+- [Digitizing manual](https://docs.google.com/document/d/1pVEeJe09dDMEV8KVDPm5VlvCeTs8LtK8vEzI-lGqiC8/edit)
+- [Digitizing status](https://docs.google.com/spreadsheets/d/14WEbqjB_3xVwuxKis1RJtjs9PfN7rkKLnOwQ8hq7qoU/edit#gid=0)
 
-The "xxxx" portion of the name refers to the unique alphanumeric id of the FDA e.g., 10AB or 09EA.
+The original Yukon Government's manuals can be viewed here:
 
-### Layers
+- [Summary document](https://drive.google.com/file/d/1LUja-JRxFI0Q2jeqqi8j-X0G0QRrzGEI/view?usp=sharing)
+- [Standards and guidelines](https://drive.google.com/file/d/1mwLDDqO4COUW-2n3l09A_Q9fu04yLp71/view?usp=sharing)
+- [Feature interpretation key](https://drive.google.com/file/d/1SpcR-r_lQn_urERG8_CUl7oRQRJUxOri/view?usp=sharing)
 
-<pre>
-Available layers:
-         layer_name geometry_type features fields             crs_name
-1               FDA Multi Polygon        1     19 NAD83 / Yukon Albers
-2          IFL_2000 Multi Polygon        2     24 NAD83 / Yukon Albers
-3          IFL_2020 Multi Polygon        2     23 NAD83 / Yukon Albers
-4    Mapping_Extent       Polygon        2      4 NAD83 / Yukon Albers
-5    Areal_Features                    127     13 NAD83 / Yukon Albers
-6   Linear_Features                    587     14 NAD83 / Yukon Albers
-7    Point_Features                      0     10 NAD83 / Yukon Albers
-8      Fire_History                     46     12 NAD83 / Yukon Albers
-9     Quartz_Claims                   5077     16 NAD83 / Yukon Albers
-10          nts_50k Multi Polygon       31      6 NAD83 / Yukon Albers
-11  Areal_Features+       Polygon      506      5 NAD83 / Yukon Albers
-12 Linear_Features+                   1034      5 NAD83 / Yukon Albers
-</pre>
 
-### Attributes for areal and linear features
+# Disturbance validation tool
 
-<pre>
-CODE_POLY / CODE_LINE
-TYPE_INDUSTRY
-TYPE_DISTURBANCE
-DIST_YEAR
-SCALE
-CREATED_BY
-DIGZ_DATE
-IMAGE_NAME
-IMAGE_DATE
-RESOLUTION
-SENSOR
-FLAG
-VHR_ASSIST
-NOTES
-geometry
-Area_ha / Length_km
-</pre>
+The `disturbance validation` app can be run by pulling this repo or from a local machine using the following steps (note, the first 2 steps only need to be run once):
+
+1. Install R (download from r-project.org and follow instructions)
+2. Install the following additional packages:
+
+>install.packages(c("sf","leaflet","dplyr","shinydashboard",DT))
+
+3. Start the Shiny app:
+
+>shiny::runGitHub("beaconsproject/disturbance_mapping/validation/")
+
+
+# Project workflow
+
+The following steps describe the disturbance mapping workflow for one area of interest (AOI), from preparing a data package for digitizing to merging the newly digitized features with existing disturbance features. All of the steps can be completed using QGIS and are appropriate for projects that are conducted with Yukon and/or BC. Where procedures differ by jurisdiction, both Yukon and BC variations are described. A set of scripts have been written to automate parts of the workflow as much as possible (e.g., creating a data package).
+
+## 1. Before digitizing
+
+Prior to digitizing it is necessary to 1) create a QGIS project, 2) prepare a data package contain all necessary map layers for an area of interest (AOI), 3) add several web services to the QGIS project, and 4) create a worksheet containing a list of grid cells that will be used to track progress. An AOI can be a watershed (e.g., FDA), an ecoregion, a caribou range, or any other polygon defining a study (planning) area.
+
+**1.1 Create QGIS project**
+
+The first step is to create a new GIS project called "Digitizing_project.qgz" and save it in a new directory where all project files will be stored. This can simply be done by opening QGIS, creating a new project, and saving it. All map layers that are created in the next section can be added and organized within the QGIS project.
+
+**1.2 Prepare data package**
+
+The second step is to prepare several map layers and save them in a new geopackage file. This can be done manually (with the exception of creating a nested grid) or using the accompanying R script (recommended). 
+
+Manual approach (QGIS):
+
+1. Create a new geopackage file and call it "Data_package.gpkg". This will be used to save each layer that is created in the steps described below. Make sure to save the FDA and all other layers in the desired CRS (e.g., 3578 in the Yukon).
+2. Select the AOI of interest and save it as a layer in a new geopackage.
+3. Select all intersecting NTS 50k grids to the AOI.
+4. Create 3x3 and 9x9 nested grids using "gen_grids.R" script. Clip or select each to the AOI.
+5. Clip or select YG linear and areal disturbance layers that intersect AOI and save.
+6. Clip forest fire polygons to AOI and save.
+7. Clip placer and quartz mining claims and save.
+8. Clip additional layers, as needed, to assist in digitizing e.g., human_access_2010.
+
+Scripting approach (R):
+
+- Open the "gen_nested_grids.R" script, modify parameters at the top of the script to specify the location of the NTS grid, and run the script to create 3x3 and 9x9 grids that are nested within the NTS grids.
+- Open the "gen_data_package.R" script and modify the parameters at the top of the script to specify the location of the AOI and all additional datasets.
+- Run the script and verify output layers in the data package using QGIS.
+
+1.3 Add web services
+
+The third step is to add the following web services to the QGIS project:
+
+- GeoYukon SPOT mosaic: https://map-data.service.yukon.ca/geoyukon/ 
+- Google Imagery: https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z} 
+- ESRI Imagery with date information: https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer 
+
+**1.4 Prepare google sheet to track digitizing status**
+
+The fourth step is to open the digitizing status Google sheet and:
+
+- Create a new worksheet giving it a name that reflects the AOI e.g., FDA_10AB
+- Copy the header row from another worksheet
+- Copy the NTS 50k grid IDs to the first column
+
+## While digitizing
+
+The main section of this document provides detailed instructions on digitizing linear and areal disturbances. This comprises two main tasks:
+
+1. Digitize linear and areal anthropogenic disturbance features following the procedures described in the procedures manual.
+2. Update the digitizing status worksheet, ensuring all attributes are filled (including changing the status field from 0 to 1 once grid square has been digitized.
+
+## After digitizing
+
+There are three broad steps to complete at the completion of a digitizing project: 1) update the digitizing status map layer to update the status of newly digitized cells, 2) merge the newly digitized layers with the existing YG datasets for the AOI, 3) validate the merged dataset, and 4) update the master surface disturbance database. 
+
+**3.1 Update grid_100k layer with "status" attribute**
+
+- Input: bp_digitizing_status.gsheet, bp_digitizing_grid.gpkg
+- Output: bp_digitizing_grid.gpkg
+- Script: get_status.R - read the worksheets and update the Grid_100k layer
+
+**3.2 Merge BP and YG datasets**
+
+For each project (FDA or caribou range):
+
+1. SD_Line and SD_Poly layers: Drop rows where DATABASE=="Retired"
+2. Merge SD_Line and BP_Line; merge SD_Poly and BP_Poly
+
+**3.3 Validate the merged dataset**
+
+- Attribute validation: Use the validation tool (Shiny app) to validate the linear and areal disturbance attributes.
+- Spatial validation
+
+**3.4 Update master surface disturbance database**
+
+Merge linear and areal disturbance for all project-level datasets
+
+1. Clip latest YG surface disturbances to combined SE Yukon project area
+2. For each project area (AOI):
+    - Drop YG features that have been flagged as "Retired" in the project layers
+    - Add all newly digitized features to the database

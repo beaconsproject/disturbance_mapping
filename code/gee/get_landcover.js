@@ -1,4 +1,4 @@
-var aoi = ee.FeatureCollection("projects/ee-vernier/assets/lrb_10k");
+var aoi = ee.FeatureCollection("projects/ee-vernier/assets/sda10ab_50k");
 
 var lcc = ee.Image('projects/sat-io/open-datasets/CA_FOREST_LC_VLCE2/CA_forest_VLCE2_1984').clip(aoi);
 Export.image.toDrive({

@@ -1,6 +1,7 @@
-apps
-data/archive
-manuscript
-schema
-tmp
+code
+dashboard
+data
+datasets
+vernier
+workflow
 Rgui.lnk
