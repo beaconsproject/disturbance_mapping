@@ -47,6 +47,10 @@ The `disturbance validation` app can be run [online](https://beaconsproject.shin
 
 >install.packages(c("sf","leaflet","dplyr","shinydashboard",DT))
 
-3. Start the Shiny app:
+3a. Start the older Shiny app:
 
 >shiny::runGitHub("beaconsproject/disturbance_validation")
+
+3b. Start the newer Shiny app:
+
+>shiny::runGitHub("beaconsproject/disturbance_mapping/validation")

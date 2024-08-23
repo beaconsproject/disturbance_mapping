@@ -1,0 +1,66 @@
+﻿Industry type,Feature type,Disturbance type,Description
+Agriculture,Areal,Agriculture,"Farms, ranches, or other agricultural areas"
+Forestry,Areal,Forestry,Cut blocks or other forestry related activities
+Mining,Areal,Building,A building footprint or the building and the surrounding land related to mining activities
+,,Drill Pad,Drill pad features related to mineral exploration activities
+,,Fuel Cache,Remote caches of fuel allowing for mineral exploration activities (will often have fuel tanks and barrels)
+,,Gravel Pit / Quarry,Pit or quarry for mining gravel or aggregate
+,,Laydown area,Areas used to store materials and equipment for mining operations
+,,Mining,Miscellaneous or unknown mining activities
+,,Placer Mining - Minor,Placer mining area with little disturbance
+,,Place Mining - Significant,Placer mining area with greater disturbance
+,,Quartz Mining - Minor,Quartz mining area with little disturbance
+,,Quartz Mining - Significant,Quartz mining area with greater disturbance
+,,Tailing Pond,Tailing pond associated with mining activity
+,,Camp,Mining camp
+,Linear,Diversion Channel,An engineered linear bypass feature that redirects a watercourse around a mining feature such as a tailings pond
+,,Survey / Cutline,"A linear cleared area through undeveloped land, used for line-of-sight surveying; impossible to distinguish whether associated with quartz or placer mining (overlapping or unclear claims information)"
+,,Survey / Cutline - Placer,"A linear cleared area through undeveloped land, used for line-of-sight surveying; associated with placer mining (identified using claims information and/or other indicators)"
+,,Survey / Cutline - Quartz,"A linear cleared area through undeveloped land, used for line-of-sight surveying; associated with quartz mining (identified using claims information and/or other indicators)"
+,,Trench,"A long, narrow excavation dug to expose vein or ore structure"
+,,Unknown,Unknown linear mining disturbance
+Oil and Gas,Areal,Well Pad,Cleared area surrounding oil or gas well
+,,Unknown,Added by BEACONs 2024-02-27
+,Linear,Pipeline,Visible pipeline or pipeline Right-of-Way (above- or below-ground)
+,,Seismic Line,Seismic lines
+Rural,Areal,Camp,"Any camp outside of mining areas, including fishing/hunting camps, ENV conservation officer cabins/camps, outfitters, etc."
+,,Homestead,Rural dwelling and associated land
+,Linear,Driveway,A driveway in a rural area
+,,Fence,A fence in a rural area
+Transportation,Areal,Airstrip,Airport or Airstrip
+,,Clearing,"Clearings that are related to transportation but could not be clearly attributed as a turn area, pullout, road cut and fill, etc."
+,,Gravel Pit / Quarry,Gravel pits related to transportation
+,,Pullout / Turn Area,An area associated with transportation and is intended as a vehicle pullout or turn area
+,,Road Cut and Fill,Cut slopes and moved earth for road construction purposes
+,,Unknown,Added by BEACONs 2023-11-28
+,Linear,Access Assumed,"A linear feature that is assumed to be an access road, but could also be a trail"
+,,Access Road,"A road or narrow passage whose primary function is to provide access for resource extraction (i.e. mining, forestry) and may also have served in providing public access to the backcountry."
+,,Arterial Road,A major thoroughfare with medium to large traffic capacity
+,,Local Road,"A low-speed thoroughfare, provides access to front of properties, including those with potential public restrictions such as trailer parks, First Nations land, private estate, seasonal residences, gravel pits (NRN definition for Local Street/Local Strata/Local Unknown). Shows signs of regular use."
+,,Right of Way,For Road Rights as attributed in the land parcels ancillary data
+,,Trail,"Path or track used for walking, cycling, ORV, or other backcountry activities. (Note: trails used for mining activities are Access Roads.)"
+,,Unpaved Road,Dirt or gravel road  that does not necessarily access remote resources
+,,Railway,Added by BEACONs 2023-11-28
+,,Unknown,Added by BEACONs 2023-11-28
+Unknown,Areal,Clearing,A tract of land devoid (or nearly devoid) of natural land cover and suspected to be anthropogenic in nature
+,,Gravel Pit / Quarry,A gravel pit with unknown related industry
+,,Unknown,"Unable to identify from imagery, but suspected to be anthropogenic"
+,Linear,Right of Way,A right of way with unknown industry type
+,,Survey / Cutline,"A linear cleared area through undeveloped land, used for line-of-sight surveying. A cutline may not always be associated with mineral exploration, therefore, Type: Unknown was used to differentiate all cutlines that were outside of mineral exploration."
+,,Unknown,"Unclassified, or unable to identify type based on imagery, but suspected to be anthropogenic"
+Urban,Areal,Building,Visible building or structure
+,,Cemetery,Cemetery
+,,Clearing,Miscellaneous urban clearings
+,,Cul-de-sac / Turn Area,A turn area associated with transportation or road cul-de-sac
+,,Dam,Barrier impounding water or stream
+,,Golf Course,Recreational golfing area
+,,Industrial,"Areas that are designated for industrial uses: factories, tank farm, transportation area"
+,,Institutional,"Any institutional buildings and immediate cleared area: School, government, etc."
+,,Landfill,Site used for disposal of waste materials
+,,Pond,"Standing body of water, created anthropogenically; includes sewage lagoons, wastewater facilities, and artificial bodies of water"
+,,Recreation Area,Visible disturbance in Urban / Rural parks and recreation areas
+,,Rural Residential,Land use in which housing predominates in an urban or community setting
+,,Tower,"A tall structure, possibly used for communications or forestry"
+,,Urban,Miscellaneous or unknown urban features
+Utility,Linear,Electric Utility Corridor,"Corridor usually running parallel to highway, where transmission lines or other utilities are visible"
+,,Unknown,Unknown linear feature assumed to be a utility corridor; ancillary data is unclear
