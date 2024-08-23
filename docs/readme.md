@@ -2,7 +2,7 @@
 
 The BEACONs Project
 
-Updated: August 21, 2024
+Updated: August 22, 2024
 
 ## Overview
 
