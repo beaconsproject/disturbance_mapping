@@ -2,7 +2,7 @@
 
 # Introduction
 
-Updated: August 22, 2024
+October 23, 2024
 
 The Regional Disturbance Mapping project provides access to data, methods and tools to develop and validate regional-scale disturbance maps that can be used for conservation and land use planning.
 
@@ -47,10 +47,7 @@ The `disturbance validation` app can be run [online](https://beaconsproject.shin
 
 >install.packages(c("sf","leaflet","dplyr","shinydashboard",DT))
 
-3a. Start the older Shiny app:
+3. Start the Shiny app:
 
->shiny::runGitHub("beaconsproject/disturbance_validation")
+>shiny::runGitHub(repo="beaconsproject/disturbance", subdir="validation")
 
-3b. Start the newer Shiny app:
-
->shiny::runGitHub("beaconsproject/disturbance_mapping/validation")
