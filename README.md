@@ -2,7 +2,7 @@
 
 # Introduction
 
-October 23, 2024
+October 25, 2024
 
 The Regional Disturbance Mapping project provides access to data, methods and tools to develop and validate regional-scale disturbance maps that can be used for conservation and land use planning.
 
@@ -19,8 +19,13 @@ The primary components of the website are:
 
 A number of existing disturbance and related datasets exist in both Yukon and British Columbia. We are currently compiling a list of the most relevant datasets:
 
-- [Disturbance datasets](https://docs.google.com/spreadsheets/d/1jrF-9GxjVUxCpmETts-CGrAiqsv6Wm407Qsez8uCN8k/edit#gid=506214747)
+- [Disturbance datasets lists](https://docs.google.com/spreadsheets/d/1jrF-9GxjVUxCpmETts-CGrAiqsv6Wm407Qsez8uCN8k/edit#gid=506214747)
 
+Downloadable datasets:
+
+- [bp_datasets.gpkg](https://drive.google.com/open?id=10864Smj6nCOB12c6B2F0bjqk3VCgshJV&usp=drive_fs) - core datasets for use with `geopackage_creator` app. Coverage includes all of Yukon and portions of BC and NT.
+- [projected.gpkg](https://drive.google.com/open?id=10CYexK4VIPRb2iuqB_n8o7f9hlvVm_YJ&usp=drive_fs) - quartz and placer mining claims in the Yukon
+- [species.gpkg](https://drive.google.com/open?id=1-yosX3t0I4JJ8vLVit4vuUwKFhLib-Ut&usp=drive_fs) - various species ranges in the Yukon
 
 # Disturbance mapping manual
 
