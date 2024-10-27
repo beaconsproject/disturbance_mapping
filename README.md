@@ -21,11 +21,10 @@ A number of existing disturbance and related datasets exist in both Yukon and Br
 
 - [Disturbance datasets lists](https://docs.google.com/spreadsheets/d/1jrF-9GxjVUxCpmETts-CGrAiqsv6Wm407Qsez8uCN8k/edit#gid=506214747)
 
-Downloadable datasets:
-
-- [bp_datasets.gpkg](https://drive.google.com/open?id=10864Smj6nCOB12c6B2F0bjqk3VCgshJV&usp=drive_fs) - core datasets for use with `geopackage_creator` app. Coverage includes all of Yukon and portions of BC and NT.
-- [projected.gpkg](https://drive.google.com/open?id=10CYexK4VIPRb2iuqB_n8o7f9hlvVm_YJ&usp=drive_fs) - quartz and placer mining claims in the Yukon
-- [species.gpkg](https://drive.google.com/open?id=1-yosX3t0I4JJ8vLVit4vuUwKFhLib-Ut&usp=drive_fs) - various species ranges in the Yukon
+Downloadable datasets (public):
+- [bp_datasets.gpkg](https://drive.google.com/file/d/10864Smj6nCOB12c6B2F0bjqk3VCgshJV/view?usp=sharing) - core datasets for use with `geopackage_creator` app. Coverage includes all of Yukon and portions of BC and NT.
+- [projected.gpkg](https://drive.google.com/file/d/10CYexK4VIPRb2iuqB_n8o7f9hlvVm_YJ/view?usp=sharing) - quartz and placer mining claims in the Yukon
+- [species.gpkg](https://drive.google.com/file/d/1-yosX3t0I4JJ8vLVit4vuUwKFhLib-Ut/view?usp=sharing) - various species ranges in the Yukon
 
 # Disturbance mapping manual
 
