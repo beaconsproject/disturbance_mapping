@@ -34,7 +34,6 @@ Downloadable datasets (public):
 The primary objective of the project is to fill gaps in the coverage of disturbances using high resolution remote sensing imagery. The procedures to do so were adapted from the YG Government Surface Disturbance Mapping protocol and are described here:
 
 - [Digitizing manual](https://docs.google.com/document/d/1pVEeJe09dDMEV8KVDPm5VlvCeTs8LtK8vEzI-lGqiC8/edit)
-- [Digitizing status](https://docs.google.com/spreadsheets/d/14WEbqjB_3xVwuxKis1RJtjs9PfN7rkKLnOwQ8hq7qoU/edit#gid=0)
 
 The original Yukon Government's manuals can be viewed here:
 
@@ -52,7 +51,7 @@ The `disturbance validation` app can be run [online](https://beaconsproject.shin
 1. Install R (download from r-project.org and follow instructions)
 2. Install the following additional packages:
 
->install.packages(c("sf","leaflet","leaflet.esri","dplyr","shinydashboard","DT","summarytools"))
+>install.packages(c("markdown","sf","leaflet","leaflet.esri","dplyr","shinydashboard","DT","summarytools"))
 
 3. Start the Shiny app:
 
