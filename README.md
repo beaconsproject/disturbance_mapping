@@ -46,8 +46,6 @@ The original Yukon Government's manuals can be viewed here:
 
 The Disturbance Validation app is a Shiny app that enables users to i) interactively examine linear and areal surface disturbance features along with several satellite imagery sources, ii) validate industry and disturbance type attributes, and iii) randomly select individual features and their associated attributes. This permits alternative digitizers or other users to quickly look at the digitized features and their assigned attributes, and visually compare them to more than one high resolution imagery source. Three satellite images are available for viewing: Esri WorldImagery, Google Imagery, and SPOT Imagery for circa 2021.
 
-The `disturbance validation` app can be run [online](https://beaconsproject.shinyapps.io/disturbance_validation) or from a local machine using the following steps (note, the first 2 steps only need to be run once):
-
 1. Install R (download from r-project.org and follow instructions)
 2. Install the following additional packages:
 

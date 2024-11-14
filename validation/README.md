@@ -9,10 +9,10 @@ The app can be run from a local machine using the following steps:
   1. Install R (download from r-project.org and follow instructions)
   2. Install the following additional packages:
 
-    install.packages(c("sf","DT","leaflet","tidyverse","summarytools","shinydashboard","leaflet.esri"))
+    install.packages(c("markdown","sf","leaflet","leaflet.esri","dplyr","shinydashboard","DT","summarytools"))
 
   3. Start the Shiny app:
 
-    shiny::runGitHub(repo="beaconsproject/disturbance", subdir="validation")
+    shiny::runGitHub(repo="beaconsproject/disturbance_mapping", subdir="validation")
 
 ![app](www/app.jpg)
