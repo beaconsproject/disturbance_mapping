@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Project"
+  given-names: "BEACONs"
+  orcid: "https://orcid.org/0000-0000-0000-0000"
+title: "Regional Disturbance Mapping"
+version: 1.0.0
+doi: 
+date-released: 2025-02-13
+url: "https://github.com/beaconsproject/disturbance_mapping"
