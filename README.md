@@ -33,7 +33,7 @@ Downloadable datasets (public):
 
 The primary objective of the project is to fill gaps in the coverage of disturbances using high resolution remote sensing imagery. The procedures to do so were adapted from the YG Government Surface Disturbance Mapping protocol and are described here:
 
-- [Digitizing manual](https://github.com/beaconsproject/disturbance_mapping/tree/master/procedures)
+- [Go to manual](https://github.com/beaconsproject/disturbance_mapping/tree/master/procedures)
 
 The original Yukon Government's manuals can be viewed here:
 
