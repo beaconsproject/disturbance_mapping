@@ -44,7 +44,7 @@ Downloadable datasets (public):
 
 ## Disturbance validation tool
 
-The Disturbance Validation app is a Shiny app that enables users to i) interactively examine linear and areal surface disturbance features along with several satellite imagery sources, ii) validate industry and disturbance type attributes, and iii) randomly select individual features and their associated attributes. This permits alternative digitizers or other users to quickly look at the digitized features and their assigned attributes, and visually compare them to more than one high resolution imagery source. Three satellite images are available for viewing: Esri WorldImagery, Google Imagery, and SPOT Imagery for circa 2021.
+The Disturbance Validation app is a Shiny app that enables users to interactively examine linear and areal surface disturbance features and validate industry and disturbance type attributes. Three satellite images are available for viewing: Esri WorldImagery, Google Imagery, and SPOT Imagery for circa 2021. Future enhancements may include the ability to randomly select a sample of individual features as part of a more comprehensive validation plan.
 
 1. Install R (download from r-project.org and follow instructions)
 2. Install the following additional packages:
@@ -57,5 +57,5 @@ The Disturbance Validation app is a Shiny app that enables users to i) interacti
 
 ## Disturbance mapping paper
 
-- [Manuscript - in prep (private)] (https://docs.google.com/document/d/1odYaCYmW05E3kvzcx0dSBb5RGP6l5cOvKXGkJjK26jQ/edit?pli=1)
+- [Manuscript - in prep (private)](https://docs.google.com/document/d/1odYaCYmW05E3kvzcx0dSBb5RGP6l5cOvKXGkJjK26jQ/edit?pli=1)
 
