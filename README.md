@@ -20,7 +20,6 @@ The primary objective of the project is to fill gaps in the coverage of disturba
 
 - [Go to manual](https://github.com/beaconsproject/disturbance_mapping/blob/master/assets/BP_SurfaceDisturbance_Mapping_Procedures.pdf)
 
-
 The original Yukon Government's manuals can be viewed here:
 
 - [Summary document](https://drive.google.com/file/d/1LUja-JRxFI0Q2jeqqi8j-X0G0QRrzGEI/view?usp=sharing)
