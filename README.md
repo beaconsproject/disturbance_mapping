@@ -2,7 +2,7 @@
 
 ## Introduction
 
-February 13, 2025
+May 1, 2025
 
 The Regional Disturbance Mapping project provides access to data, methods and tools to develop and validate regional-scale disturbance maps that can be used for conservation and land use planning.
 
@@ -18,8 +18,7 @@ The primary components of the website are:
 
 The primary objective of the project is to fill gaps in the coverage of disturbances using high resolution remote sensing imagery. The procedures to do so were adapted from the YG Government Surface Disturbance Mapping protocol and are described here:
 
-- [Go to manual](https://beaconsproject.github.io/assets/BP_SurfaceDisturbance_Mapping_Procedures.pdf)
-- [Go to manual](https://beaconsproject.github.io/manual/BP_SurfaceDisturbance_Mapping_Procedures.pdf)
+- [Go to manual](https://github.com/beaconsproject/disturbance_mapping/blob/master/manual/BP_SurfaceDisturbance_Mapping_Procedures.pdf)
 
 
 The original Yukon Government's manuals can be viewed here:
