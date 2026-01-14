@@ -38,25 +38,14 @@ A number of existing disturbance and related datasets exist in both Yukon and Br
 
 - [Disturbance datasets lists](https://docs.google.com/spreadsheets/d/1jrF-9GxjVUxCpmETts-CGrAiqsv6Wm407Qsez8uCN8k/edit#gid=506214747)
 
-Downloadable datasets (public):
+Downloadable datasets (please email vernier@ualberta.ca for access):
 - [bp_datasets.gpkg](https://drive.google.com/file/d/1-b3v0q-zI8Wf1URShyfxVyGxtdZOYGWF/view?usp=sharing) - core datasets for use with `geopackage_creator` app. Coverage includes all of Yukon and portions of BC and NT.
 - [projected.gpkg](https://drive.google.com/file/d/1elO7hPsHipDAnMMLg8xLXkrum1kKMuMa/view?usp=sharing) - quartz and placer mining claims in the Yukon
 - [species.gpkg](https://drive.google.com/file/d/1-yosX3t0I4JJ8vLVit4vuUwKFhLib-Ut/view?usp=sharing) - various species ranges in the Yukon
 
 ## Disturbance validation tool
 
-The Disturbance Validation app is a Shiny app that enables users to interactively examine linear and areal surface disturbance features and validate industry and disturbance type attributes. Three satellite images are available for viewing: Esri WorldImagery, Google Imagery, and SPOT Imagery for circa 2021. Future enhancements may include the ability to randomly select a sample of individual features as part of a more comprehensive validation plan.
-
-1. Install R (download from r-project.org and follow instructions)
-2. Install the following additional packages:
-
->install.packages(c("markdown","sf","leaflet","leaflet.esri","dplyr","shinydashboard","DT","summarytools"))
-
-3. Start the Shiny app:
-
->shiny::runGitHub(repo="beaconsproject/disturbance_mapping", subdir="validation")
-
-<sup>1</sup>Depending on the version of R you are running, you may need to install the leaflet.esri package separately using this command: devtools::install_github("bhaskarvk/leaflet.esri")
+The [Disturbance Validation](validation) app is a Shiny app that enables users to interactively examine linear and areal surface disturbance features and validate industry and disturbance type attributes.
 
 ## Disturbance mapping paper
 
