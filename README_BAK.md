@@ -2,7 +2,7 @@
 
 ## Introduction
 
-January 14, 2026
+May 1, 2025
 
 The Regional Disturbance Mapping project provides access to data, methods and tools to develop and validate regional-scale disturbance maps that can be used for conservation and land use planning.
 
@@ -18,8 +18,7 @@ The primary components of the website are:
 
 The primary objective of the project is to fill gaps in the coverage of disturbances using high resolution remote sensing imagery. The procedures to do so were adapted from the YG Government Surface Disturbance Mapping protocol and are described here:
 
-- [Go to manual (PDF version 2024-08-20)](https://github.com/beaconsproject/disturbance_mapping/blob/master/assets/BP_SurfaceDisturbance_Mapping_Procedures_2024-08-20.pdf)
-- [Go to manual (Google docs version - password protected)](https://docs.google.com/document/d/1pVEeJe09dDMEV8KVDPm5VlvCeTs8LtK8vEzI-lGqiC8/edit?tab=t.0)
+- [Go to manual](https://github.com/beaconsproject/disturbance_mapping/blob/master/assets/BP_SurfaceDisturbance_Mapping_Procedures_2024-08-20.pdf)
 
 The original Yukon Government's manuals can be viewed here:
 
@@ -39,8 +38,8 @@ A number of existing disturbance and related datasets exist in both Yukon and Br
 - [Disturbance datasets lists](https://docs.google.com/spreadsheets/d/1jrF-9GxjVUxCpmETts-CGrAiqsv6Wm407Qsez8uCN8k/edit#gid=506214747)
 
 Downloadable datasets (public):
-- [bp_datasets.gpkg](https://drive.google.com/file/d/1-b3v0q-zI8Wf1URShyfxVyGxtdZOYGWF/view?usp=sharing) - core datasets for use with `geopackage_creator` app. Coverage includes all of Yukon and portions of BC and NT.
-- [projected.gpkg](https://drive.google.com/file/d/1elO7hPsHipDAnMMLg8xLXkrum1kKMuMa/view?usp=sharing) - quartz and placer mining claims in the Yukon
+- [bp_datasets.gpkg](https://drive.google.com/file/d/10864Smj6nCOB12c6B2F0bjqk3VCgshJV/view?usp=sharing) - core datasets for use with `geopackage_creator` app. Coverage includes all of Yukon and portions of BC and NT. [Click here for a description of the map layers](https://docs.google.com/spreadsheets/d/1jrF-9GxjVUxCpmETts-CGrAiqsv6Wm407Qsez8uCN8k/edit?gid=1936233523#gid=1936233523).
+- [projected.gpkg](https://drive.google.com/file/d/10CYexK4VIPRb2iuqB_n8o7f9hlvVm_YJ/view?usp=sharing) - quartz and placer mining claims in the Yukon
 - [species.gpkg](https://drive.google.com/file/d/1-yosX3t0I4JJ8vLVit4vuUwKFhLib-Ut/view?usp=sharing) - various species ranges in the Yukon
 
 ## Disturbance validation tool
@@ -55,8 +54,6 @@ The Disturbance Validation app is a Shiny app that enables users to interactivel
 3. Start the Shiny app:
 
 >shiny::runGitHub(repo="beaconsproject/disturbance_mapping", subdir="validation")
-
-<sup>1</sup>Depending on the version of R you are running, you may need to install the leaflet.esri package separately using this command: devtools::install_github("bhaskarvk/leaflet.esri")
 
 ## Disturbance mapping paper
 
