@@ -18,7 +18,7 @@ The primary components of the website are:
 
 The primary objective of the project is to fill gaps in the coverage of disturbances using high resolution remote sensing imagery. The procedures to do so were adapted from the YG Government Surface Disturbance Mapping protocol and are described here:
 
-- [Go to manual (PDF version 2024-08-20)](https://github.com/beaconsproject/disturbance_mapping/blob/master/assets/BP_SurfaceDisturbance_Mapping_Procedures_2024-08-20.pdf)
+- [Go to manual (PDF version 2024-08-20)](https://github.com/beaconsproject/disturbance_mapping/blob/master/assets/BP_SurfaceDisturbance_Mapping_Procedures.pdf)
 - [Go to manual (Google docs version - password protected)](https://docs.google.com/document/d/1pVEeJe09dDMEV8KVDPm5VlvCeTs8LtK8vEzI-lGqiC8/edit?tab=t.0)
 
 The original Yukon Government's manuals can be viewed here:
