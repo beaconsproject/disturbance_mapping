@@ -2,7 +2,7 @@
 
 ## Introduction
 
-January 14, 2026
+January 15, 2026
 
 The Regional Disturbance Mapping project provides access to data, methods and tools to develop and validate regional-scale disturbance maps that can be used for conservation and land use planning.
 
@@ -51,3 +51,7 @@ The [Disturbance Validation](validation) app is a Shiny app that enables users t
 
 - [Manuscript - in prep (private)](https://docs.google.com/document/d/1odYaCYmW05E3kvzcx0dSBb5RGP6l5cOvKXGkJjK26jQ/edit?pli=1)
 
+
+## Master's thesis
+
+Maegan Elliot recently completed her thesis on the effects of anthropogenic disturbances on caribou within the Klaza and Clear Creek herds. A link to her thesis will be made available when it becomes available. In the meantime, the disturbance data that she prepared as part of her thesis is available [here](https://drive.google.com/drive/folders/1YBxloqOukWPX2mQOD0hb30a_7vmfDlDs).
