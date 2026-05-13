@@ -2,7 +2,7 @@
 
 ## Introduction
 
-January 15, 2026
+May 13, 2026
 
 The Regional Disturbance Mapping project provides access to data, methods and tools to develop and validate regional-scale disturbance maps that can be used for conservation and land use planning.
 
