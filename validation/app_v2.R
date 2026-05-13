@@ -65,8 +65,6 @@ ui <- page_navbar(
         
         markdown("**3. VIEW DISTURBANCES**"),
         actionButton("mapButton", "Map features", class = "btn-primary w-100"),
-        sliderInput("gridSize", "Grid size (km):", min = 1, max = 25, value = 5),
-        actionButton("gridButton", "Create grid", class = "btn-info w-100"),
         hr(),
         
         markdown("**4. EDIT ATTRIBUTES**"),
@@ -75,13 +73,14 @@ ui <- page_navbar(
         actionButton("saveEdits", "Save edits",
                      icon  = icon("floppy-disk"),
                      class = "btn-warning w-100"),
+        br(), br(),
         downloadButton("downloadGpkg", "Save as new geopackage",
                        icon  = icon("download"),
                        class = "btn-success w-100")
       ),
       
       layout_columns(
-        col_widths = c(9, 3),
+        col_widths = c(8, 4),
         
         # Left: map + full attribute tables
         navset_card_tab(
@@ -92,23 +91,17 @@ ui <- page_navbar(
           nav_panel("Area features",   DTOutput("table_poly"))
         ),
         
-        # Right: scale box + per-feature attribute cards
+        # Right: per-feature attribute cards (editable)
         layout_columns(
           col_widths = 12,
-          value_box(
-            title = "Viewing Scale",
-            value = textOutput("scaleText"),
-            showcase = icon("magnifying-glass-plus"),
-            theme = "primary"
-          ),
           card(
-            height      = 300,
+            height      = 375,
             full_screen = TRUE,
             card_header("Linear attributes"),
             DTOutput("table1")
           ),
           card(
-            height      = 300,
+            height      = 375,
             full_screen = TRUE,
             card_header("Areal attributes"),
             DTOutput("table2")
@@ -160,7 +153,7 @@ server <- function(input, output, session) {
     updateSelectInput(session, "poly", choices = lyrs, selected = 'areal_disturbance')
   })
   
-  # --- Base spatial reactives -------------------------------------------------
+  # --- Base spatial reactives (loaded once on "Map features") ----------------
   bnd <- eventReactive(input$mapButton, {
     req(input$gpkg)
     st_read(input$gpkg$datapath, input$bnd, quiet = TRUE) |> st_transform(4326)
@@ -180,42 +173,19 @@ server <- function(input, output, session) {
       mutate(poly_id = paste0('P', seq_len(n())))
   })
   
-  # --- Grid Generation --------------------------------------------------------
-  grid_data <- eventReactive(input$gridButton, {
-    req(bnd())
-    # Project to Yukon Albers (3578) for accurate km-based grid
-    bnd_proj <- st_transform(bnd(), 3578)
-    grid <- st_make_grid(bnd_proj, cellsize = input$gridSize * 1000) %>%
-      st_as_sf() #%>%
-    grid <- grid[bnd_proj,] %>%
-      #st_intersection(st_union(bnd_proj)) %>%
-      st_transform(4326)
-    grid
-  })
-
-  # --- Scale Calculation ------------------------------------------------------
-  output$scaleText <- renderText({
-    req(input$map_zoom, input$map_center)
-    zoom <- input$map_zoom
-    lat  <- input$map_center$lat
-    # Resolution (meters/pixel) = (Cos(lat) * circumference) / (256 * 2^zoom)
-    res <- (cos(lat * pi / 180) * 40075016.686) / (256 * 2^zoom)
-    # Scale = 1 : (res * pixels_per_meter). Assuming 96 DPI screen (3779.53 px/m)
-    scale_val <- round(res * 3779.53)
-    paste0("1:", format(scale_val, big.mark = ","))
-  })
-  
-  # --- Editable attribute tables ----------------------------------------------
+  # --- Editable attribute tables (reactiveVal = mutable) ---------------------
+  # Only attribute columns are stored here; geometry lives in *_base().
   line_attrs <- reactiveVal(NULL)
   poly_attrs <- reactiveVal(NULL)
   
   observeEvent(line_base(), { line_attrs(st_drop_geometry(line_base())) })
   observeEvent(poly_base(), { poly_attrs(st_drop_geometry(poly_base())) })
   
+  # --- Track selected feature ------------------------------------------------
   selected_line_id <- reactiveVal(NULL)
   selected_poly_id <- reactiveVal(NULL)
   
-  # --- Map --------------------------------------------------------------------
+  # --- Map -------------------------------------------------------------------
   output$map <- renderLeaflet({
     m <- leaflet(options = leafletOptions(attributionControl = FALSE)) |>
       addTiles(google, group = "Google.Imagery") |>
@@ -232,25 +202,11 @@ server <- function(input, output, session) {
                     group = "Areal disturbances") |>
         addPolylines(data = line_base(), weight = 2, color = 'red',
                      layerId = line_base()$line_id,
-                     group = "Linear disturbances")
-      
-      # Add grid if button has been clicked
-      if (input$gridButton > 0) {
-        grid_sf <- grid_data()
-        m <- m |>
-          addPolygons(data = grid_sf, fill = FALSE, weight = 2, color = 'lightgrey',
-                      #group = "Grid") |>
-                      dashArray = "5, 5", group = "Grid") |>
-          addLegend(position = "bottomright", colors = "black", 
-                    labels = paste0("Grid (", input$gridSize, " x ", input$gridSize, " km)"),
-                    layerId = "gridLegend")
-      }
-      
-      m <- m |>
+                     group = "Linear disturbances") |>
         addLayersControl(
           position      = "topright",
           baseGroups    = c("Esri.WorldTopoMap", "Esri.WorldImagery", "Google.Imagery"),
-          overlayGroups = c("Study area", "Areal disturbances", "Linear disturbances", "Grid"),
+          overlayGroups = c("Study area", "Areal disturbances", "Linear disturbances"),
           options       = layersControlOptions(collapsed = FALSE)
         )
     } else {
@@ -264,7 +220,8 @@ server <- function(input, output, session) {
     m
   })
   
-  # --- Full feature tables ----------------------------------------------------
+  # --- Full feature tables (reactive to live edits after Save) ---------------
+  # Use a flag so table_line/table_poly reflect edits only after Save is clicked.
   saved_line_attrs <- reactiveVal(NULL)
   saved_poly_attrs <- reactiveVal(NULL)
   
@@ -283,6 +240,7 @@ server <- function(input, output, session) {
               options = list(dom = 'tip', pageLength = 15))
   })
   
+  # --- Per-feature editable attribute panels ---------------------------------
   render_editable <- function(df_row) {
     tdf        <- as.data.frame(t(df_row), stringsAsFactors = FALSE)
     colnames(tdf) <- "Value"
@@ -308,6 +266,7 @@ server <- function(input, output, session) {
     render_editable(row)
   })
   
+  # --- Map click: select a feature -------------------------------------------
   observeEvent(input$map_shape_click, {
     id <- input$map_shape_click$id
     req(id)
@@ -315,9 +274,11 @@ server <- function(input, output, session) {
     else if (grepl("^L", id)) selected_line_id(id)
   })
   
+  # --- Apply cell edits to live attribute stores -----------------------------
   apply_edit <- function(attrs, selected_id, id_col, info) {
     df        <- attrs()
     row_match <- df[[id_col]] == selected_id()
+    # Transposed table: row index maps to attribute name
     attr_name <- names(df)[info$row]
     new_val   <- tryCatch(
       methods::as(info$value, class(df[[attr_name]])[1]),
@@ -337,6 +298,7 @@ server <- function(input, output, session) {
     apply_edit(poly_attrs, selected_poly_id, "poly_id", input$table2_cell_edit)
   })
   
+  # --- Save edits button: flush live attrs to the full tables ----------------
   observeEvent(input$saveEdits, {
     req(line_attrs(), poly_attrs())
     saved_line_attrs(line_attrs())
@@ -344,65 +306,122 @@ server <- function(input, output, session) {
     showNotification("Edits saved to tables.", type = "message", duration = 3)
   })
   
+  # --- Save as new geopackage ------------------------------------------------
+  # downloadButton in the UI calls this handler directly; no JS tricks needed.
+  # The filename function explicitly ends in .gpkg so browsers cannot
+  # substitute another extension.
   output$downloadGpkg <- downloadHandler(
     filename = function() {
       paste0("disturbance_edited_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".gpkg")
     },
     content = function(file) {
       req(input$gpkg, line_base(), poly_base(), line_attrs(), poly_attrs())
+      
       src_path    <- input$gpkg$datapath
       all_lyrs    <- st_layers(src_path)$name
       edited_lyrs <- c(input$line, input$poly)
-      line_sf <- st_sf(line_attrs() |> select(-line_id), geometry = st_geometry(line_base()))
-      poly_sf <- st_sf(poly_attrs() |> select(-poly_id), geometry = st_geometry(poly_base()))
-      st_write(line_sf, dsn = file, layer = input$line, driver = "GPKG", quiet = TRUE)
-      st_write(poly_sf, dsn = file, layer = input$poly, driver = "GPKG", append = TRUE, quiet = TRUE)
+      
+      # Recombine edited attributes with original geometries
+      line_sf <- st_sf(
+        line_attrs() |> select(-line_id),
+        geometry = st_geometry(line_base())
+      )
+      poly_sf <- st_sf(
+        poly_attrs() |> select(-poly_id),
+        geometry = st_geometry(poly_base())
+      )
+      
+      # Write edited layers (first layer creates the file)
+      st_write(line_sf, dsn = file, layer = input$line,
+               driver = "GPKG", quiet = TRUE)
+      st_write(poly_sf, dsn = file, layer = input$poly,
+               driver = "GPKG", append = TRUE, quiet = TRUE)
+      
+      # Append all other layers from the source unchanged
       for (lyr in setdiff(all_lyrs, edited_lyrs)) {
-        other_sf <- tryCatch(st_read(src_path, lyr, quiet = TRUE), error = function(e) NULL)
-        if (!is.null(other_sf)) st_write(other_sf, dsn = file, layer = lyr, driver = "GPKG", append = TRUE, quiet = TRUE)
+        other_sf <- tryCatch(
+          st_read(src_path, lyr, quiet = TRUE),
+          error = function(e) NULL
+        )
+        if (!is.null(other_sf)) {
+          st_write(other_sf, dsn = file, layer = lyr,
+                   driver = "GPKG", append = TRUE, quiet = TRUE)
+        }
       }
     }
   )
   
-  # --- Validation -------------------------------------------------------------
+  # =============================================================================
+  # VALIDATION  --  operates on the live (saved) attribute tables, not the
+  # original file, so any edits made before clicking "Run validation code"
+  # are reflected in the results.
+  # =============================================================================
+  
+  # Helper: compute validation columns for a data frame
   validate_df <- function(df, feature_type) {
     indu  <- types |> filter(TYPE_FEATURE == feature_type) |> pull(TYPE_INDUSTRY)   |> unique()
     dist  <- types |> filter(TYPE_FEATURE == feature_type) |> pull(TYPE_DISTURBANCE)|> unique()
     combo <- types |> filter(TYPE_FEATURE == feature_type) |>
       mutate(C = paste0(TYPE_INDUSTRY, "***", TYPE_DISTURBANCE)) |> pull(C) |> unique()
+    
     df |>
       mutate(
         industry_test    = ifelse(TYPE_INDUSTRY    %in% indu,  'ok', 'please fix'),
         disturbance_test = ifelse(TYPE_DISTURBANCE %in% dist,  'ok', 'please fix'),
-        combination_test = ifelse(paste0(TYPE_INDUSTRY, "***", TYPE_DISTURBANCE) %in% combo, 'ok', 'not expected')
+        combination_test = ifelse(
+          paste0(TYPE_INDUSTRY, "***", TYPE_DISTURBANCE) %in% combo, 'ok', 'not expected'
+        )
       )
   }
   
-  val_line <- eventReactive(input$valButton, { req(saved_line_attrs()); validate_df(saved_line_attrs(), 'Linear') })
-  val_poly <- eventReactive(input$valButton, { req(saved_poly_attrs()); validate_df(saved_poly_attrs(), 'Areal') })
+  # Validation uses saved_line_attrs / saved_poly_attrs so that "Save edits"
+  # must be clicked before validation reflects edits (intentional workflow).
+  val_line <- eventReactive(input$valButton, {
+    req(saved_line_attrs())
+    validate_df(saved_line_attrs(), 'Linear')
+  })
+  
+  val_poly <- eventReactive(input$valButton, {
+    req(saved_poly_attrs())
+    validate_df(saved_poly_attrs(), 'Areal')
+  })
   
   output$linearTable <- renderDT({
     req(val_line())
-    val_line() |> filter(industry_test != 'ok' | disturbance_test != 'ok' | combination_test != 'ok') |> datatable()
+    val_line() |>
+      filter(industry_test != 'ok' | disturbance_test != 'ok' | combination_test != 'ok') |>
+      datatable()
   })
   
   output$linearText <- renderPrint({
     req(val_line(), input$gpkg)
     df <- saved_line_attrs()
-    cat('Project: ', input$gpkg$name, '\nDate: ',  format(Sys.time(), "%d %B %Y"), '\n\n# LINEAR DISTURBANCES\n')
-    for (i in names(df)) { cat('\n## Attribute: ', toupper(i), '\n'); print(dfSummary(df[i], graph.col = FALSE, max.distinct.values = 20)) }
+    cat('Project: ', input$gpkg$name,
+        '\nDate: ',  format(Sys.time(), "%d %B %Y"),
+        '\n\n# LINEAR DISTURBANCES\n')
+    for (i in names(df)) {
+      cat('\n## Attribute: ', toupper(i), '\n')
+      print(dfSummary(df[i], graph.col = FALSE, max.distinct.values = 20))
+    }
   })
   
   output$arealTable <- renderDT({
     req(val_poly())
-    val_poly() |> filter(industry_test != 'ok' | disturbance_test != 'ok' | combination_test != 'ok') |> datatable()
+    val_poly() |>
+      filter(industry_test != 'ok' | disturbance_test != 'ok' | combination_test != 'ok') |>
+      datatable()
   })
   
   output$arealText <- renderPrint({
     req(val_poly(), input$gpkg)
     df <- saved_poly_attrs()
-    cat('Project: ', input$gpkg$name, '\nDate: ',  format(Sys.time(), "%d %B %Y"), '\n\n# AREAL DISTURBANCES\n')
-    for (i in names(df)) { cat('\n## Attribute: ', toupper(i), '\n'); print(dfSummary(df[i], graph.col = FALSE, max.distinct.values = 20)) }
+    cat('Project: ', input$gpkg$name,
+        '\nDate: ',  format(Sys.time(), "%d %B %Y"),
+        '\n\n# AREAL DISTURBANCES\n')
+    for (i in names(df)) {
+      cat('\n## Attribute: ', toupper(i), '\n')
+      print(dfSummary(df[i], graph.col = FALSE, max.distinct.values = 20))
+    }
   })
 }
 
