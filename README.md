@@ -2,7 +2,7 @@
 
 ## Introduction
 
-May 13, 2026
+May 14, 2026
 
 The Regional Disturbance Mapping project provides access to data, methods and tools to develop and validate regional-scale disturbance maps that can be used for conservation and land use planning.
 
@@ -47,6 +47,8 @@ Downloadable datasets (please email vernier@ualberta.ca for access):
 ## Disturbance validation tool
 
 The [Disturbance Validation](validation) app is a Shiny app that enables users to interactively examine linear and areal surface disturbance features and validate industry and disturbance type attributes.
+
+- https://beaconsproject.shinyapps.io/disturbance_validation/
 
 ## Disturbance mapping paper
 

@@ -39,16 +39,10 @@ ui <- page_navbar(
   nav_panel(
     title = "Introduction",
     icon  = icon("info-circle"),
-    layout_sidebar(
-      sidebar = sidebar(width=280,
-        title = "Introduction",
-        #actionButton("valButton", "Run validation code", class = "btn-success w-100")
-      ),
-      navset_card_tab(
-        full_screen = TRUE,
-        nav_panel("Overview",               includeMarkdown("www/overview.md")),
-        nav_panel("Permitted disturbances", DTOutput("types"))
-      )
+    navset_card_tab(
+      full_screen = TRUE,
+      nav_panel("Overview",               includeMarkdown("www/overview.md")),
+      nav_panel("Permitted disturbances", DTOutput("types"))
     )
   ),
   
@@ -57,84 +51,34 @@ ui <- page_navbar(
     title = "View features",
     icon  = icon("upload"),
     layout_sidebar(
-      sidebar = sidebar(width=280,
+      sidebar = sidebar(
         title = "Data Controls",
         
-        navset_tab(
-          
-          # -- UPLOAD TAB ------------------------------------------------------
-          nav_panel(
-            title = "Upload",
-            
-            br(),
-            markdown("**1. UPLOAD DATA**"),
-            fileInput("gpkg", "Geopackage:", accept = ".gpkg"),
-            hr(),
-            
-            markdown("**2. SELECT LAYERS**"),
-            selectInput("bnd",  "Study area:",          choices = NULL),
-            selectInput("line", "Linear disturbances:", choices = NULL),
-            selectInput("poly", "Areal disturbances:",  choices = NULL),
-            hr(),
-            
-            markdown("**3. VIEW DISTURBANCES**"),
-            actionButton("mapButton", "Map features", class = "btn-primary w-100"),
-            sliderInput("gridSize", "Grid size (km):", min = 1, max = 25, value = 5),
-            actionButton("gridButton", "Create grid", class = "btn-info w-100")
-          ),
-          
-          # -- EDIT TAB --------------------------------------------------------
-          nav_panel(
-            title = "Edit",
-            
-            br(),
-            markdown("**4. EDIT ATTRIBUTES**"),
-            p(class = "text-muted small",
-              "Click any cell in the Linear or Areal attribute panels to edit its value."),
-            actionButton("saveEdits", "Save edits",
-                         icon  = icon("floppy-disk"),
-                         class = "btn-warning w-100"),
-            br(), br(),
-            downloadButton("downloadGpkg", "Save as new geopackage",
-                           icon  = icon("download"),
-                           class = "btn-success w-100")
-          ),
-          
-          # -- SEARCH TAB ------------------------------------------------------
-          nav_panel(
-            title = "Search",
-            
-            br(),
-            markdown("**SEARCH FEATURES**"),
-            
-            # 1) Choose layer
-            radioButtons(
-              "searchLayer",
-              label = "Select layer:",
-              choices = c(
-                "Linear disturbances" = "linear",
-                "Areal disturbances"  = "areal"
-              ),
-              selected = "linear"
-            ),
-            
-            # 2) Choose feature ID (populated reactively)
-            selectInput(
-              "searchFeatureId",
-              label = "Select feature:",
-              choices  = NULL,
-              selected = NULL
-            ),
-            
-            # 3) Zoom button
-            actionButton(
-              "zoomToFeature",
-              label = "Zoom to feature",
-              icon  = icon("crosshairs"),
-              class = "btn-primary w-100"
-            )
-          )
-        )
+        markdown("**1. UPLOAD DATA**"),
+        fileInput("gpkg", "Geopackage:", accept = ".gpkg"),
+        hr(),
+        
+        markdown("**2. SELECT LAYERS**"),
+        selectInput("bnd",  "Study area:",          choices = NULL),
+        selectInput("line", "Linear disturbances:", choices = NULL),
+        selectInput("poly", "Areal disturbances:",  choices = NULL),
+        hr(),
+        
+        markdown("**3. VIEW DISTURBANCES**"),
+        actionButton("mapButton", "Map features", class = "btn-primary w-100"),
+        sliderInput("gridSize", "Grid size (km):", min = 1, max = 25, value = 5),
+        actionButton("gridButton", "Create grid", class = "btn-info w-100"),
+        hr(),
+        
+        markdown("**4. EDIT ATTRIBUTES**"),
+        p(class = "text-muted small",
+          "Click any cell in the Linear or Areal attribute panels to edit its value."),
+        actionButton("saveEdits", "Save edits",
+                     icon  = icon("floppy-disk"),
+                     class = "btn-warning w-100"),
+        downloadButton("downloadGpkg", "Save as new geopackage",
+                       icon  = icon("download"),
+                       class = "btn-success w-100")
       ),
       
       layout_columns(
@@ -180,7 +124,7 @@ ui <- page_navbar(
     title = "Validate Attributes",
     icon  = icon("check-circle"),
     layout_sidebar(
-      sidebar = sidebar(width=280,
+      sidebar = sidebar(
         title = "Validation",
         actionButton("valButton", "Run validation code", class = "btn-success w-100")
       ),
@@ -243,8 +187,9 @@ server <- function(input, output, session) {
     # Project to Yukon Albers (3578) for accurate km-based grid
     bnd_proj <- st_transform(bnd(), 3578)
     grid <- st_make_grid(bnd_proj, cellsize = input$gridSize * 1000) %>%
-      st_as_sf()
+      st_as_sf() #%>%
     grid <- grid[bnd_proj,] %>%
+      #st_intersection(st_union(bnd_proj)) %>%
       st_transform(4326)
     grid
   })
@@ -271,52 +216,6 @@ server <- function(input, output, session) {
   selected_line_id <- reactiveVal(NULL)
   selected_poly_id <- reactiveVal(NULL)
   
-  # --- Populate Search feature IDs when layer or data changes ----------------
-  observe({
-    req(input$searchLayer)
-    if (input$searchLayer == "linear") {
-      ids <- if (!is.null(line_attrs())) line_attrs()$line_id else character(0)
-      updateSelectInput(session, "searchFeatureId",
-                        label   = "Select line_id:",
-                        choices = ids)
-    } else {
-      ids <- if (!is.null(poly_attrs())) poly_attrs()$poly_id else character(0)
-      updateSelectInput(session, "searchFeatureId",
-                        label   = "Select poly_id:",
-                        choices = ids)
-    }
-  })
-  
-  # --- Zoom to selected feature -----------------------------------------------
-  observeEvent(input$zoomToFeature, {
-    req(input$searchFeatureId)
-    
-    if (input$searchLayer == "linear") {
-      req(line_base())
-      feat <- line_base() |> filter(line_id == input$searchFeatureId)
-      req(nrow(feat) > 0)
-      bbox <- st_bbox(feat)
-      leafletProxy("map") |>
-        fitBounds(
-          lng1 = bbox[["xmin"]], lat1 = bbox[["ymin"]],
-          lng2 = bbox[["xmax"]], lat2 = bbox[["ymax"]]
-        )
-      selected_line_id(input$searchFeatureId)
-      
-    } else {
-      req(poly_base())
-      feat <- poly_base() |> filter(poly_id == input$searchFeatureId)
-      req(nrow(feat) > 0)
-      bbox <- st_bbox(feat)
-      leafletProxy("map") |>
-        fitBounds(
-          lng1 = bbox[["xmin"]], lat1 = bbox[["ymin"]],
-          lng2 = bbox[["xmax"]], lat2 = bbox[["ymax"]]
-        )
-      selected_poly_id(input$searchFeatureId)
-    }
-  })
-  
   # --- Map --------------------------------------------------------------------
   output$map <- renderLeaflet({
     m <- leaflet(options = leafletOptions(attributionControl = FALSE)) |>
@@ -341,6 +240,7 @@ server <- function(input, output, session) {
         grid_sf <- grid_data()
         m <- m |>
           addPolygons(data = grid_sf, fill = FALSE, weight = 2, color = 'lightgrey',
+                      #group = "Grid") |>
                       dashArray = "5, 5", group = "Grid") |>
           addLegend(position = "bottomright", colors = "black", 
                     labels = paste0("Grid (", input$gridSize, " x ", input$gridSize, " km)"),
