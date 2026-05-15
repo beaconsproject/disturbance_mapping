@@ -1,0 +1,66 @@
+TYPE_FEATURE,TYPE_INDUSTRY,TYPE_DISTURBANCE
+Areal,Agriculture,Agriculture
+Areal,Forestry,Forestry
+Areal,Mining,Building
+Areal,Mining,Drill Pad
+Areal,Mining,Fuel Cache
+Areal,Mining,Gravel Pit / Quarry
+Areal,Mining,Laydown area
+Areal,Mining,Mining
+Areal,Mining,Placer Mining - Minor
+Areal,Mining,Placer Mining - Significant
+Areal,Mining,Quartz Mining - Minor
+Areal,Mining,Quartz Mining - Significant
+Areal,Mining,Tailing Pond
+Areal,Mining,Camp
+Areal,Oil and Gas,Well Pad
+Areal,Oil and Gas,Unknown
+Areal,Rural,Camp
+Areal,Rural,Homestead
+Areal,Transportation,Airstrip
+Areal,Transportation,Clearing
+Areal,Transportation,Gravel Pit / Quarry
+Areal,Transportation,Pullout / Turn Area
+Areal,Transportation,Road Cut and Fill
+Areal,Transportation,Unknown
+Areal,Unknown,Clearing
+Areal,Unknown,Gravel Pit / Quarry
+Areal,Unknown,Unknown
+Areal,Urban,Building
+Areal,Urban,Cemetery
+Areal,Urban,Clearing
+Areal,Urban,Cul-de-sac / Turn Area
+Areal,Urban,Dam
+Areal,Urban,Golf Course
+Areal,Urban,Industrial
+Areal,Urban,Institutional
+Areal,Urban,Landfill
+Areal,Urban,Pond
+Areal,Urban,Recreation Area
+Areal,Urban,Rural Residential
+Areal,Urban,Tower
+Areal,Urban,Urban
+Linear,Mining,Diversion Channel
+Linear,Mining,Survey / Cutline
+Linear,Mining,Survey / Cutline - Placer
+Linear,Mining,Survey / Cutline - Quartz
+Linear,Mining,Trench
+Linear,Mining,Unknown
+Linear,Oil and Gas,Pipeline
+Linear,Oil and Gas,Seismic Line
+Linear,Rural,Driveway
+Linear,Rural,Fence
+Linear,Transportation,Access Assumed
+Linear,Transportation,Access Road
+Linear,Transportation,Arterial Road
+Linear,Transportation,Local Road
+Linear,Transportation,Right of Way
+Linear,Transportation,Trail
+Linear,Transportation,Unpaved Road
+Linear,Transportation,Railway
+Linear,Transportation,Unknown
+Linear,Unknown,Right of Way
+Linear,Unknown,Survey / Cutline
+Linear,Unknown,Unknown
+Linear,Utility,Electric Utility Corridor
+Linear,Utility,Unknown
