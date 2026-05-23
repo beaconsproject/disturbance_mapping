@@ -2,7 +2,7 @@
 
 ## Introduction
 
-May 15, 2026
+May 23, 2026
 
 The Regional Disturbance Mapping project provides access to data, methods and tools to develop and validate regional-scale anthropogenic disturbance maps that can then be used to generate footprint and/or intactness maps for use in conservation and land use planning.
 
@@ -18,7 +18,8 @@ The main components of the website are:
 
 An important part of a mapping project is to fill gaps in the coverage of anthropogenic disturbances using high resolution remote sensing imagery. The procedures to do so were adapted from the YG Government Surface Disturbance Mapping protocol and are described in detail here:
 
-- [Go to procedures manual](manual/manual.md)
+- [Go to General Procedures manual](manual/general_procedures.md)
+- [Go to Temporal Mapping manual](manual/temporal_mapping.md)
 
 For reference, the original Yukon Government's manuals can be viewed here:
 
@@ -59,3 +60,5 @@ We are in the process of writing a paper that describes the regional disturbance
 ## Master's thesis
 
 Maegan Elliot recently completed her thesis on the effects of anthropogenic disturbances on caribou within the Klaza and Clear Creek herds. A link to her thesis will be made available when it becomes available. In the meantime, the disturbance data that she prepared as part of her thesis is available [here](https://drive.google.com/drive/folders/1YBxloqOukWPX2mQOD0hb30a_7vmfDlDs).
+
+- [Temporal surface disturbance database](Readme_surface_disturbance.md)
