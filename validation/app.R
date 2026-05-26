@@ -12,7 +12,6 @@ options(shiny.maxRequestSize = 100 * 1024^2)
 # Load reference data
 types  <- readr::read_csv('www/yg_industry_disturbance_types.csv')
 errors <- readr::read_csv('www/yg_industry_disturbance_types_errors.csv')
-spot   <- "https://mapservices.gov.yk.ca/imagery/rest/services/Satellites/Satellites_MedRes_Update/ImageServer"
 google <- "https://mts1.google.com/vt/lyrs=s&hl=en&src=app&x={x}&y={y}&z={z}&s=G"
 
 ui <- page_navbar(
@@ -54,7 +53,7 @@ ui <- page_navbar(
   
   # 2. VIEW FEATURES TAB
   nav_panel(
-    title = "View features",
+    title = "View Features",
     icon  = icon("upload"),
     layout_sidebar(
       sidebar = sidebar(width=280,
@@ -146,7 +145,7 @@ ui <- page_navbar(
           full_screen = TRUE,
           nav_panel("Mapview",         leafletOutput("map", height = "100%")),
           nav_panel("Linear features", DTOutput("table_line")),
-          nav_panel("Area features",   DTOutput("table_poly"))
+          nav_panel("Areal features",   DTOutput("table_poly"))
         ),
         
         # Right: scale box + per-feature attribute cards

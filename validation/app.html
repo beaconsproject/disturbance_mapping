@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Disturbance Validation</title>
+
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+<!-- Bootstrap 5 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- jQuery + DataTables -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<link  rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"/>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<!-- sql.js (SQLite → WebAssembly; reads .gpkg natively) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+
+<!-- Turf.js (bbox + square grid) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/6.5.0/turf.min.js"></script>
+
+<!-- PapaParse + Marked -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+
+<!-- proj4js – coordinate reprojection to WGS84 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
+
+<style>
+:root {
+  --green:#006400; --green-dk:#004d00; --accent:#28a745;
+  --sidebar:280px;
+}
+body { font-size:.875rem; background:#f8f9fa; }
+
+/* navbar */
+.navbar { background:var(--green) !important; }
+.navbar-brand,.navbar .nav-link { color:#fff !important; font-weight:500; }
+.navbar .nav-link:hover,.navbar .nav-link.active { color:#cfffcf !important; }
+
+/* layout */
+.app-body { display:flex; height:calc(100vh - 56px); overflow:hidden; }
+.sidebar {
+  width:var(--sidebar); min-width:var(--sidebar);
+  background:#fff; border-right:1px solid #dee2e6;
+  overflow-y:auto; flex-shrink:0;
+}
+.sidebar-title {
+  background:#e9ecef; padding:10px 14px;
+  font-weight:600; font-size:.8rem;
+  text-transform:uppercase; letter-spacing:.05em;
+  border-bottom:1px solid #dee2e6;
+}
+.sidebar-inner { padding:12px; }
+.main-content { flex:1; overflow-y:auto; padding:12px; min-width:0; }
+
+/* active tab highlight */
+.nav-tabs .nav-link.active { background:var(--green); color:#fff !important; border-color:var(--green); }
+.nav-tabs .nav-link { color:#333; }
+.tab-content>.tab-pane { display:none; }
+.tab-content>.active  { display:block; }
+
+/* map */
+#map { width:100%; height:100%; }
+.map-wrap { height:620px; }
+.map-wrap .card-body { padding:0; height:100%; }
+
+/* value box */
+.value-box {
+  background:#0d6efd; color:#fff; border-radius:8px;
+  padding:12px 16px; display:flex; align-items:center;
+  gap:12px; margin-bottom:10px;
+}
+.value-box i { font-size:1.6rem; opacity:.8; }
+.vb-label { font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; opacity:.85; }
+.vb-value { font-size:1.1rem; font-weight:700; }
+
+/* attribute cards */
+.attr-card { margin-bottom:10px; }
+.attr-card .card-header { padding:6px 12px; font-weight:600; font-size:.8rem; background:#e9ecef; }
+
+/* validation output */
+#linearText,#arealText {
+  background:#1e1e1e; color:#d4d4d4;
+  font-family:'Courier New',monospace; font-size:.78rem;
+  padding:14px; border-radius:6px;
+  white-space:pre-wrap; min-height:300px; overflow-y:auto;
+}
+
+/* misc */
+.small-label { font-weight:600; font-size:.8rem; margin-bottom:4px; }
+#overviewContent h2 { font-size:1.2rem; font-weight:700; margin-top:1rem; }
+#overviewContent h3 { font-size:1rem; font-weight:600; color:var(--green); margin-top:.8rem; }
+#overviewContent p,#overviewContent li { font-size:.875rem; }
+.table-scroll { overflow-x:auto; }
+.editing-cell { background:#fff3cd !important; cursor:text; }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-md">
+  <div class="container-fluid">
+    <span class="navbar-brand fw-bold"><i class="fa fa-leaf me-2"></i>Disturbance Validation</span>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-2" id="mainNavTabs">
+        <li class="nav-item"><a class="nav-link active" href="#" data-page="intro"><i class="fa fa-info-circle me-1"></i>Introduction</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" data-page="view"><i class="fa fa-upload me-1"></i>View features</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" data-page="validate"><i class="fa fa-check-circle me-1"></i>Validate Attributes</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE: INTRODUCTION -->
+<div id="page-intro" class="page">
+  <div class="app-body">
+    <div class="sidebar">
+      <div class="sidebar-title">Introduction</div>
+      <div class="sidebar-inner">
+        <p class="text-muted small">Use the tabs to browse the overview and permitted disturbance types.</p>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="card" style="height:calc(100vh - 90px);">
+        <div class="card-header bg-light p-0">
+          <ul class="nav nav-tabs">
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-overview">Overview</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-types">Permitted disturbances</a></li>
+          </ul>
+        </div>
+        <div class="card-body overflow-auto tab-content p-2">
+          <div class="tab-pane active" id="tab-overview"><div id="overviewContent"></div></div>
+          <div class="tab-pane" id="tab-types">
+            <div class="table-scroll"><table id="typesTable" class="table table-sm table-striped" style="width:100%"></table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: VIEW FEATURES -->
+<div id="page-view" class="page d-none">
+  <div class="app-body">
+    <div class="sidebar">
+      <div class="sidebar-title">Data Controls</div>
+      <div class="sidebar-inner">
+        <ul class="nav nav-tabs mb-2">
+          <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#ctrl-upload">Upload</a></li>
+          <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#ctrl-edit">Edit</a></li>
+          <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#ctrl-search">Search</a></li>
+        </ul>
+        <div class="tab-content">
+
+          <!-- UPLOAD -->
+          <div class="tab-pane active" id="ctrl-upload">
+            <div class="small-label">1. UPLOAD DATA</div>
+            <input type="file" class="form-control form-control-sm mb-1" id="gpkgFile" accept=".gpkg"/>
+            <div id="uploadStatus" class="text-muted small mb-2" style="font-size:.75rem"></div>
+            <hr/>
+            <div class="small-label">2. SELECT LAYERS</div>
+            <label class="form-label form-label-sm mb-0">Study area:</label>
+            <select class="form-select form-select-sm mb-1" id="selBnd"></select>
+            <label class="form-label form-label-sm mb-0">Linear disturbances:</label>
+            <select class="form-select form-select-sm mb-1" id="selLine"></select>
+            <label class="form-label form-label-sm mb-0">Areal disturbances:</label>
+            <select class="form-select form-select-sm mb-2" id="selPoly"></select>
+            <hr/>
+            <div class="small-label">3. VIEW DISTURBANCES</div>
+            <button class="btn btn-primary btn-sm w-100 mb-2" id="mapButton"><i class="fa fa-map me-1"></i>Map features</button>
+            <label class="form-label form-label-sm mb-0">Grid size (km): <span id="gridSizeLabel">5</span></label>
+            <input type="range" class="form-range mb-2" id="gridSize" min="1" max="25" value="5"/>
+            <button class="btn btn-info btn-sm w-100 text-white" id="gridButton"><i class="fa fa-th me-1"></i>Create grid</button>
+          </div>
+
+          <!-- EDIT -->
+          <div class="tab-pane" id="ctrl-edit">
+            <p class="text-muted small mt-2">Click any cell in the Linear or Areal attribute panels to edit its value.</p>
+            <button class="btn btn-warning btn-sm w-100 mb-2" id="saveEdits"><i class="fa fa-floppy-disk me-1"></i>Save edits</button>
+            <button class="btn btn-success btn-sm w-100" id="downloadGeoJSON"><i class="fa fa-download me-1"></i>Download as GeoJSON</button>
+            <p class="text-muted mt-2" style="font-size:.72rem">Downloads two GeoJSON files (linear + areal). GeoJSON is used instead of .gpkg for browser compatibility.</p>
+          </div>
+
+          <!-- SEARCH -->
+          <div class="tab-pane" id="ctrl-search">
+            <div class="small-label mt-2">SEARCH FEATURES</div>
+            <label class="form-label form-label-sm mb-1">Select layer:</label>
+            <div class="mb-2">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchLayer" id="srchLinear" value="linear" checked/>
+                <label class="form-check-label" for="srchLinear">Linear</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="searchLayer" id="srchAreal" value="areal"/>
+                <label class="form-check-label" for="srchAreal">Areal</label>
+              </div>
+            </div>
+            <label class="form-label form-label-sm mb-0">Select feature:</label>
+            <select class="form-select form-select-sm mb-2" id="searchFeatureId"></select>
+            <button class="btn btn-primary btn-sm w-100" id="zoomToFeature"><i class="fa fa-crosshairs me-1"></i>Zoom to feature</button>
+          </div>
+        </div>
+      </div>
+    </div><!-- /sidebar -->
+
+    <div class="main-content">
+      <div class="row g-2">
+        <!-- Map column -->
+        <div class="col-md-9">
+          <div class="card map-wrap">
+            <div class="card-header bg-light p-0">
+              <ul class="nav nav-tabs" id="mapTabs">
+                <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-map">Mapview</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-line-full">Linear features</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-poly-full">Area features</a></li>
+              </ul>
+            </div>
+            <div class="card-body p-0 tab-content" style="height:577px;">
+              <div class="tab-pane active h-100" id="tab-map"><div id="map"></div></div>
+              <div class="tab-pane p-2 overflow-auto h-100" id="tab-line-full">
+                <div class="table-scroll"><table id="tableLineFull" class="table table-sm table-striped" style="width:100%"></table></div>
+              </div>
+              <div class="tab-pane p-2 overflow-auto h-100" id="tab-poly-full">
+                <div class="table-scroll"><table id="tablePolyFull" class="table table-sm table-striped" style="width:100%"></table></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Info column -->
+        <div class="col-md-3">
+          <div class="value-box">
+            <i class="fa fa-magnifying-glass-plus"></i>
+            <div><div class="vb-label">Viewing Scale</div><div class="vb-value" id="scaleText">—</div></div>
+          </div>
+          <div class="card attr-card">
+            <div class="card-header">Linear attributes</div>
+            <div class="card-body p-1" style="height:240px;overflow:auto;">
+              <table id="table1" class="table table-sm table-bordered" style="width:100%"></table>
+            </div>
+          </div>
+          <div class="card attr-card">
+            <div class="card-header">Areal attributes</div>
+            <div class="card-body p-1" style="height:240px;overflow:auto;">
+              <table id="table2" class="table table-sm table-bordered" style="width:100%"></table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: VALIDATE ATTRIBUTES -->
+<div id="page-validate" class="page d-none">
+  <div class="app-body">
+    <div class="sidebar">
+      <div class="sidebar-title">Validation</div>
+      <div class="sidebar-inner">
+        <button class="btn btn-success btn-sm w-100" id="valButton"><i class="fa fa-play me-1"></i>Run validation code</button>
+        <div id="valStatus" class="text-muted small mt-2"></div>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="card" style="height:calc(100vh - 90px);">
+        <div class="card-header bg-light p-0">
+          <ul class="nav nav-tabs">
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-linsummary">Linear summary</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-linerrors">Linear errors</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-arealsummary">Areal summary</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-arealerrors">Areal errors</a></li>
+          </ul>
+        </div>
+        <div class="card-body tab-content overflow-auto p-2">
+          <div class="tab-pane active" id="tab-linsummary"><pre id="linearText">Run validation to see summary.</pre></div>
+          <div class="tab-pane" id="tab-linerrors"><div class="table-scroll"><table id="linearTable" class="table table-sm table-striped" style="width:100%"></table></div></div>
+          <div class="tab-pane" id="tab-arealsummary"><pre id="arealText">Run validation to see summary.</pre></div>
+          <div class="tab-pane" id="tab-arealerrors"><div class="table-scroll"><table id="arealTable" class="table table-sm table-striped" style="width:100%"></table></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+  <div id="appToast" class="toast align-items-center border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body" id="toastMsg"></div>
+      <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     EMBEDDED REFERENCE DATA
+════════════════════════════════════════════════════ -->
+<script>
+const TYPES_CSV=`TYPE_FEATURE,TYPE_INDUSTRY,TYPE_DISTURBANCE,BEACONS_EXTRA
+Areal,Agriculture,Agriculture,0
+Areal,Forestry,Forestry,0
+Areal,Mining,Building,0
+Areal,Mining,Drill Pad,0
+Areal,Mining,Fuel Cache,0
+Areal,Mining,Gravel Pit / Quarry,0
+Areal,Mining,Laydown area,0
+Areal,Mining,Mining,0
+Areal,Mining,Placer Mining - Minor,0
+Areal,Mining,Placer Mining - Significant,0
+Areal,Mining,Quartz Mining - Minor,0
+Areal,Mining,Quartz Mining - Significant,0
+Areal,Mining,Tailing Pond,0
+Areal,Mining,Camp,0
+Areal,Oil and Gas,Well Pad,0
+Areal,Oil and Gas,Unknown,0
+Areal,Rural,Camp,0
+Areal,Rural,Homestead,0
+Areal,Transportation,Airstrip,0
+Areal,Transportation,Clearing,0
+Areal,Transportation,Gravel Pit / Quarry,0
+Areal,Transportation,Pullout / Turn Area,0
+Areal,Transportation,Road Cut and Fill,0
+Areal,Transportation,Unknown,1
+Areal,Unknown,Clearing,0
+Areal,Unknown,Gravel Pit / Quarry,0
+Areal,Unknown,Unknown,0
+Areal,Urban,Building,0
+Areal,Urban,Cemetery,0
+Areal,Urban,Clearing,0
+Areal,Urban,Cul-de-sac / Turn Area,0
+Areal,Urban,Dam,0
+Areal,Urban,Golf Course,0
+Areal,Urban,Industrial,0
+Areal,Urban,Institutional,0
+Areal,Urban,Landfill,0
+Areal,Urban,Pond,0
+Areal,Urban,Recreation Area,0
+Areal,Urban,Rural Residential,0
+Areal,Urban,Tower,0
+Areal,Urban,Urban,0
+Linear,Mining,Diversion Channel,0
+Linear,Mining,Survey / Cutline,0
+Linear,Mining,Survey / Cutline - Placer,0
+Linear,Mining,Survey / Cutline - Quartz,0
+Linear,Mining,Trench,0
+Linear,Mining,Unknown,0
+Linear,Oil and Gas,Pipeline,0
+Linear,Oil and Gas,Seismic Line,0
+Linear,Rural,Driveway,0
+Linear,Rural,Fence,0
+Linear,Transportation,Access Assumed,0
+Linear,Transportation,Access Road,0
+Linear,Transportation,Arterial Road,0
+Linear,Transportation,Local Road,0
+Linear,Transportation,Right of Way,0
+Linear,Transportation,Trail,0
+Linear,Transportation,Unpaved Road,0
+Linear,Transportation,Railway,1
+Linear,Transportation,Unknown,1
+Linear,Unknown,Right of Way,0
+Linear,Unknown,Survey / Cutline,0
+Linear,Unknown,Unknown,0
+Linear,Utility,Electric Utility Corridor,0
+Linear,Utility,Unknown,0`;
+
+const OVERVIEW_MD=`## Disturbance Validation
+
+The Disturbance Validation app enables users to i) interactively examine linear and areal surface disturbance features along with several satellite imagery sources, ii) validate industry and disturbance type attributes, and iii) search for individual features and their associated attributes.
+
+The app consists of 3 sections:
+
+### Introduction
+This section includes this overview page plus a tab describing all permitted industry and disturbance types.
+
+### View features
+1. **Upload data** – Upload a GeoPackage (\`.gpkg\`) containing a study area boundary, linear disturbances, and areal disturbances.
+2. **Select layers** – Choose the layer names from the three dropdown boxes.
+3. **Map features** – Click "Map features" to render the data on the interactive map.
+
+**Required layers**
+- \`studyarea\` – A single polygon outlining the study area boundary.
+- \`linear_disturbance\` – Linear anthropogenic surface disturbance features.
+- \`areal_disturbance\` – Areal (polygonal) anthropogenic surface disturbance features.
+
+**Required attributes** (linear & areal layers)
+- \`TYPE_INDUSTRY\` – e.g. Mining, Transportation
+- \`TYPE_DISTURBANCE\` – e.g. Survey / Cutline, Access Road
+
+### Validate Attributes
+Validates \`TYPE_INDUSTRY\` and \`TYPE_DISTURBANCE\` against the permitted combinations table. Click **Run validation code** to generate a summary and error report for both layers.`;
+</script>
+
+<!-- ═══════════════════════════════════════════════
+     APPLICATION
+════════════════════════════════════════════════════ -->
+<script>
+// ─── sql.js init ──────────────────────────────────────────────────────────────
+let SQL = null;
+initSqlJs({ locateFile: f => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${f}` })
+  .then(s => { SQL = s; })
+  .catch(e => console.error('sql.js failed to load:', e));
+
+// ─── State ────────────────────────────────────────────────────────────────────
+const S = {
+  gpkgName: '',
+  db: null,
+  layers: [],
+  bndGeoJSON: null,
+  lineGeoJSON: null,
+  polyGeoJSON: null,
+  lineAttrs: [],   // live-edited attribute rows
+  polyAttrs: [],
+  savedLineAttrs: [],
+  savedPolyAttrs: [],
+  selectedLineId: null,
+  selectedPolyId: null,
+  typesData: [],
+  leafletMap: null,
+  lineLayer: null,
+  polyLayer: null,
+  bndLayer: null,
+  gridLayer: null,
+};
+
+S.typesData = Papa.parse(TYPES_CSV.trim(), { header:true, skipEmptyLines:true }).data;
+
+// ─── Overview + permitted types table ────────────────────────────────────────
+document.getElementById('overviewContent').innerHTML = marked.parse(OVERVIEW_MD);
+
+function initTypesTable() {
+  const cols = Object.keys(S.typesData[0]).map(k => ({ title:k, data:k }));
+  if ($.fn.DataTable.isDataTable('#typesTable')) $('#typesTable').DataTable().destroy();
+  $('#typesTable').DataTable({ data:S.typesData, columns:cols, pageLength:25, scrollX:true, dom:'tip' });
+}
+initTypesTable();
+
+// ─── Page navigation ──────────────────────────────────────────────────────────
+document.querySelectorAll('#mainNavTabs .nav-link').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelectorAll('#mainNavTabs .nav-link').forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.add('d-none'));
+    document.getElementById('page-' + link.dataset.page).classList.remove('d-none');
+    if (link.dataset.page === 'view')
+      setTimeout(() => S.leafletMap && S.leafletMap.invalidateSize(), 120);
+  });
+});
+
+// ─── Leaflet map ──────────────────────────────────────────────────────────────
+const map = L.map('map', { attributionControl:false }).setView([63,-135], 5);
+S.leafletMap = map;
+
+const baseLayers = {
+  'Esri.WorldTopoMap': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', { maxZoom:19 }),
+  'Esri.WorldImagery': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom:19 }),
+  'Google.Imagery':    L.tileLayer('https://mts1.google.com/vt/lyrs=s&hl=en&src=app&x={x}&y={y}&z={z}&s=G', { maxZoom:20 }),
+};
+baseLayers['Esri.WorldTopoMap'].addTo(map);
+L.control.scale({ position:'bottomleft' }).addTo(map);
+
+// layersControl is rebuilt whenever overlay layers change
+let layersControl = L.control.layers(baseLayers, {}, { position:'topright', collapsed:false }).addTo(map);
+function rebuildLayersControl(overlays) {
+  layersControl.remove();
+  layersControl = L.control.layers(baseLayers, overlays, { position:'topright', collapsed:false }).addTo(map);
+}
+
+function updateScale() {
+  const res = (Math.cos(map.getCenter().lat * Math.PI/180) * 40075016.686) / (256 * Math.pow(2, map.getZoom()));
+  document.getElementById('scaleText').textContent = '1:' + Math.round(res * 3779.53).toLocaleString();
+}
+map.on('zoomend moveend', updateScale);
+updateScale();
+
+document.getElementById('gridSize').addEventListener('input', function() {
+  document.getElementById('gridSizeLabel').textContent = this.value;
+});
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+function toast(msg, type='success') {
+  const el = document.getElementById('appToast');
+  el.className = `toast align-items-center text-bg-${type} border-0`;
+  document.getElementById('toastMsg').textContent = msg;
+  bootstrap.Toast.getOrCreateInstance(el, { delay:3500 }).show();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  GEOPACKAGE READING  (via sql.js)
+// ═══════════════════════════════════════════════════════════════
+
+// GeoPackage geometry header is 8 bytes minimum, followed by WKB
+// Header: G P [version] [flags] [srs_id 4-bytes] [optional envelope] WKB…
+// flags byte: bits 1-3 = envelope type, bit 0 = empty
+
+function gpkgBlobToGeoJSON(buf) {
+  // buf is a Uint8Array
+  if (buf[0] !== 0x47 || buf[1] !== 0x50) return null; // 'GP'
+  const flags  = buf[3];
+  const envelopeType = (flags >> 1) & 0x07;
+  const envBytes = [0,32,48,48,64][envelopeType] || 0;
+  const wkbOffset = 8 + envBytes;
+  const wkb = buf.subarray(wkbOffset);
+  return wkbToGeoJSON(wkb);
+}
+
+function wkbToGeoJSON(buf) {
+  let offset = 0;
+  function readByte() { return buf[offset++]; }
+  function readUint32LE() { const v = buf[offset]|(buf[offset+1]<<8)|(buf[offset+2]<<16)|(buf[offset+3]<<24); offset+=4; return v>>>0; }
+  function readFloat64LE() {
+    const lo = buf[offset]|(buf[offset+1]<<8)|(buf[offset+2]<<16)|(buf[offset+3]<<24);
+    const hi = buf[offset+4]|(buf[offset+5]<<8)|(buf[offset+6]<<16)|(buf[offset+7]<<24);
+    offset+=8;
+    const view = new DataView(new ArrayBuffer(8));
+    view.setUint32(0, lo>>>0, true);
+    view.setUint32(4, hi>>>0, true);
+    return view.getFloat64(0, true);
+  }
+
+  function readPoint() { return [readFloat64LE(), readFloat64LE()]; }
+  function readRing() {
+    const n = readUint32LE();
+    const pts = [];
+    for (let i=0;i<n;i++) pts.push(readPoint());
+    return pts;
+  }
+
+  function readGeometry() {
+    const byteOrder = readByte();  // 1=LE, 0=BE (we only handle LE)
+    const type = readUint32LE();
+    const baseType = type % 1000;
+    switch(baseType) {
+      case 1: return { type:'Point',           coordinates: readPoint() };
+      case 2: { const n=readUint32LE(); const c=[]; for(let i=0;i<n;i++) c.push(readPoint()); return { type:'LineString', coordinates:c }; }
+      case 3: { const nr=readUint32LE(); const rings=[]; for(let i=0;i<nr;i++) rings.push(readRing()); return { type:'Polygon', coordinates:rings }; }
+      case 4: { const n=readUint32LE(); const geoms=[]; for(let i=0;i<n;i++){readByte();readUint32LE();const c2=[]; const n2=readUint32LE(); for(let j=0;j<n2;j++) c2.push(readPoint()); geoms.push(c2);} return { type:'MultiPoint', coordinates:geoms }; }
+      case 5: { const n=readUint32LE(); const lines=[]; for(let i=0;i<n;i++){readByte();readUint32LE();const nn=readUint32LE();const pts=[];for(let j=0;j<nn;j++) pts.push(readPoint());lines.push(pts);} return { type:'MultiLineString', coordinates:lines }; }
+      case 6: { const n=readUint32LE(); const polys=[]; for(let i=0;i<n;i++){readByte();readUint32LE();const nr2=readUint32LE();const rings2=[];for(let j=0;j<nr2;j++) rings2.push(readRing());polys.push(rings2);} return { type:'MultiPolygon', coordinates:polys }; }
+      case 7: { const n=readUint32LE(); const gc=[]; for(let i=0;i<n;i++) gc.push(readGeometry()); return { type:'GeometryCollection', geometries:gc }; }
+      default: return null;
+    }
+  }
+  try { return readGeometry(); } catch(e) { return null; }
+}
+
+function getLayerNames(db) {
+  const res = db.exec("SELECT table_name FROM gpkg_contents WHERE data_type='features'");
+  if (!res.length) return [];
+  return res[0].values.map(r => r[0]);
+}
+
+// ── CRS / proj4 helpers ───────────────────────────────────────────────────────
+
+// Read the WKT or proj4 definition for a given srs_id from gpkg_spatial_ref_sys
+function getProj4Def(db, srsId) {
+  // Try definition column (standard)
+  let res = db.exec(`SELECT definition FROM gpkg_spatial_ref_sys WHERE srs_id=${srsId}`);
+  if (res.length && res[0].values.length) {
+    const def = res[0].values[0][0];
+    if (def && def !== 'undefined') return def;
+  }
+  return null;
+}
+
+// Given a proj4 or WKT string, register it with proj4 and return the key,
+// or return null if it is already WGS84.
+function registerCrs(srsId, def) {
+  if (srsId === 4326) return null;        // already WGS84
+  if (srsId === 0 || srsId === -1) return null; // undefined / unknown
+
+  // If it looks like geographic (degree-based) skip reprojection
+  if (/GEOGCS/i.test(def) && !/PROJCS/i.test(def)) return null;
+
+  const key = 'EPSG:' + srsId;
+  try { proj4.defs(key, def); } catch(e) { return null; }
+  return key;
+}
+
+// Reproject a single [x, y] coordinate array in-place (recursive for rings)
+function reprojectCoords(coords, projKey) {
+  if (!projKey) return coords;
+  if (typeof coords[0] === 'number') {
+    // single point
+    const pt = proj4(projKey, 'EPSG:4326', [coords[0], coords[1]]);
+    return pt;
+  }
+  return coords.map(c => reprojectCoords(c, projKey));
+}
+
+function reprojectGeometry(geom, projKey) {
+  if (!geom || !projKey) return geom;
+  const g = JSON.parse(JSON.stringify(geom)); // clone
+  switch (g.type) {
+    case 'Point':
+      g.coordinates = reprojectCoords(g.coordinates, projKey); break;
+    case 'LineString': case 'MultiPoint':
+      g.coordinates = g.coordinates.map(c => reprojectCoords(c, projKey)); break;
+    case 'Polygon': case 'MultiLineString':
+      g.coordinates = g.coordinates.map(ring => ring.map(c => reprojectCoords(c, projKey))); break;
+    case 'MultiPolygon':
+      g.coordinates = g.coordinates.map(poly => poly.map(ring => ring.map(c => reprojectCoords(c, projKey)))); break;
+    case 'GeometryCollection':
+      g.geometries = g.geometries.map(sub => reprojectGeometry(sub, projKey)); break;
+  }
+  return g;
+}
+
+// ── Read a layer, auto-reprojects to WGS84 ───────────────────────────────────
+function readLayerFromDb(db, tableName) {
+  // Geometry column name
+  const gcRes = db.exec(`SELECT column_name, srs_id FROM gpkg_geometry_columns WHERE table_name='${tableName}'`);
+  const geomCol = gcRes.length ? gcRes[0].values[0][0] : 'geom';
+  const srsId   = gcRes.length ? gcRes[0].values[0][1] : 4326;
+
+  // Resolve projection
+  let projKey = null;
+  if (srsId !== 4326) {
+    const def = getProj4Def(db, srsId);
+    if (def) projKey = registerCrs(srsId, def);
+    if (projKey) console.log(`Layer "${tableName}": reprojecting EPSG:${srsId} → EPSG:4326`);
+    else         console.warn(`Layer "${tableName}": EPSG:${srsId} – no proj4 def found, assuming WGS84`);
+  }
+
+  // All attribute columns
+  const colRes = db.exec(`PRAGMA table_info('${tableName}')`);
+  const allCols = colRes[0].values.map(r => r[1]);
+  const attrCols = allCols.filter(c => c !== geomCol);
+
+  const rows = db.exec(`SELECT "${geomCol}",${attrCols.map(c=>`"${c}"`).join(',')} FROM "${tableName}"`);
+  if (!rows.length) return { type:'FeatureCollection', features:[] };
+
+  const features = [];
+  for (const row of rows[0].values) {
+    const geomBlob = row[0];
+    if (!geomBlob) continue;
+    const geomBuf = geomBlob instanceof Uint8Array ? geomBlob : new Uint8Array(geomBlob);
+    let geom = gpkgBlobToGeoJSON(geomBuf);
+    if (!geom) continue;
+    if (projKey) geom = reprojectGeometry(geom, projKey);
+    const props = {};
+    attrCols.forEach((c,i) => { props[c] = row[i+1]; });
+    features.push({ type:'Feature', geometry:geom, properties:props });
+  }
+  return { type:'FeatureCollection', features };
+}
+
+// ─── File upload ──────────────────────────────────────────────────────────────
+document.getElementById('gpkgFile').addEventListener('change', async function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (!SQL) { toast('sql.js not yet loaded, please wait and try again.', 'warning'); return; }
+  document.getElementById('uploadStatus').textContent = 'Reading file…';
+  S.gpkgName = file.name;
+  try {
+    const buf = await file.arrayBuffer();
+    S.db = new SQL.Database(new Uint8Array(buf));
+    S.layers = getLayerNames(S.db);
+    if (!S.layers.length) throw new Error('No feature layers found in this GeoPackage.');
+    populateLayerSelects(S.layers);
+
+    // Report CRS info for first feature layer
+    const gcInfo = S.db.exec(`SELECT srs_id FROM gpkg_geometry_columns LIMIT 1`);
+    const detectedSrs = gcInfo.length ? gcInfo[0].values[0][0] : '?';
+    const crsNote = detectedSrs === 4326 ? ' (WGS84)' : ` (EPSG:${detectedSrs} → will reproject to WGS84)`;
+    document.getElementById('uploadStatus').textContent = `✓ ${S.layers.length} layer(s) found${crsNote}.`;
+    toast('File loaded successfully.');
+  } catch(err) {
+    document.getElementById('uploadStatus').textContent = '✗ ' + err.message;
+    toast(err.message, 'danger');
+    console.error(err);
+  }
+});
+
+function populateLayerSelects(layers) {
+  ['selBnd','selLine','selPoly'].forEach(id => {
+    const sel = document.getElementById(id);
+    sel.innerHTML = layers.map(l => `<option value="${l}">${l}</option>`).join('');
+  });
+  trySelect('selBnd',  'studyarea');
+  trySelect('selLine', 'linear_disturbance');
+  trySelect('selPoly', 'areal_disturbance');
+}
+
+function trySelect(id, val) {
+  const sel = document.getElementById(id);
+  if ([...sel.options].find(o => o.value === val)) sel.value = val;
+}
+
+// ─── Map features ─────────────────────────────────────────────────────────────
+document.getElementById('mapButton').addEventListener('click', () => {
+  if (!S.db) { toast('Please upload a .gpkg file first.', 'warning'); return; }
+  try {
+    toast('Loading layers…', 'info');
+    S.bndGeoJSON  = readLayerFromDb(S.db, document.getElementById('selBnd').value);
+    S.lineGeoJSON = readLayerFromDb(S.db, document.getElementById('selLine').value);
+    S.polyGeoJSON = readLayerFromDb(S.db, document.getElementById('selPoly').value);
+
+    // Assign synthetic IDs
+    S.lineGeoJSON.features.forEach((f,i) => { f.properties._lid = 'L'+(i+1); });
+    S.polyGeoJSON.features.forEach((f,i) => { f.properties._pid = 'P'+(i+1); });
+
+    S.lineAttrs = S.lineGeoJSON.features.map(f => ({...f.properties}));
+    S.polyAttrs = S.polyGeoJSON.features.map(f => ({...f.properties}));
+    S.savedLineAttrs = JSON.parse(JSON.stringify(S.lineAttrs));
+    S.savedPolyAttrs = JSON.parse(JSON.stringify(S.polyAttrs));
+
+    renderMap();
+    renderFullTable('tableLineFull', S.savedLineAttrs, '_lid');
+    renderFullTable('tablePolyFull', S.savedPolyAttrs, '_pid');
+    populateSearchIds();
+    toast('Features mapped successfully.');
+  } catch(err) {
+    toast('Error loading layers: ' + err.message, 'danger');
+    console.error(err);
+  }
+});
+
+// ─── Render map ───────────────────────────────────────────────────────────────
+function renderMap() {
+  // Remove old data layers
+  [S.bndLayer, S.lineLayer, S.polyLayer, S.gridLayer].forEach(l => { if (l) map.removeLayer(l); });
+  S.gridLayer = null;
+
+  S.bndLayer = L.geoJSON(S.bndGeoJSON, {
+    style:{ fill:false, weight:2, color:'blue' }
+  }).addTo(map);
+
+  S.polyLayer = L.geoJSON(S.polyGeoJSON, {
+    style:{ weight:1, color:'red', fillOpacity:0.4 },
+    onEachFeature(feat, lyr) {
+      lyr.on('click', () => showAttrCard('table2', S.polyAttrs, '_pid', feat.properties._pid));
+    }
+  }).addTo(map);
+
+  S.lineLayer = L.geoJSON(S.lineGeoJSON, {
+    style:{ weight:2, color:'red' },
+    onEachFeature(feat, lyr) {
+      lyr.on('click', () => showAttrCard('table1', S.lineAttrs, '_lid', feat.properties._lid));
+    }
+  }).addTo(map);
+
+  // Rebuild layers control to include overlay toggles
+  rebuildLayersControl({
+    'Study area':          S.bndLayer,
+    'Areal disturbances':  S.polyLayer,
+    'Linear disturbances': S.lineLayer,
+  });
+
+  const b = S.bndLayer.getBounds();
+  if (b.isValid()) map.fitBounds(b);
+}
+
+// ─── Attribute card (key-value, editable) ─────────────────────────────────────
+function showAttrCard(tableId, attrs, idCol, selId) {
+  const row = attrs.find(r => r[idCol] === selId);
+  if (!row) return;
+  const keys = Object.keys(row).filter(k => !k.startsWith('_'));
+  const data = keys.map(k => [k, row[k] == null ? '' : String(row[k])]);
+
+  if ($.fn.DataTable.isDataTable('#'+tableId)) $('#'+tableId).DataTable().destroy();
+  document.getElementById(tableId).innerHTML = '';
+
+  const dt = $('#'+tableId).DataTable({
+    data, columns:[{title:'Attribute'},{title:'Value'}],
+    dom:'t', paging:false, scrollY:'200px', scrollCollapse:true,
+    createdRow(tr) {
+      $('td:eq(1)', tr).attr('contenteditable','true').addClass('editing-cell');
+    }
+  });
+
+  $('#'+tableId+' tbody').off('blur','td').on('blur','td[contenteditable]', function() {
+    const ri = dt.row($(this).closest('tr')).index();
+    const key = data[ri][0];
+    const val = $(this).text().trim();
+    const r = attrs.find(x => x[idCol] === selId);
+    if (r) r[key] = val;
+  });
+}
+
+// ─── Full attribute table ─────────────────────────────────────────────────────
+function renderFullTable(tableId, data, skipCol) {
+  if (!data || !data.length) return;
+  const display = data.map(r => { const o={...r}; delete o[skipCol]; return o; });
+  const cols = Object.keys(display[0]).map(k => ({ title:k, data:k }));
+  if ($.fn.DataTable.isDataTable('#'+tableId)) $('#'+tableId).DataTable().destroy();
+  document.getElementById(tableId).innerHTML = '';
+  $('#'+tableId).DataTable({ data:display, columns:cols, pageLength:15, scrollX:true, dom:'tip' });
+}
+
+// ─── Search features ──────────────────────────────────────────────────────────
+function populateSearchIds() {
+  updateSearchSel();
+  document.querySelectorAll('input[name="searchLayer"]').forEach(r => {
+    r.addEventListener('change', updateSearchSel);
+  });
+}
+function updateSearchSel() {
+  const layer = document.querySelector('input[name="searchLayer"]:checked').value;
+  const sel = document.getElementById('searchFeatureId');
+  sel.innerHTML = '';
+  const ids = layer === 'linear'
+    ? S.lineAttrs.map(r => r._lid)
+    : S.polyAttrs.map(r => r._pid);
+  ids.forEach(id => sel.appendChild(Object.assign(document.createElement('option'), {value:id, textContent:id})));
+}
+
+document.getElementById('zoomToFeature').addEventListener('click', () => {
+  const layer = document.querySelector('input[name="searchLayer"]:checked').value;
+  const id    = document.getElementById('searchFeatureId').value;
+  if (!id) return;
+  const feat = layer === 'linear'
+    ? S.lineGeoJSON?.features.find(f => f.properties._lid === id)
+    : S.polyGeoJSON?.features.find(f => f.properties._pid === id);
+  if (!feat) return;
+  const bb = turf.bbox(feat);
+  map.fitBounds([[bb[1],bb[0]],[bb[3],bb[2]]]);
+  if (layer === 'linear') showAttrCard('table1', S.lineAttrs, '_lid', id);
+  else                    showAttrCard('table2', S.polyAttrs, '_pid', id);
+});
+
+// ─── Grid ─────────────────────────────────────────────────────────────────────
+document.getElementById('gridButton').addEventListener('click', () => {
+  if (!S.bndGeoJSON) { toast('Map features first.', 'warning'); return; }
+  const km  = parseFloat(document.getElementById('gridSize').value);
+  const deg = km / 111.32;
+  const bb  = turf.bbox(S.bndGeoJSON);
+  const grid = turf.squareGrid(bb, deg, { units:'degrees', mask:S.bndGeoJSON });
+  if (S.gridLayer) map.removeLayer(S.gridLayer);
+  S.gridLayer = L.geoJSON(grid, { style:{ fill:false, weight:1.5, color:'#888', dashArray:'5,5' } }).addTo(map);
+  // Rebuild layers control to include the grid overlay
+  rebuildLayersControl({
+    'Study area':          S.bndLayer,
+    'Areal disturbances':  S.polyLayer,
+    'Linear disturbances': S.lineLayer,
+    [`Grid (${km} x ${km} km)`]: S.gridLayer,
+  });
+  toast(`${km} km grid created.`);
+});
+
+// ─── Save edits ───────────────────────────────────────────────────────────────
+document.getElementById('saveEdits').addEventListener('click', () => {
+  S.savedLineAttrs = JSON.parse(JSON.stringify(S.lineAttrs));
+  S.savedPolyAttrs = JSON.parse(JSON.stringify(S.polyAttrs));
+  renderFullTable('tableLineFull', S.savedLineAttrs, '_lid');
+  renderFullTable('tablePolyFull', S.savedPolyAttrs, '_pid');
+  toast('Edits saved to tables.');
+});
+
+// ─── Download GeoJSON ─────────────────────────────────────────────────────────
+document.getElementById('downloadGeoJSON').addEventListener('click', () => {
+  if (!S.lineGeoJSON || !S.polyGeoJSON) { toast('No data to download.', 'warning'); return; }
+
+  function merge(geoJSON, attrs, idCol) {
+    const map2 = {};
+    attrs.forEach(r => { map2[r[idCol]] = r; });
+    const features = geoJSON.features.map(f => {
+      const a = {...(map2[f.properties[idCol]] || f.properties)};
+      delete a._lid; delete a._pid;
+      return {...f, properties:a};
+    });
+    return { type:'FeatureCollection', features };
+  }
+
+  dl(merge(S.lineGeoJSON, S.savedLineAttrs, '_lid'), 'linear_disturbance_edited.geojson');
+  setTimeout(() => dl(merge(S.polyGeoJSON, S.savedPolyAttrs, '_pid'), 'areal_disturbance_edited.geojson'), 400);
+  toast('Downloading GeoJSON files…');
+});
+
+function dl(obj, fname) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)], {type:'application/json'}));
+  a.download = fname; a.click(); URL.revokeObjectURL(a.href);
+}
+
+// ─── Validation ───────────────────────────────────────────────────────────────
+document.getElementById('valButton').addEventListener('click', () => {
+  if (!S.savedLineAttrs.length) { toast('Load and map data before validating.', 'warning'); return; }
+  runValidation();
+});
+
+function validateRows(rows, featureType) {
+  const sub = S.typesData.filter(r => r.TYPE_FEATURE === featureType);
+  const vI = new Set(sub.map(r => r.TYPE_INDUSTRY));
+  const vD = new Set(sub.map(r => r.TYPE_DISTURBANCE));
+  const vC = new Set(sub.map(r => r.TYPE_INDUSTRY+'***'+r.TYPE_DISTURBANCE));
+  return rows.map(r => ({
+    ...r,
+    industry_test:    vI.has(r.TYPE_INDUSTRY)    ? 'ok' : 'please fix',
+    disturbance_test: vD.has(r.TYPE_DISTURBANCE) ? 'ok' : 'please fix',
+    combination_test: vC.has(r.TYPE_INDUSTRY+'***'+r.TYPE_DISTURBANCE) ? 'ok' : 'not expected',
+  }));
+}
+
+function summarise(rows, label) {
+  const cols = Object.keys(rows[0]).filter(k => !k.startsWith('_'));
+  let out = `Project: ${S.gpkgName}\nDate: ${new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'})}\n\n# ${label.toUpperCase()} DISTURBANCES\nTotal features: ${rows.length}\n`;
+  for (const col of cols) {
+    const freq = {};
+    rows.forEach(r => { const v = r[col]==null?'(null)':String(r[col]); freq[v]=(freq[v]||0)+1; });
+    out += `\n## Attribute: ${col.toUpperCase()}\n  Distinct values: ${Object.keys(freq).length}\n`;
+    Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,10).forEach(([v,n]) => {
+      out += `  ${v.padEnd(42)} n=${n}\n`;
+    });
+  }
+  return out;
+}
+
+function valDT(tableId, rows) {
+  if ($.fn.DataTable.isDataTable('#'+tableId)) $('#'+tableId).DataTable().destroy();
+  document.getElementById(tableId).innerHTML = '';
+  if (!rows.length) { document.getElementById(tableId).innerHTML='<p class="text-success mt-2">✓ No errors found.</p>'; return; }
+  const cols = Object.keys(rows[0]).filter(k=>!k.startsWith('_')).map(k=>({title:k,data:k}));
+  $('#'+tableId).DataTable({ data:rows, columns:cols, pageLength:15, scrollX:true, dom:'tip' });
+}
+
+function runValidation() {
+  const vLine = validateRows(S.savedLineAttrs, 'Linear');
+  const vPoly = validateRows(S.savedPolyAttrs, 'Areal');
+  document.getElementById('linearText').textContent = summarise(S.savedLineAttrs, 'Linear');
+  document.getElementById('arealText').textContent  = summarise(S.savedPolyAttrs, 'Areal');
+  const lineErr = vLine.filter(r => r.industry_test!=='ok'||r.disturbance_test!=='ok'||r.combination_test!=='ok');
+  const polyErr = vPoly.filter(r => r.industry_test!=='ok'||r.disturbance_test!=='ok'||r.combination_test!=='ok');
+  valDT('linearTable', lineErr);
+  valDT('arealTable',  polyErr);
+  document.getElementById('valStatus').textContent = `Done — Linear errors: ${lineErr.length}. Areal errors: ${polyErr.length}.`;
+  toast('Validation complete.');
+}
+
+// ─── Map tab resize ───────────────────────────────────────────────────────────
+document.querySelectorAll('#mapTabs .nav-link').forEach(tab => {
+  tab.addEventListener('shown.bs.tab', () => {
+    if (tab.getAttribute('href') === '#tab-map') map.invalidateSize();
+  });
+});
+</script>
+</body>
+</html>
