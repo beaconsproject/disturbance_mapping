@@ -2,7 +2,7 @@
 
 ## Introduction
 
-May 23, 2026
+June 3, 2026
 
 The Regional Disturbance Mapping project provides access to data, methods and tools to develop and validate regional-scale anthropogenic disturbance maps that can then be used to generate footprint and/or intactness maps for use in conservation and land use planning.
 
