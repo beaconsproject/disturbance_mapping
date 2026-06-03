@@ -7,11 +7,10 @@ library(summarytools)
 library(bslib)
 
 # Increase upload limit
-options(shiny.maxRequestSize = 100 * 1024^2)
+options(shiny.maxRequestSize = 1000 * 1024^2)
 
 # Load reference data
-types  <- readr::read_csv('www/yg_industry_disturbance_types.csv')
-errors <- readr::read_csv('www/yg_industry_disturbance_types_errors.csv')
+# types  <- readr::read_csv('www/yg_industry_disturbance_types.csv') # REMOVED AS REQUESTED
 google <- "https://mts1.google.com/vt/lyrs=s&hl=en&src=app&x={x}&y={y}&z={z}&s=G"
 
 ui <- page_navbar(
@@ -34,31 +33,12 @@ ui <- page_navbar(
   }
 "),
   
-  # 1. INTRODUCTION TAB
-  nav_panel(
-    title = "Introduction",
-    icon  = icon("info-circle"),
-    layout_sidebar(
-      sidebar = sidebar(width=280,
-        title = "Introduction",
-        #actionButton("valButton", "Run validation code", class = "btn-success w-100")
-      ),
-      navset_card_tab(
-        full_screen = TRUE,
-        nav_panel("Overview",               includeMarkdown("www/overview.md")),
-        nav_panel("Permitted disturbances", DTOutput("types"))
-      )
-    )
-  ),
-  
-  # 2. VIEW FEATURES TAB
+  # 1. VIEW FEATURES TAB
   nav_panel(
     title = "View Features",
     icon  = icon("upload"),
     layout_sidebar(
       sidebar = sidebar(width=280,
-        title = "Data Controls",
-        
         navset_tab(
           
           # -- UPLOAD TAB ------------------------------------------------------
@@ -143,9 +123,10 @@ ui <- page_navbar(
         navset_card_tab(
           height      = 750,
           full_screen = TRUE,
+          nav_panel("Overview",        includeMarkdown("www/overview.md")),
           nav_panel("Mapview",         leafletOutput("map", height = "100%")),
           nav_panel("Linear features", DTOutput("table_line")),
-          nav_panel("Areal features",   DTOutput("table_poly"))
+          nav_panel("Areal features",  DTOutput("table_poly"))
         ),
         
         # Right: scale box + per-feature attribute cards
@@ -174,21 +155,25 @@ ui <- page_navbar(
     )
   ),
   
-  # 3. VALIDATE ATTRIBUTES TAB
+  # 2. VALIDATE ATTRIBUTES TAB
   nav_panel(
     title = "Validate Attributes",
     icon  = icon("check-circle"),
     layout_sidebar(
       sidebar = sidebar(width=280,
         title = "Validation",
-        actionButton("valButton", "Run validation code", class = "btn-success w-100")
+        fileInput("csv", "Upload attributes (CSV):", accept = ".csv"),
+        #selectInput("fld",  "Select attribute:",          choices = NULL),
+        #hr(),
+        actionButton("valButton", "Validate attributes", class = "btn-success w-100")
       ),
       navset_card_tab(
         full_screen = TRUE,
         nav_panel("Linear summary", verbatimTextOutput("linearText")),
         nav_panel("Linear errors",  DTOutput("linearTable")),
         nav_panel("Areal summary",  verbatimTextOutput("arealText")),
-        nav_panel("Areal errors",   DTOutput("arealTable"))
+        nav_panel("Areal errors",   DTOutput("arealTable")),
+        nav_panel("Permitted values", DTOutput("types"))
       )
     )
   )
@@ -200,9 +185,15 @@ ui <- page_navbar(
 
 server <- function(input, output, session) {
   
-  # --- Reference table --------------------------------------------------------
+  # --- Reactive Reference table from File Input -------------------------------
+  types <- reactive({
+    req(input$csv)
+    readr::read_csv(input$csv$datapath)
+  })
+  
   output$types <- renderDataTable({
-    datatable(types, rownames = FALSE,
+    req(types())
+    datatable(types(), rownames = FALSE,
               options = list(dom = 'tip', scrollX = TRUE,
                              scrollY = TRUE, pageLength = 25),
               class = "compact")
@@ -239,7 +230,6 @@ server <- function(input, output, session) {
   # --- Grid Generation --------------------------------------------------------
   grid_data <- eventReactive(input$gridButton, {
     req(bnd())
-    # Project to Yukon Albers (3578) for accurate km-based grid
     bnd_proj <- st_transform(bnd(), 3578)
     grid <- st_make_grid(bnd_proj, cellsize = input$gridSize * 1000) %>%
       st_as_sf()
@@ -253,9 +243,7 @@ server <- function(input, output, session) {
     req(input$map_zoom, input$map_center)
     zoom <- input$map_zoom
     lat  <- input$map_center$lat
-    # Resolution (meters/pixel) = (Cos(lat) * circumference) / (256 * 2^zoom)
     res <- (cos(lat * pi / 180) * 40075016.686) / (256 * 2^zoom)
-    # Scale = 1 : (res * pixels_per_meter). Assuming 96 DPI screen (3779.53 px/m)
     scale_val <- round(res * 3779.53)
     paste0("1:", format(scale_val, big.mark = ","))
   })
@@ -335,7 +323,6 @@ server <- function(input, output, session) {
                      layerId = line_base()$line_id,
                      group = "Linear disturbances")
       
-      # Add grid if button has been clicked
       if (input$gridButton > 0) {
         grid_sf <- grid_data()
         m <- m |>
@@ -466,9 +453,10 @@ server <- function(input, output, session) {
   
   # --- Validation -------------------------------------------------------------
   validate_df <- function(df, feature_type) {
-    indu  <- types |> filter(TYPE_FEATURE == feature_type) |> pull(TYPE_INDUSTRY)   |> unique()
-    dist  <- types |> filter(TYPE_FEATURE == feature_type) |> pull(TYPE_DISTURBANCE)|> unique()
-    combo <- types |> filter(TYPE_FEATURE == feature_type) |>
+    req(types()) # Ensures dynamic csv data is loaded before running validation
+    indu  <- types() |> filter(TYPE_FEATURE == feature_type) |> pull(TYPE_INDUSTRY)   |> unique()
+    dist  <- types() |> filter(TYPE_FEATURE == feature_type) |> pull(TYPE_DISTURBANCE)|> unique()
+    combo <- types() |> filter(TYPE_FEATURE == feature_type) |>
       mutate(C = paste0(TYPE_INDUSTRY, "***", TYPE_DISTURBANCE)) |> pull(C) |> unique()
     df |>
       mutate(
