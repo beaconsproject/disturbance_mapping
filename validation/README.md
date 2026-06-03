@@ -19,6 +19,4 @@ Alternatively, the app can be run from a local machine using the following steps
 
     shiny::runGitHub(repo="beaconsproject/disturbance_mapping", subdir="validation")
 
-<sup>1</sup>Depending on the version of R you are running, you may need to install the leaflet.esri package separately using this command: devtools::install_github("bhaskarvk/leaflet.esri")
-
 ![app](www/app.png)
