@@ -2,7 +2,7 @@
 
 ## Introduction
 
-June 3, 2026
+June 8, 2026
 
 The Regional Disturbance Mapping project provides access to data, methods and tools to develop and validate regional-scale anthropogenic disturbance maps that can then be used to generate footprint and/or intactness maps for use in conservation and land use planning.
 
@@ -17,6 +17,11 @@ The main components of the website are:
 ## Disturbance mapping manual
 
 An important part of a mapping project is to fill gaps in the coverage of anthropogenic disturbances using high resolution remote sensing imagery. The procedures to do so were adapted from the YG Government Surface Disturbance Mapping protocol and are described in detail here:
+
+- [Go to General Procedures manual](https://docs.google.com/document/d/1pVEeJe09dDMEV8KVDPm5VlvCeTs8LtK8vEzI-lGqiC8/edit?tab=t.0)
+- [Go to Temporal Mapping manual](https://docs.google.com/document/d/1WfhApX1oXL0z0r0xGeXgXC6l_MD3IX3KlZLOTykqjfg/edit?tab=t.0)
+
+Older links:
 
 - [Go to General Procedures manual](manual/general_procedures.md)
 - [Go to Temporal Mapping manual](manual/temporal_mapping.md)
