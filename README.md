@@ -19,12 +19,7 @@ The main components of the website are:
 An important part of a mapping project is to fill gaps in the coverage of anthropogenic disturbances using high resolution remote sensing imagery. The procedures to do so were adapted from the YG Government Surface Disturbance Mapping protocol and are described in detail here:
 
 - [Go to General Procedures manual](https://docs.google.com/document/d/1pVEeJe09dDMEV8KVDPm5VlvCeTs8LtK8vEzI-lGqiC8/edit?tab=t.0)
-- [Go to Temporal Mapping manual](https://docs.google.com/document/d/1WfhApX1oXL0z0r0xGeXgXC6l_MD3IX3KlZLOTykqjfg/edit?tab=t.0)
-
-Older links:
-
-- [Go to General Procedures manual](manual/general_procedures.md)
-- [Go to Temporal Mapping manual](manual/temporal_mapping.md)
+- [Go to Temporal Mapping manual](https://docs.google.com/document/d/1oDJ6o4FXfsW5BCbC9TFq7ZCFeMOre9kbJpcuAXtwJgE/edit?tab=t.0)
 
 For reference, the original Yukon Government's manuals can be viewed here:
 
