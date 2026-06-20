@@ -2,7 +2,7 @@
 
 ## Introduction
 
-June 8, 2026
+June 20, 2026
 
 The Regional Disturbance Mapping project provides access to data, methods and tools to develop and validate regional-scale anthropogenic disturbance maps that can then be used to generate footprint and/or intactness maps for use in conservation and land use planning.
 
@@ -59,6 +59,6 @@ We are in the process of writing a paper that describes the regional disturbance
 
 ## Master's thesis
 
-Maegan Elliot recently completed her thesis on the effects of anthropogenic disturbances on caribou within the Klaza and Clear Creek herds. A link to her thesis will be made available when it becomes available. In the meantime, the disturbance data that she prepared as part of her thesis is available [here](https://drive.google.com/drive/folders/1YBxloqOukWPX2mQOD0hb30a_7vmfDlDs).
+Maegan Elliot recently completed her thesis on the effects of anthropogenic disturbances on caribou within the Klaza and Clear Creek herds. A link to her thesis is available [here](https://ualberta.scholaris.ca/items/c2591947-7bc7-4f91-b9e1-b2f5a7f9aac8) while the disturbance data that she prepared as part of her thesis is available [here](https://drive.google.com/drive/folders/1YBxloqOukWPX2mQOD0hb30a_7vmfDlDs).
 
 - [Temporal surface disturbance database](Readme_surface_disturbance.md)

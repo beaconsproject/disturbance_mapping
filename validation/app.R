@@ -33,6 +33,13 @@ ui <- page_navbar(
   }
 "),
   
+  # JS handler to set grids_in_gpkg input from server
+  tags$head(tags$script(HTML('
+    Shiny.addCustomMessageHandler("setGridsInGpkg", function(val) {
+      Shiny.setInputValue("gridsInGpkg", val);
+    });
+  '))),
+  
   # 1. VIEW FEATURES TAB
   nav_panel(
     title = "View Features",
@@ -53,13 +60,25 @@ ui <- page_navbar(
             markdown("**2. SELECT LAYERS**"),
             selectInput("bnd",  "Study area:",          choices = NULL),
             selectInput("line", "Linear disturbances:", choices = NULL),
-            selectInput("poly", "Areal disturbances:",  choices = NULL),
+            selectInput("poly",      "Areal disturbances:",  choices = NULL),
+            selectInput("grid2x2",   "Grid 2x2 km:",         choices = NULL),
+            selectInput("grid10x10", "Grid 10x10 km:",       choices = NULL),
             hr(),
             
             markdown("**3. VIEW DISTURBANCES**"),
             actionButton("mapButton", "Map features", class = "btn-primary w-100"),
-            sliderInput("gridSize", "Grid size (km):", min = 1, max = 25, value = 5),
-            actionButton("gridButton", "Create grid", class = "btn-info w-100")
+            conditionalPanel(
+              condition = "input.mapButton > 0 && !input.gridsInGpkg",
+              hr(),
+              markdown("**4. SELECT GRIDS**"),
+              checkboxGroupInput(
+                "gridLayers",
+                label    = "Intersecting grids to display:",
+                choices  = c("Grid 2x2km" = "grid_2x2", "Grid 10x10km" = "grid_10x10"),
+                selected = "grid_2x2"
+              ),
+              actionButton("gridButton", "Load grids", icon = icon("th"), class = "btn-secondary w-100")
+            )
           ),
           
           # -- EDIT TAB --------------------------------------------------------
@@ -73,7 +92,6 @@ ui <- page_navbar(
             actionButton("saveEdits", "Save edits",
                          icon  = icon("floppy-disk"),
                          class = "btn-warning w-100"),
-            br(), br(),
             downloadButton("downloadGpkg", "Save as new geopackage",
                            icon  = icon("download"),
                            class = "btn-success w-100")
@@ -138,17 +156,17 @@ ui <- page_navbar(
             showcase = icon("magnifying-glass-plus"),
             theme = "primary"
           ),
-          card(
+          navset_card_tab(
             height      = 300,
             full_screen = TRUE,
-            card_header("Linear attributes"),
-            DTOutput("table1")
+            nav_panel("Linear attributes", DTOutput("table1")),
+            nav_panel("Areal attributes",  DTOutput("table2"))
           ),
-          card(
+          navset_card_tab(
             height      = 300,
             full_screen = TRUE,
-            card_header("Areal attributes"),
-            DTOutput("table2")
+            nav_panel("Grid 10x10 km", DTOutput("table_grid10")),
+            nav_panel("Grid 2x2 km",   DTOutput("table_grid2"))
           )
         )
       )
@@ -205,6 +223,16 @@ server <- function(input, output, session) {
     updateSelectInput(session, "bnd",  choices = lyrs, selected = 'studyarea')
     updateSelectInput(session, "line", choices = lyrs, selected = 'linear_disturbance')
     updateSelectInput(session, "poly", choices = lyrs, selected = 'areal_disturbance')
+    
+    # Grid layers: populate with matching layer names if present, else empty
+    grid2_choices  <- if ("grid_2x2km"   %in% lyrs) c("grid_2x2km"   = "grid_2x2km")   else c("(not in file)" = "")
+    grid10_choices <- if ("grid_10x10km" %in% lyrs) c("grid_10x10km" = "grid_10x10km") else c("(not in file)" = "")
+    updateSelectInput(session, "grid2x2",   choices = grid2_choices)
+    updateSelectInput(session, "grid10x10", choices = grid10_choices)
+    
+    # Tell the UI whether grids are already present (hides section 4 if TRUE)
+    grids_present <- all(c("grid_2x2km", "grid_10x10km") %in% lyrs)
+    session$sendCustomMessage("setGridsInGpkg", grids_present)
   })
   
   # --- Base spatial reactives -------------------------------------------------
@@ -227,15 +255,63 @@ server <- function(input, output, session) {
       mutate(poly_id = paste0('P', seq_len(n())))
   })
   
-  # --- Grid Generation --------------------------------------------------------
-  grid_data <- eventReactive(input$gridButton, {
+  # --- Detect whether both grids are embedded in the uploaded gpkg ------------
+  grids_in_gpkg <- reactive({
+    req(input$gpkg)
+    lyrs <- st_layers(input$gpkg$datapath)$name
+    all(c("grid_2x2km", "grid_10x10km") %in% lyrs)
+  })
+
+  # Unified trigger: fires on mapButton (when grids are in gpkg) OR gridButton
+  grid_trigger <- reactive({
+    list(input$mapButton, input$gridButton)
+  })
+
+  # --- Grid Selection: from gpkg on mapButton, or external file on gridButton -
+  grid_2x2 <- eventReactive(grid_trigger(), {
     req(bnd())
-    bnd_proj <- st_transform(bnd(), 3578)
-    grid <- st_make_grid(bnd_proj, cellsize = input$gridSize * 1000) %>%
-      st_as_sf()
-    grid <- grid[bnd_proj,] %>%
-      st_transform(4326)
-    grid
+    # When grids are embedded: load on mapButton; otherwise require gridButton
+    if (isTRUE(grids_in_gpkg())) {
+      req(input$mapButton > 0)
+    } else {
+      req(input$gridButton > 0, "grid_2x2" %in% input$gridLayers)
+    }
+    bnd_proj  <- st_transform(bnd(), 3578)
+    gpkg_src  <- if (!is.null(input$grid2x2) && nzchar(input$grid2x2)) {
+      list(path = input$gpkg$datapath, layer = input$grid2x2)
+    } else {
+      list(path = "www/sbfi_grid.gpkg", layer = "grid_2x2km")
+    }
+    full_grid <- st_read(gpkg_src$path, layer = gpkg_src$layer, quiet = TRUE)
+    full_grid <- st_transform(full_grid, 3578)
+    sel       <- full_grid[bnd_proj, ]
+    st_transform(sel, 4326)
+  })
+
+  grid_10x10 <- eventReactive(grid_trigger(), {
+    req(bnd())
+    if (isTRUE(grids_in_gpkg())) {
+      req(input$mapButton > 0)
+    } else {
+      req(input$gridButton > 0, "grid_10x10" %in% input$gridLayers)
+    }
+    bnd_proj  <- st_transform(bnd(), 3578)
+    gpkg_src  <- if (!is.null(input$grid10x10) && nzchar(input$grid10x10)) {
+      list(path = input$gpkg$datapath, layer = input$grid10x10)
+    } else {
+      list(path = "www/sbfi_grid.gpkg", layer = "grid_10x10km")
+    }
+    full_grid <- st_read(gpkg_src$path, layer = gpkg_src$layer, quiet = TRUE)
+    full_grid <- st_transform(full_grid, 3578)
+    sel       <- full_grid[bnd_proj, ]
+    st_transform(sel, 4326)
+  })
+
+  # Track whether grids have been loaded (via either button)
+  grids_loaded <- reactiveVal(FALSE)
+  observeEvent(input$gridButton, { grids_loaded(TRUE) })
+  observeEvent(input$mapButton, {
+    if (isTRUE(grids_in_gpkg())) grids_loaded(TRUE)
   })
 
   # --- Scale Calculation ------------------------------------------------------
@@ -249,14 +325,20 @@ server <- function(input, output, session) {
   })
   
   # --- Editable attribute tables ----------------------------------------------
-  line_attrs <- reactiveVal(NULL)
-  poly_attrs <- reactiveVal(NULL)
+  line_attrs       <- reactiveVal(NULL)
+  poly_attrs       <- reactiveVal(NULL)
+  grid2_attrs      <- reactiveVal(NULL)
+  grid10_attrs     <- reactiveVal(NULL)
   
   observeEvent(line_base(), { line_attrs(st_drop_geometry(line_base())) })
   observeEvent(poly_base(), { poly_attrs(st_drop_geometry(poly_base())) })
+  observeEvent(grid_2x2(),   { grid2_attrs(st_drop_geometry(grid_2x2()))   })
+  observeEvent(grid_10x10(), { grid10_attrs(st_drop_geometry(grid_10x10())) })
   
-  selected_line_id <- reactiveVal(NULL)
-  selected_poly_id <- reactiveVal(NULL)
+  selected_line_id   <- reactiveVal(NULL)
+  selected_poly_id   <- reactiveVal(NULL)
+  selected_grid2_id  <- reactiveVal(NULL)
+  selected_grid10_id <- reactiveVal(NULL)
   
   # --- Populate Search feature IDs when layer or data changes ----------------
   observe({
@@ -313,6 +395,7 @@ server <- function(input, output, session) {
       addScaleBar(position = 'bottomleft')
     
     if (!is.null(input$gpkg) && input$mapButton > 0) {
+      overlay_groups <- c("Study area", "Areal disturbances", "Linear disturbances")
       m <- m |>
         addPolygons(data = bnd(), fill = FALSE, weight = 2, color = 'blue',
                     group = "Study area") |>
@@ -322,22 +405,30 @@ server <- function(input, output, session) {
         addPolylines(data = line_base(), weight = 2, color = 'red',
                      layerId = line_base()$line_id,
                      group = "Linear disturbances")
-      
-      if (input$gridButton > 0) {
-        grid_sf <- grid_data()
+
+      # If both grids are embedded in the gpkg, draw them immediately
+      if (isTRUE(grids_in_gpkg())) {
+        g2_cols  <- grid_fill_colors(grid2_attrs())
+        g10_cols <- grid_fill_colors(grid10_attrs())
         m <- m |>
-          addPolygons(data = grid_sf, fill = FALSE, weight = 2, color = 'lightgrey',
-                      dashArray = "5, 5", group = "Grid") |>
-          addLegend(position = "bottomright", colors = "black", 
-                    labels = paste0("Grid (", input$gridSize, " x ", input$gridSize, " km)"),
-                    layerId = "gridLegend")
+          addPolygons(data = grid_2x2(), fill = TRUE, weight = 1,
+                      color = '#555555', fillColor = g2_cols, group = "Grid 2x2km",
+                      fillOpacity = 0.45, layerId = paste0("G2_", seq_len(nrow(grid_2x2())))) |>
+          addPolygons(data = grid_10x10(), fill = TRUE, weight = 2,
+                      color = '#222222', fillColor = g10_cols, group = "Grid 10x10km",
+                      fillOpacity = 0.45, layerId = paste0("G10_", seq_len(nrow(grid_10x10())))) |>
+          addLegend(position = "bottomright",
+                    colors   = c("#555555", "#222222", "#FFD700"),
+                    labels   = c("Grid 2x2km", "Grid 10x10km", "status = 1"),
+                    layerId  = "gridLegend")
+        overlay_groups <- c(overlay_groups, "Grid 2x2km", "Grid 10x10km")
       }
-      
+
       m <- m |>
         addLayersControl(
           position      = "topright",
           baseGroups    = c("Esri.WorldTopoMap", "Esri.WorldImagery", "Google.Imagery"),
-          overlayGroups = c("Study area", "Areal disturbances", "Linear disturbances", "Grid"),
+          overlayGroups = overlay_groups,
           options       = layersControlOptions(collapsed = FALSE)
         )
     } else {
@@ -349,6 +440,61 @@ server <- function(input, output, session) {
         )
     }
     m
+  })
+  
+  # --- Add grids to map via proxy when gridButton is clicked ------------------
+  observeEvent(input$gridButton, {
+    req(bnd())
+    
+    proxy <- leafletProxy("map")
+    
+    # Clear any previously added grid layers and legend
+    proxy |>
+      clearGroup("Grid 2x2km") |>
+      clearGroup("Grid 10x10km") |>
+      removeControl("gridLegend")
+    
+    legend_colors <- c()
+    legend_labels <- c()
+    overlay_groups <- c("Study area", "Areal disturbances", "Linear disturbances")
+    
+    if ("grid_2x2" %in% input$gridLayers && !is.null(grid_2x2())) {
+      g2_cols <- grid_fill_colors(grid2_attrs())
+      proxy <- proxy |>
+        addPolygons(data = grid_2x2(), fill = TRUE, weight = 1,
+                    color = '#555555', fillColor = g2_cols, group = "Grid 2x2km",
+                    fillOpacity = 0.45, layerId = paste0("G2_", seq_len(nrow(grid_2x2()))))
+      legend_colors <- c(legend_colors, "#555555")
+      legend_labels <- c(legend_labels, "Grid 2x2km")
+      overlay_groups <- c(overlay_groups, "Grid 2x2km")
+    }
+    
+    if ("grid_10x10" %in% input$gridLayers && !is.null(grid_10x10())) {
+      g10_cols <- grid_fill_colors(grid10_attrs())
+      proxy <- proxy |>
+        addPolygons(data = grid_10x10(), fill = TRUE, weight = 2,
+                    color = '#222222', fillColor = g10_cols, group = "Grid 10x10km",
+                    fillOpacity = 0.45, layerId = paste0("G10_", seq_len(nrow(grid_10x10()))))
+      legend_colors <- c(legend_colors, "#222222")
+      legend_labels <- c(legend_labels, "Grid 10x10km")
+      overlay_groups <- c(overlay_groups, "Grid 10x10km")
+    }
+    
+    if (length(legend_colors) > 0) {
+      proxy <- proxy |>
+        addLegend(position = "bottomright",
+                  colors   = c(legend_colors, "#FFD700"),
+                  labels   = c(legend_labels, "status = 1"),
+                  layerId  = "gridLegend")
+    }
+    
+    proxy |>
+      addLayersControl(
+        position      = "topright",
+        baseGroups    = c("Esri.WorldTopoMap", "Esri.WorldImagery", "Google.Imagery"),
+        overlayGroups = overlay_groups,
+        options       = layersControlOptions(collapsed = FALSE)
+      )
   })
   
   # --- Full feature tables ----------------------------------------------------
@@ -398,8 +544,10 @@ server <- function(input, output, session) {
   observeEvent(input$map_shape_click, {
     id <- input$map_shape_click$id
     req(id)
-    if (grepl("^P", id)) selected_poly_id(id)
-    else if (grepl("^L", id)) selected_line_id(id)
+    if      (grepl("^P",   id)) selected_poly_id(id)
+    else if (grepl("^L",   id)) selected_line_id(id)
+    else if (grepl("^G2_", id)) selected_grid2_id(id)
+    else if (grepl("^G10_",id)) selected_grid10_id(id)
   })
   
   apply_edit <- function(attrs, selected_id, id_col, info) {
@@ -419,15 +567,111 @@ server <- function(input, output, session) {
     apply_edit(line_attrs, selected_line_id, "line_id", input$table1_cell_edit)
   })
   
+  output$table_grid2 <- renderDT({
+    req(selected_grid2_id(), grid2_attrs())
+    idx <- as.integer(sub("^G2_", "", selected_grid2_id()))
+    req(!is.na(idx), idx >= 1L, idx <= nrow(grid2_attrs()))
+    render_editable(grid2_attrs()[idx, , drop = FALSE])
+  })
+
+  output$table_grid10 <- renderDT({
+    req(selected_grid10_id(), grid10_attrs())
+    idx <- as.integer(sub("^G10_", "", selected_grid10_id()))
+    req(!is.na(idx), idx >= 1L, idx <= nrow(grid10_attrs()))
+    render_editable(grid10_attrs()[idx, , drop = FALSE])
+  })
+
   observeEvent(input$table2_cell_edit, {
     req(poly_attrs(), selected_poly_id())
     apply_edit(poly_attrs, selected_poly_id, "poly_id", input$table2_cell_edit)
   })
   
+  # Edit helper for grid tables (keyed by numeric row index, not an ID column)
+  apply_grid_edit <- function(attrs, selected_id, prefix, info) {
+    df        <- attrs()
+    row_idx   <- as.integer(sub(paste0("^", prefix), "", selected_id()))
+    attr_name <- names(df)[info$row]
+    new_val   <- tryCatch(
+      methods::as(info$value, class(df[[attr_name]])[1]),
+      error = function(e) info$value
+    )
+    df[row_idx, attr_name] <- new_val
+    attrs(df)
+  }
+  
+  observeEvent(input$table_grid2_cell_edit, {
+    req(grid2_attrs(), selected_grid2_id())
+    apply_grid_edit(grid2_attrs, selected_grid2_id, "G2_", input$table_grid2_cell_edit)
+  })
+  
+  observeEvent(input$table_grid10_cell_edit, {
+    req(grid10_attrs(), selected_grid10_id())
+    apply_grid_edit(grid10_attrs, selected_grid10_id, "G10_", input$table_grid10_cell_edit)
+  })
+  
+  # --- Helper: derive fill colour from status column --------------------------
+  grid_fill_colors <- function(attrs_df) {
+    if (!is.null(attrs_df) && "status" %in% names(attrs_df)) {
+      ifelse(as.character(attrs_df$status) == "1", "#FFD700", "#AAAAAA")
+    } else {
+      rep("#AAAAAA", if (is.null(attrs_df)) 0L else nrow(attrs_df))
+    }
+  }
+  
+  # --- Redraw Grid 2x2 polygons when attrs change -----------------------------
+  observeEvent(grid2_attrs(), {
+    req(grid_2x2(), grids_loaded())
+    g2  <- grid_2x2()
+    df  <- grid2_attrs()
+    req(nrow(g2) == nrow(df))
+    cols <- grid_fill_colors(df)
+    leafletProxy("map") |>
+      clearGroup("Grid 2x2km") |>
+      addPolygons(
+        data        = g2,
+        fill        = TRUE,
+        weight      = 1,
+        color       = '#555555',
+        fillColor   = cols,
+        fillOpacity = 0.45,
+        group       = "Grid 2x2km",
+        layerId     = paste0("G2_", seq_len(nrow(g2)))
+      )
+  }, ignoreNULL = TRUE, ignoreInit = TRUE)
+  
+  # --- Redraw Grid 10x10 polygons when attrs change ---------------------------
+  observeEvent(grid10_attrs(), {
+    req(grid_10x10(), grids_loaded())
+    g10 <- grid_10x10()
+    df  <- grid10_attrs()
+    req(nrow(g10) == nrow(df))
+    cols <- grid_fill_colors(df)
+    leafletProxy("map") |>
+      clearGroup("Grid 10x10km") |>
+      addPolygons(
+        data        = g10,
+        fill        = TRUE,
+        weight      = 2,
+        color       = '#222222',
+        fillColor   = cols,
+        fillOpacity = 0.45,
+        group       = "Grid 10x10km",
+        layerId     = paste0("G10_", seq_len(nrow(g10)))
+      )
+  }, ignoreNULL = TRUE, ignoreInit = TRUE)
+  
+  saved_grid2_attrs  <- reactiveVal(NULL)
+  saved_grid10_attrs <- reactiveVal(NULL)
+  
+  observeEvent(grid2_attrs(),  { saved_grid2_attrs(grid2_attrs())   })
+  observeEvent(grid10_attrs(), { saved_grid10_attrs(grid10_attrs()) })
+  
   observeEvent(input$saveEdits, {
     req(line_attrs(), poly_attrs())
     saved_line_attrs(line_attrs())
     saved_poly_attrs(poly_attrs())
+    if (!is.null(grid2_attrs()))  saved_grid2_attrs(grid2_attrs())
+    if (!is.null(grid10_attrs())) saved_grid10_attrs(grid10_attrs())
     showNotification("Edits saved to tables.", type = "message", duration = 3)
   })
   
@@ -444,6 +688,19 @@ server <- function(input, output, session) {
       poly_sf <- st_sf(poly_attrs() |> select(-poly_id), geometry = st_geometry(poly_base()))
       st_write(line_sf, dsn = file, layer = input$line, driver = "GPKG", quiet = TRUE)
       st_write(poly_sf, dsn = file, layer = input$poly, driver = "GPKG", append = TRUE, quiet = TRUE)
+      # Write grids with edited attributes if available
+      g2_sf  <- tryCatch(grid_2x2(),   error = function(e) NULL)
+      g10_sf <- tryCatch(grid_10x10(), error = function(e) NULL)
+      if (!is.null(g2_sf)) {
+        if (!is.null(saved_grid2_attrs()))
+          g2_sf <- st_sf(saved_grid2_attrs(), geometry = st_geometry(g2_sf))
+        st_write(g2_sf,  dsn = file, layer = "grid_2x2km",   driver = "GPKG", append = TRUE, quiet = TRUE)
+      }
+      if (!is.null(g10_sf)) {
+        if (!is.null(saved_grid10_attrs()))
+          g10_sf <- st_sf(saved_grid10_attrs(), geometry = st_geometry(g10_sf))
+        st_write(g10_sf, dsn = file, layer = "grid_10x10km", driver = "GPKG", append = TRUE, quiet = TRUE)
+      }
       for (lyr in setdiff(all_lyrs, edited_lyrs)) {
         other_sf <- tryCatch(st_read(src_path, lyr, quiet = TRUE), error = function(e) NULL)
         if (!is.null(other_sf)) st_write(other_sf, dsn = file, layer = lyr, driver = "GPKG", append = TRUE, quiet = TRUE)
