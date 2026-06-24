@@ -1,1 +1,1 @@
-digitizing_project1.qgz and digitizing_project2.qgz are identical except that the former includes the layers that are in the data_package.gpkg
+digitizing_project1.qgz and digitizing_project2.qgz are identical except that the latter includes the layers that are in the data_package.gpkg
