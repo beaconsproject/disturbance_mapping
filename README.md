@@ -2,7 +2,7 @@
 
 ## Introduction
 
-June 24, 2026
+June 25, 2026
 
 The Regional Disturbance Mapping project provides access to data, methods and tools to develop and validate regional-scale anthropogenic disturbance maps that can then be used to generate footprint and/or intactness maps for use in conservation and land use planning.
 
@@ -49,11 +49,23 @@ For convenience, we bundled some of those layers into downloadable datasets (ple
 - [projected.gpkg](https://drive.google.com/file/d/1elO7hPsHipDAnMMLg8xLXkrum1kKMuMa/view?usp=sharing) - quartz and placer mining claims in the Yukon
 - [species.gpkg](https://drive.google.com/file/d/1-yosX3t0I4JJ8vLVit4vuUwKFhLib-Ut/view?usp=sharing) - various species ranges in the Yukon
 
-## Disturbance validation tool
+## Shiny apps
 
-The [Disturbance Validation](validation) app is a Shiny app that enables users to interactively examine linear and areal surface disturbance features, validate industry and disturbance type attributes, and edit values that are found to be in error. The app can be found at the following link and only requires the user to upload their project geopackage.
+We have developed several R/Shiny apps that can be used to assist in conducting a mapping project. They are referenced in the general procedures 
 
+**Geopackage Creator**
+
+- Assists users to upload a study area boundary map and create a disturbance mapping database for use in QGIS
+- https://beaconsproject.shinyapps.io/geopackage_creator/
+
+**Disturbance Validation**
+
+- Enables users to interactively examine linear and areal surface disturbance features, validate industry and disturbance type attributes, and edit values that are found to be in error
 - https://beaconsproject.shinyapps.io/disturbance_validation/
+
+**Disturbance Explorer**
+- Allows users to upload their new disturbance data to create human footprint and/or undisturbed areas maps for their study region
+- https://beaconsproject.shinyapps.io/disturbance_explorer/
 
 ## Disturbance mapping paper
 
