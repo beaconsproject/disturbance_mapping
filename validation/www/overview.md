@@ -1,8 +1,27 @@
 ## Disturbance Validation
 
-The Disturbance Validation app is a Shiny app that enables users to i) interactively examine linear and areal surface disturbance features along with several satellite imagery sources, ii) validate industry and disturbance type attributes, and iii) randomly select individual features and their associated attributes. This permits alternative digitizers or other users to quickly look at the digitized features and their assigned attributes, and visually compare them to more than one high resolution imagery source. Three satellite images are available for viewing: Esri WorldImagery, Google Imagery, and SPOT Imagery for circa 2021.
+The Disturbance Validation app is a Shiny app that enables users to i) interactively examine linear and areal surface disturbance features along with high resolution ESRI and Google satellite imagery, ii) edit linear and areal disturbance attribute values if needed, and iii) validate industry and disturbance type attribute values. This permits users or reviewers to quickly look at the digitized features and their assigned attributes, ensure that only permitted values are used for disturbance types, and edit them if necessary.
 
-<center><img src="app.jpg" width="600"></center>
+<center><img src="app.png" width="600"></center>
+
+<hr>
+
+#### Features
+
+| Feature | Description |
+|---------|-------------|
+| Map view | Leaflet map with ESRI Imagery / Topo / Gray basemaps and a layer-toggle control |
+| Table view | Tables displaying the values of the Linear and Areal disturbance features |
+| Scale bar | Dynamic `1:X` scale indicator in the map header |
+| Grid generator | Create an *n × n* km grid (1–25 km) intersecting the study area |
+| Click to inspect | Click any linear or areal feature to see its attributes in the side cards |
+| Editable attributes | Modify any field value directly in the attribute cards |
+| Save edits | *Save Attribute Edits* commits changes back to the in-memory layers |
+| Export | *Export as GeoPackage* writes all layers (including the grid if created) to a new `.gpkg`, then a download button appears |
+
+<hr>
+
+### Structure
 
 The Disturbance Validation app consists of Three sections:
 
@@ -19,8 +38,9 @@ The Linear features and Areal features tabs allow the user to view the attribute
 
 ### Validate attributes
 
-This section allows the user to view a summary of linear and areal disturbance attributes, validate their values, and identify errors.
+This section allows the user to view a summary of linear and areal disturbance attributes, validate their values, and identify errors. Results will be displayed in the 4 tabs on the right.
 
+<hr>
 
 ### User Guide
 
@@ -35,3 +55,6 @@ Follow these steps to validate digitized disturbances:
 - To edit the attributes of a feature, the user can: 
   - Search for the feature ID under the search tab on the left or view and flip through the dataset attribute table
   - Select a feature in the mapview and edit its attributes in the feature table on the right. 
+  
+<hr>
+

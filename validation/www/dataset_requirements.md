@@ -2,6 +2,8 @@
   
 This page describes the required map layers and attributes that are used by the *Disturbance Validation* app. Additional resources are available on Github at: https://github.com/beaconsproject/disturbance_validation/tree/main/www
   
+<hr>
+
 ### Required layers
 
 The Geopackage must contain the following three layers
@@ -11,6 +13,8 @@ The Geopackage must contain the following three layers
 - **areal_disturbance** : Areal (polygonal) anthropogenic surface disturbance features. Available from: https://map-data.service.yukon.ca/geoyukon/Environmental_Monitoring/
 
 To **Validate Attributes** a .csv file of approved Industry and Disturbance types is required. A template is available from: https://github.com/beaconsproject/disturbance_validation/blob/main/www/yg_industry_disturbance_types.csv
+
+<hr>
 
 ### Required attributes
 
@@ -25,6 +29,8 @@ The **areal_disturbance** layer must include the following attributes:
     
 - TYPE_INDUSTRY : a text attribute describing industry type e.g., Mining, Transportation
 - TYPE_DISTURBANCE : a text attribute describing disturbance type (nested within industry type) e.g., Drill Pad, Clearing
+
+<hr>
 
 ### Random features #is this header relevant?
 
