@@ -144,7 +144,8 @@ ui <- page_navbar(
           nav_panel("Overview",        includeMarkdown("www/overview.md")),
           nav_panel("Mapview",         leafletOutput("map", height = "100%")),
           nav_panel("Linear features", DTOutput("table_line")),
-          nav_panel("Areal features",  DTOutput("table_poly"))
+          nav_panel("Areal features",  DTOutput("table_poly")),
+          nav_panel("Dataset requirements", includeMarkdown("www/dataset_requirements.md"))
         ),
         
         # Right: scale box + per-feature attribute cards
