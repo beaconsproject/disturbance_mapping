@@ -1,6 +1,10 @@
 ### Required Layers and Attributes
   
-This page describes the required map layers and attributes that are used by the *Disturbance Validation* app. Additional resources are available on Github at: https://github.com/beaconsproject/disturbance_validation/tree/main/www
+This page describes the required map layers and attributes that are used by the *Disturbance Validation* app. 
+
+Additional resources are available on Github at: https://github.com/beaconsproject/disturbance_validation/tree/main/www These include:
+- a **demo geopackage** for learning how the tool works
+- a .csv of **Industry and Disturbance types** used by Yukon Government
   
 <hr>
 
