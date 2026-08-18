@@ -1,0 +1,143 @@
+---
+title: Workflow for Creating a New Mapping Project
+format:
+  html:
+    code-fold: true
+    css: styles.css
+execute:
+  warning: false
+---
+
+
+```{r}
+#| message: false
+library(sf)
+library(tmap)
+tmap_mode("plot")
+project_gpkg <- "sample_project/demo.gpkg"
+disturbance_gpkg <- "G:/Shared drives/Beacons data/Public/geopackage_creator/bp_datasets.gpkg"
+aoi <- st_read(project_gpkg, layer = "studyarea", quiet = TRUE)
+aoi_bbox <- st_as_text(st_as_sfc(st_bbox(st_buffer(aoi, 50000))))
+bnd <- st_read(disturbance_gpkg, layer = "bnd", quiet = TRUE)
+grid <- st_read(disturbance_gpkg, layer = "grid", quiet = TRUE)
+line <- st_read(disturbance_gpkg, layer = "linear_disturbances", wkt_filter = aoi_bbox, quiet = TRUE)
+poly <- st_read(disturbance_gpkg, layer = "areal_disturbances", wkt_filter = aoi_bbox, quiet = TRUE)
+map_bbox <- st_bbox(st_buffer(aoi, 50000))
+```
+
+## Introduction
+
+This workflow should be used when creating a new project and merging it with the most recent disturbance database. Steps include:
+
+1. Prepare project geopackage and backup the existing disturbance database
+2. Use the new project AOI to select all intersecting 10-km grid cells
+3. Use the selected grid cells to clip all existing linear and areal features
+4. Digitize new features, remove features no longer visible, and modify erroneous features
+5. Erase all linear and areal features within the AOI-GRID from the existing disturbance database
+6. Replace AOI-GRID gap with the newly modified linear and areal disturbance features
+7. Replace the original disturbance database with the updated version
+
+## Step 1: Backup existing disturbance database
+
+Prepare the project geopackage by creating a new project folder and copying your AOI map layer into it. Also, make sure to backup or archive the existing disturbance database (disturbances.gpkg) e.g., `disturbances_2026-08-13.gpkg`
+
+```{r}
+#| fig-width: 11
+#| fig-height: 11
+tm_shape(bnd, bbox = map_bbox) + tm_borders(col = "black") +
+  tm_shape(poly) + tm_polygons(fill = "blue", col = NA) +
+  tm_shape(line) + tm_lines(col = "blue") +
+  tm_shape(aoi) + tm_borders(col = "black", lwd = 2) +
+  tm_title("Area of interest")
+```
+
+## Step 2: Select intersecting grid cells
+
+Use the AOI to select all intersecting 10x10 km grid cells.
+
+```{r}
+#| fig-width: 11
+#| fig-height: 11
+aoi_grid <- grid[st_intersects(grid, aoi, sparse = FALSE)[, 1], ]
+st_write(aoi_grid, project_gpkg, layer = "aoi_grid", delete_layer = TRUE, quiet = TRUE)
+tm_shape(grid, bbox = map_bbox) + tm_borders(col = "grey50") +
+  tm_shape(aoi_grid) + tm_polygons(fill = "grey70", col = "grey50") +
+  tm_shape(aoi) + tm_borders(col = "black", lwd = 2) +
+  tm_title("Selected AO grid cells")
+```
+
+## Step 3: Clip existing linear and areal features
+
+Clip existing linear and areal features to the aoi_grid extent and save them to the project geopackage.
+
+```{r}
+#| fig-width: 11
+#| fig-height: 11
+aoi_grid_line <- st_intersection(line, st_union(aoi_grid))
+aoi_grid_poly <- st_intersection(poly, st_union(aoi_grid))
+#st_write(aoi_grid_line, project_gpkg, layer = "aoi_grid_line", delete_layer = TRUE, quiet = TRUE)
+#st_write(aoi_grid_poly, project_gpkg, layer = "aoi_grid_poly", delete_layer = TRUE, quiet = TRUE)
+tm_shape(aoi_grid, bbox = map_bbox) + tm_borders(col = "grey50") +
+  tm_shape(aoi_grid_poly) + tm_polygons(fill = "blue", col = NA) +
+  tm_shape(aoi_grid_line) + tm_lines(col = "blue") +
+  tm_shape(aoi) + tm_borders(col = "black", lwd = 2) +
+  tm_title("Clipped disturbance features")
+```
+
+## Step 4: Digitize
+
+Use QGIS to digitize new features, remove features no longer visible, and modify erroneous features. Make sure the entire area of the `aoi_grid` is reviewed and updated.
+
+```{r}
+#| fig-width: 11
+#| fig-height: 11
+aoi_grid_line <- st_intersection(line, st_union(aoi_grid))
+aoi_grid_poly <- st_intersection(poly, st_union(aoi_grid))
+#st_write(aoi_grid_line, project_gpkg, layer = "aoi_grid_line", delete_layer = TRUE, quiet = TRUE)
+#st_write(aoi_grid_poly, project_gpkg, layer = "aoi_grid_poly", delete_layer = TRUE, quiet = TRUE)
+tm_shape(aoi_grid, bbox = map_bbox) + tm_borders(col = "grey50") +
+  tm_shape(aoi_grid_poly) + tm_polygons(fill = "red", col = NA) +
+  tm_shape(aoi_grid_line) + tm_lines(col = "red") +
+  tm_shape(aoi) + tm_borders(col = "black", lwd = 2) +
+  tm_title("New & revised disturbance features")
+```
+
+## Step 5: Erase existing features from the disturbance database
+
+Erase all linear and areal features within the AOI-GRID from the existing disturbance database
+
+```{r}
+#| fig-width: 11
+#| fig-height: 11
+line2 <- st_difference(line, st_union(aoi_grid))
+poly2 <- st_difference(poly, st_union(aoi_grid))
+aoi_grid2 <- st_union(aoi_grid)
+tm_shape(aoi_grid2, bbox = map_bbox) + tm_borders(col = "grey50") +
+  tm_shape(poly2) + tm_polygons(fill = "blue", col = NA) +
+  tm_shape(line2) + tm_lines(col = "blue") +
+  tm_shape(aoi) + tm_borders(col = "black", lwd = 2) +
+  tm_title("AOI-GRID gap erased from disturbance database")
+```
+
+## Step 6: Replace erased features with modified features
+
+Replace AOI-GRID gap with the newly modified linear and areal disturbance features
+
+```{r}
+#| fig-width: 11
+#| fig-height: 11
+line2 <- st_difference(line, st_union(aoi_grid))
+poly2 <- st_difference(poly, st_union(aoi_grid))
+aoi_grid2 <- st_union(aoi_grid)
+tm_shape(aoi_grid2, bbox = map_bbox) + tm_borders(col = "grey50") +
+  tm_shape(poly2) + tm_polygons(fill = "blue", col = NA) +
+  tm_shape(line2) + tm_lines(col = "blue") +
+  tm_shape(aoi_grid_poly) + tm_polygons(fill = "red", col = NA) +
+  tm_shape(aoi_grid_line) + tm_lines(col = "red") +
+  tm_shape(aoi) + tm_borders(col = "black", lwd = 2) +
+  tm_title("Updated disturbance database with AOI-GRID features")
+```
+
+## Step 7: Replace the original disturbance database with the updated version
+
+Replace the original disturbance database with the updated version
