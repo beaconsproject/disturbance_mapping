@@ -8,7 +8,7 @@ The temporal surface disturbance database includes the following shapefiles for 
 * Klaza polygonal surface disturbances
 * Klaza linear surface disturbances
 
-The temporal aspect of the database is captured under the DISTURBANC field, where the year a feature appeared in satellite imagery from 1972 – 2021 is recorded. In some cases, there are multiple overlapping features where a disturbance changed over time. Users may choose to filter the database to a specific time period. 
+The temporal aspect of the database is captured under the DISTURBANC field, where the year a feature appeared in satellite imagery from 1972 – 2021 is recorded. In some cases, there are multiple overlapping features where a disturbance changed over time. Users may choose to filter the database to a specific time period. The database can be accessed here: https://drive.google.com/drive/folders/1YBxloqOukWPX2mQOD0hb30a_7vmfDlDs 
 
 For the complete description of the methods used and a list of industry and disturbance types, please see: 
 Procedures manual: https://github.com/beaconsproject/disturbance_mapping/blob/master/manual/general_procedures.md
