@@ -78,4 +78,4 @@ We are in the process of writing a paper that describes the regional disturbance
 
 Maegan Elliot recently completed her thesis on the effects of anthropogenic disturbances on caribou within the Klaza and Clear Creek herds. A link to her thesis is available [here](https://ualberta.scholaris.ca/items/c2591947-7bc7-4f91-b9e1-b2f5a7f9aac8) while the disturbance data that she prepared as part of her thesis is available [here](https://drive.google.com/drive/folders/1YBxloqOukWPX2mQOD0hb30a_7vmfDlDs).
 
-- [Temporal surface disturbance database](Readme_surface_disturbance.md)
+- [Learn about the temporal surface disturbance database](Readme_surface_disturbance.md)
