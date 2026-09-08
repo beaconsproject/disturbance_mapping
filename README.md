@@ -2,7 +2,7 @@
 
 ## Introduction
 
-August 18, 2026
+September 8, 2026
 
 The Regional Disturbance Mapping project provides access to data, methods and tools to develop and validate regional-scale anthropogenic disturbance maps that can then be used to generate footprint and/or intactness maps for use in conservation and land use planning.
 
@@ -60,7 +60,7 @@ We have developed several R/Shiny apps that can be used to assist in conducting 
 
 **Disturbance Validation**
 
-- Enables users to interactively examine linear and areal surface disturbance features, validate industry and disturbance type attributes, and edit values that are found to be in error
+- Enables users to interactively examine linear and areal surface disturbance features, validate industry and disturbance type attributes, edit values that are found to be in error, and view and fix spatial overlaps.
 - https://beaconsproject.shinyapps.io/disturbance_validation/
 
 **Disturbance Explorer**

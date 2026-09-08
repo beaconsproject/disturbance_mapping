@@ -1,6 +1,6 @@
 ## Welcome to Disturbance Validation
 
-This tool helps you check and clean up maps of human-made disturbances on the landscape - things like roads, tailing ponds, and clearings. You can look at them on a satellite map, fix any mistakes in their labels, and check that every feature has been labelled correctly.
+This tool helps you check and clean up maps of human-made disturbances on the landscape - things like roads, tailing ponds, and clearings. You can look at them on a satellite map, fix any mistakes in their labels, check that every feature has been labelled correctly, and find and remove duplicate or overlapping features.
 
 You don't need any technical or GIS background to use it. This guide walks you through everything step by step.
 
@@ -25,6 +25,8 @@ If you don't have your own data yet, a sample GeoPackage and CSV are also linked
 4. Click **Map features**.
 5. Explore the map and tables, and fix any details that need editing.
 6. Save your work - see "Saving your changes" further down this page. There are two different save buttons, and it's worth knowing what each one does.
+
+Two more tabs let you go further: **Validate attributes** checks every label against a list of approved values, and **Fix overlaps** finds and removes duplicate or overlapping features. Both reuse the GeoPackage you uploaded on the View features tab.
 
 <hr>
 
@@ -76,6 +78,32 @@ In the error tables, each row is checked in three ways, shown as `ok` or a messa
 
 <hr>
 
+### Finding and removing overlaps (Fix overlaps tab)
+
+This section looks for features that sit on top of one another - either exact duplicates (two features with the same shape) or partial overlaps (features that share only part of their area) - and lets you remove the extras.
+
+It works on the **same GeoPackage you uploaded on the View features tab**, so there is nothing new to upload here.
+
+**1. View overlaps**
+
+- **Layer** - choose which layer of your GeoPackage to check (for example your linear disturbances or your areal disturbances).
+- Click **Calculate and view overlaps**. The app checks every feature against every other feature in that layer and shows the result on the map and in the tables:
+  - **Map** - features are coloured red (exact duplicate), orange (partial overlap) or blue (no overlap), with a legend in the bottom-right corner.
+  - **Overlap summary** - counts of how many exact duplicates and partial overlaps were found, split by whether their attributes also match.
+  - **Overlapping feature attributes** - one row per overlapping feature. Features that overlap each other share an **Overlap id** and are labelled as an *Exact* or *Partial* group. Click any row to outline that whole group on the map in bright blue and zoom to it.
+
+**2. Fix overlaps**
+
+- **Fix overlaps (exact and partial)** - when ticked, both exact duplicates and partial overlaps are cleaned up. Untick it to remove only exact duplicates.
+- **Only fix if attributes identical** - when ticked, features are only treated as duplicates if *all* of their attribute values also match, not just their shape.
+- Click **Remove selected overlaps**. Within each cluster of overlapping features the first one is kept and the rest are removed. Removed features turn grey on the map, the summary gains an **After** column, and the attribute table gains a **Kept / Removed** status.
+
+**3. Save changes**
+
+- **Save as new geopackage** - downloads a new `.gpkg` file to your computer containing the chosen layer with the overlapping features removed. Nothing is changed in your original file.
+
+<hr>
+
 ### What your GeoPackage needs to contain
 
 Your `.gpkg` file should include three layers:
@@ -105,3 +133,5 @@ If you'd like to try the tool before using your own data, these are available on
 - **Layer** - one set of map features, e.g. all your linear disturbances.
 - **Feature** - one individual item on the map, e.g. a single road segment or a single well pad.
 - **Attribute** - a piece of information attached to a feature, like a label or category (shown in the tables and cards as columns).
+- **Exact duplicate** - two or more features that have exactly the same shape and position.
+- **Partial overlap** - two features that share only part of their area, rather than matching exactly.

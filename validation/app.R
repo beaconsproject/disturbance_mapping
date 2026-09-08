@@ -20,6 +20,186 @@ default_bbox <- st_bbox(c(xmin = 19075.03,    ymin = 41301.30,
   st_transform(4326) |>
   st_bbox()
 
+# ==============================================================================
+# OVERLAP DETECTION / FIX HELPERS  (ported from overlap_dashboard.qmd)
+# ==============================================================================
+
+# Colour key shared by the "Fix overlaps" map and its legend.
+PAL <- c(
+  "Exact duplicate" = "#d62728",
+  "Partial overlap" = "#ff7f0e",
+  "No overlap"      = "#3186cc",
+  "Removed"         = "#9e9e9e"
+)
+
+# st_make_valid() can turn a repaired feature into a GEOMETRYCOLLECTION
+# (polygon slivers mixed with stray lines/points), which leaflet cannot draw.
+# Replace any such geometry with just its polygon (or line) parts, one row at
+# a time so row order / count stay aligned with the uploaded layer.
+planar_only <- function(x) {
+  g  <- st_geometry(x)
+  gt <- as.character(st_geometry_type(g))
+  gc <- which(gt == "GEOMETRYCOLLECTION")
+  if (!length(gc)) return(x)
+  want  <- if (any(grepl("POLYGON", gt))) "POLYGON" else "LINESTRING"
+  empty <- if (want == "POLYGON") st_polygon() else st_linestring()
+  crs   <- st_crs(x)
+  gl <- lapply(seq_along(g), function(i) {
+    if (!(i %in% gc)) return(g[[i]])
+    out <- tryCatch(
+      suppressWarnings(st_collection_extract(st_sfc(g[[i]], crs = crs), want)),
+      error = function(e) NULL
+    )
+    if (is.null(out) || length(out) == 0) empty else out[[1]]
+  })
+  st_geometry(x) <- st_sfc(gl, crs = crs)
+  x
+}
+
+# Repair geometries, then classify every feature against the rest of the layer:
+#   exact_sp       - spatially equal to another feature (st_equals)
+#   exact_spattr   - spatially equal AND all attributes identical
+#   partial_sp     - partial spatial overlap with another feature (st_overlaps)
+#   partial_spattr - partial overlap AND all attributes identical
+# eq / ov keep the neighbour index lists so the fix step can group features.
+overlap_analysis <- function(x) {
+  x <- planar_only(st_make_valid(x))
+  n <- nrow(x)
+  nonempty <- !st_is_empty(x)
+
+  eq_raw <- st_equals(x)
+  ov     <- lapply(st_overlaps(x), as.integer)
+  eq     <- lapply(seq_len(n), function(i) as.integer(setdiff(eq_raw[[i]], i)))
+
+  adf  <- st_drop_geometry(x)
+  akey <- if (ncol(adf) > 0) {
+    do.call(paste, c(lapply(adf, as.character), sep = ""))
+  } else {
+    rep("", n)
+  }
+
+  attr_match <- function(nb, i) length(nb) > 0 && any(akey[nb] == akey[i])
+
+  exact_sp       <- lengths(eq) > 0 & nonempty
+  partial_sp     <- lengths(ov) > 0 & nonempty
+  exact_spattr   <- vapply(seq_len(n), function(i) nonempty[i] && attr_match(eq[[i]], i), logical(1))
+  partial_spattr <- vapply(seq_len(n), function(i) nonempty[i] && attr_match(ov[[i]], i), logical(1))
+  flagged        <- exact_sp | partial_sp
+
+  # Connected clusters of overlapping features (exact + partial links). Each
+  # cluster gets a shared group_id; group_type is "Exact" when every member
+  # shares the same geometry (all pairwise st_equals), otherwise "Partial".
+  adj <- lapply(seq_len(n), function(i) union(eq[[i]], ov[[i]]))
+  group_id <- rep(NA_integer_, n)
+  k <- 0L
+  for (i in seq_len(n)) {
+    if (!flagged[i] || !is.na(group_id[i])) next
+    k <- k + 1L
+    stack <- i
+    while (length(stack)) {
+      v <- stack[[1]]
+      stack <- stack[-1]
+      if (!is.na(group_id[v])) next
+      group_id[v] <- k
+      nb <- adj[[v]]
+      stack <- c(stack, nb[is.na(group_id[nb])])
+    }
+  }
+  group_type <- rep(NA_character_, n)
+  for (g in seq_len(k)) {
+    idx <- which(group_id == g)
+    all_equal <- all(vapply(idx, function(i) setequal(c(i, eq[[i]]), idx), logical(1)))
+    group_type[idx] <- if (all_equal) "Exact" else "Partial"
+  }
+
+  list(
+    x    = x,
+    akey = akey,
+    eq   = eq,
+    ov   = ov,
+    exact_sp       = exact_sp,
+    exact_spattr   = exact_spattr,
+    partial_sp     = partial_sp,
+    partial_spattr = partial_spattr,
+    group_id       = group_id,
+    group_type     = group_type
+  )
+}
+
+# The five summary rows for one analysis (feature counts).
+counts_vec <- function(a) c(
+  "Total features"                          = nrow(a$x),
+  "Exact duplicates (spatial only)"         = sum(a$exact_sp),
+  "Exact duplicates (spatial + attributes)" = sum(a$exact_spattr),
+  "Partial overlaps (spatial only)"         = sum(a$partial_sp),
+  "Partial overlaps (spatial + attributes)" = sum(a$partial_spattr)
+)
+
+# Row indices to drop. Build clusters of overlapping features (exact links
+# always; partial links when fix_partial; keep only identical-attribute links
+# when attr_only), then in each cluster keep the first feature and drop the
+# rest. The saved layer is therefore the original features minus these rows.
+removal_indices <- function(a, fix_partial, attr_only) {
+  n <- nrow(a$x)
+  if (n == 0) return(integer(0))
+
+  adj <- vector("list", n)
+  for (i in seq_len(n)) {
+    nb <- a$eq[[i]]
+    if (fix_partial) nb <- union(nb, a$ov[[i]])
+    if (attr_only && length(nb)) nb <- nb[a$akey[nb] == a$akey[i]]
+    adj[[i]] <- as.integer(nb)
+  }
+
+  comp <- rep(NA_integer_, n)
+  k <- 0L
+  for (i in seq_len(n)) {
+    if (!is.na(comp[i]) || length(adj[[i]]) == 0) next
+    k <- k + 1L
+    stack <- i
+    while (length(stack)) {
+      v <- stack[[1]]
+      stack <- stack[-1]
+      if (!is.na(comp[v])) next
+      comp[v] <- k
+      nxt <- adj[[v]]
+      stack <- c(stack, nxt[is.na(comp[nxt])])
+    }
+  }
+
+  drop <- integer(0)
+  for (g in seq_len(k)) {
+    idx <- which(comp == g)
+    if (length(idx) > 1) drop <- c(drop, sort(idx)[-1])
+  }
+  sort(unique(drop))
+}
+
+# Add a line or polygon layer to the map, coloured by category. Empty
+# geometries (features dropped by geometry repair) are skipped.
+add_features <- function(map, d, category, faded = FALSE, group = NULL) {
+  ok <- !st_is_empty(d)
+  d  <- d[ok, , drop = FALSE]
+  category <- category[ok]
+  if (nrow(d) == 0) return(map)
+  col     <- unname(PAL[category])
+  is_line <- any(grepl("LINESTRING", as.character(st_geometry_type(d))))
+  if (is_line) {
+    addPolylines(
+      map, data = d, color = col, group = group,
+      weight = if (faded) 2 else 3, opacity = if (faded) 0.4 else 0.9,
+      dashArray = if (faded) "4" else NULL, label = category
+    )
+  } else {
+    addPolygons(
+      map, data = d, color = col, weight = 1, group = group,
+      opacity = if (faded) 0.4 else 0.9,
+      fillColor = col, fillOpacity = if (faded) 0.1 else 0.45,
+      dashArray = if (faded) "4" else NULL, label = category
+    )
+  }
+}
+
 ui <- page_navbar(
   title = "Disturbance Validation",
   theme = bs_theme(
@@ -45,6 +225,9 @@ ui <- page_navbar(
   }
   table.dataTable tbody tr.selected > * {
     box-shadow: inset 0 0 0 9999px rgba(255, 255, 0, 0.5) !important;
+  }
+  table.dataTable tbody tr.grp-hl td {
+    background-color: #ffe08a !important;
   }
 "),
   
@@ -169,6 +352,65 @@ ui <- page_navbar(
         nav_panel("Linear errors",  DTOutput("linearTable")),
         nav_panel("Areal errors",   DTOutput("arealTable")),
         nav_panel("Permitted values", DTOutput("types"))
+      )
+    )
+  ),
+
+  # 3. FIX OVERLAPS TAB
+  nav_panel(
+    title = "Fix overlaps",
+    layout_sidebar(
+      sidebar = sidebar(width = 300,
+        markdown("**1. View overlaps**"),
+        markdown("Uses the geopackage uploaded in the **View features** tab."),
+        uiOutput("ov_layer_ui"),
+        actionButton("ov_calc", "Calculate and view overlaps",
+                     class = "btn-primary w-100"),
+        hr(),
+
+        markdown("**2. Fix overlaps**"),
+        checkboxInput("ov_fix_pp", "Fix overlaps (exact and partial)", value = TRUE),
+        checkboxInput("ov_attr_only", "Only fix if attributes identical", value = TRUE),
+        actionButton("ov_fix", "Remove selected overlaps",
+                     class = "btn-warning w-100"),
+        helpText(
+          "Unchecked “exact and partial” removes only exact duplicates. ",
+          "In each overlap cluster the first feature is kept and the rest removed; ",
+          "“attributes identical” limits this to features whose attributes all match."
+        ),
+        hr(),
+
+        markdown("**3. Save changes**"),
+        downloadButton("ov_save", "Save as new geopackage",
+                       icon  = icon("download"),
+                       class = "btn-success w-100")
+      ),
+
+      layout_columns(
+        col_widths = c(6, 6),
+
+        card(
+          full_screen = TRUE,
+          height      = 750,
+          card_header("Map"),
+          leafletOutput("ov_map", height = "100%")
+        ),
+
+        layout_columns(
+          col_widths = 12,
+          card(
+            full_screen = TRUE,
+            height      = 260,
+            card_header("Overlap summary"),
+            DTOutput("ov_summary")
+          ),
+          card(
+            full_screen = TRUE,
+            height      = 480,
+            card_header("Overlapping feature attributes"),
+            DTOutput("ov_attributes")
+          )
+        )
       )
     )
   )
@@ -546,6 +788,263 @@ server <- function(input, output, session) {
     save_to_existing_gpkg()
     showNotification("Corrections saved to the existing geopackage and re-validated.", type = "message", duration = 3)
   })
+
+  # ==========================================================================
+  # FIX OVERLAPS TAB  (ported from overlap_dashboard.qmd)
+  # Reuses the geopackage uploaded on the "View features" tab (input$gpkg);
+  # only the layer to check is chosen here.
+  # ==========================================================================
+
+  ov_vals <- reactiveValues(src = NULL, before = NULL, after = NULL,
+                            removed = integer(0))
+
+  # --- list the layers in the uploaded GeoPackage ---------------------------
+  output$ov_layer_ui <- renderUI({
+    f <- input$gpkg
+    if (is.null(f))
+      return(helpText("No geopackage uploaded yet — upload one on the “View features” tab."))
+    lyrs <- tryCatch(st_layers(f$datapath)$name, error = function(e) character(0))
+    if (!length(lyrs)) return(helpText("No layers found in this GeoPackage."))
+    selectInput("ov_layer", "Layer", choices = lyrs)
+  })
+
+  # --- read the selected layer -------------------------------------------
+  observeEvent(list(input$gpkg, input$ov_layer), {
+    req(input$gpkg, input$ov_layer)
+    x <- tryCatch(st_read(input$gpkg$datapath, input$ov_layer, quiet = TRUE),
+                  error = function(e) NULL)
+    if (is.null(x) || nrow(x) == 0) {
+      showNotification("Could not read that layer (or it is empty).", type = "error")
+      return(invisible())
+    }
+    gt <- as.character(st_geometry_type(x))
+    if (!any(grepl("LINESTRING|POLYGON", gt))) {
+      showNotification("Please select a line or polygon layer.", type = "error")
+      return(invisible())
+    }
+    if (is.na(st_crs(x))) {
+      showNotification("Layer has no CRS — it cannot be mapped.", type = "error")
+      return(invisible())
+    }
+    ov_vals$src     <- x
+    ov_vals$before  <- NULL
+    ov_vals$after   <- NULL
+    ov_vals$removed <- integer(0)
+  }, ignoreInit = TRUE)
+
+  # --- calculate and view overlaps -------------------------------------
+  observeEvent(input$ov_calc, {
+    req(ov_vals$src)
+    withProgress(message = "Detecting overlaps…", {
+      ov_vals$before <- overlap_analysis(ov_vals$src)
+    })
+    ov_vals$after   <- NULL
+    ov_vals$removed <- integer(0)
+  })
+
+  # --- remove selected overlaps --------------------------------------
+  observeEvent(input$ov_fix, {
+    req(ov_vals$before)
+    rem <- removal_indices(ov_vals$before, isTRUE(input$ov_fix_pp), isTRUE(input$ov_attr_only))
+    ov_vals$removed <- rem
+    reduced <- if (length(rem)) ov_vals$before$x[-rem, ] else ov_vals$before$x
+    withProgress(message = "Re-checking after fix…", {
+      ov_vals$after <- overlap_analysis(reduced)
+    })
+    showNotification(sprintf("%d feature(s) removed.", length(rem)), type = "message")
+  })
+
+  # --- summary table (Attribute / Before / After) ----------------------
+  output$ov_summary <- renderDT({
+    rb <- ov_vals$before
+    req(rb)
+    before <- counts_vec(rb)
+    df <- data.frame(
+      Attribute = names(before),
+      Before    = as.integer(before),
+      After     = if (is.null(ov_vals$after)) "" else as.integer(counts_vec(ov_vals$after)),
+      check.names = FALSE, stringsAsFactors = FALSE
+    )
+    datatable(
+      df, rownames = FALSE,
+      options = list(
+        dom = "t", paging = FALSE, ordering = FALSE,
+        columnDefs = list(list(className = "dt-center", targets = 1:2))
+      )
+    )
+  })
+
+  # --- attributes of the overlapping features ------------------------
+  output$ov_attributes <- renderDT({
+    rb <- ov_vals$before
+    req(rb)
+    flagged <- which(rb$exact_sp | rb$partial_sp)
+    if (!length(flagged)) {
+      return(datatable(data.frame(Message = "No overlapping features."),
+                       rownames = FALSE, options = list(dom = "t")))
+    }
+    ord <- flagged[order(rb$group_id[flagged], flagged)]
+    tbl <- data.frame(
+      Overlap_id   = rb$group_id[ord],
+      Overlap_type = rb$group_type[ord],
+      check.names = FALSE, stringsAsFactors = FALSE
+    )
+    if (length(ov_vals$removed)) {
+      tbl$Status <- ifelse(ord %in% ov_vals$removed, "Removed", "Kept")
+    }
+    tbl <- cbind(tbl, st_drop_geometry(rb$x)[ord, , drop = FALSE])
+    datatable(
+      tbl, rownames = FALSE, filter = "top", selection = "none",
+      options = list(
+        dom = "tip", pageLength = 15, scrollX = TRUE,
+        drawCallback = JS(
+          "function() {",
+          "  if (window._ovGrpHl == null) return;",
+          "  var api = this.api();",
+          "  $(api.table().body()).find('tr').removeClass('grp-hl');",
+          "  api.rows({page: 'current'}).every(function() {",
+          "    if (String(this.data()[0]) === window._ovGrpHl) $(this.node()).addClass('grp-hl');",
+          "  });",
+          "}"
+        )
+      ),
+      callback = JS(
+        "window._ovGrpHl = null;",
+        "table.on('click', 'tbody tr', function() {",
+        "  var d = table.row(this).data();",
+        "  if (!d) return;",
+        "  var gid = String(d[0]);",
+        "  window._ovGrpHl = gid;",
+        "  $(table.table().body()).find('tr').removeClass('grp-hl');",
+        "  table.rows({page: 'current'}).every(function() {",
+        "    if (String(this.data()[0]) === gid) $(this.node()).addClass('grp-hl');",
+        "  });",
+        "  Shiny.setInputValue('ov_attr_group_click', gid, {priority: 'event'});",
+        "});"
+      )
+    )
+  })
+
+  # --- map ------------------------------------------------------------
+  # The base map (tiles + basemap switcher) is built once; features and the
+  # legend are drawn through a proxy so they refresh on every Calculate / fix
+  # without rebuilding the widget or losing the current zoom.
+  output$ov_map <- renderLeaflet({
+    leaflet(options = leafletOptions(attributionControl = FALSE)) |>
+      addProviderTiles("Esri.WorldTopoMap",    group = "Esri topo") |>
+      addProviderTiles("Esri.WorldImagery",    group = "Esri imagery") |>
+      addProviderTiles("Esri.WorldGrayCanvas", group = "Esri grey") |>
+      addLayersControl(
+        baseGroups = c("Esri topo", "Esri imagery", "Esri grey"),
+        options = layersControlOptions(collapsed = FALSE)
+      )
+  })
+
+  observe({
+    proxy <- leafletProxy("ov_map")
+    proxy |>
+      clearGroup("features") |>
+      clearGroup("removed") |>
+      clearGroup("highlight") |>
+      removeControl("legend")
+
+    rb  <- ov_vals$before
+    src <- ov_vals$src
+
+    # before "Calculate": show the raw layer (or nothing yet), no legend
+    if (is.null(rb)) {
+      if (!is.null(src)) {
+        d0 <- planar_only(st_transform(src, 4326))
+        add_features(proxy, d0, rep("No overlap", nrow(d0)), group = "features")
+        bb <- as.numeric(st_bbox(d0))
+        if (all(is.finite(bb))) proxy |> fitBounds(bb[1], bb[2], bb[3], bb[4])
+      }
+      return()
+    }
+
+    disp <- st_transform(rb$x, 4326)
+    n    <- nrow(disp)
+    ra   <- ov_vals$after
+    rem  <- ov_vals$removed
+
+    if (is.null(ra)) {
+      category <- ifelse(rb$exact_sp, "Exact duplicate",
+                  ifelse(rb$partial_sp, "Partial overlap", "No overlap"))
+      keep_idx <- seq_len(n)
+    } else {
+      category <- rep("No overlap", n)
+      keep_idx <- if (length(rem)) setdiff(seq_len(n), rem) else seq_len(n)
+      category[keep_idx] <- ifelse(ra$exact_sp, "Exact duplicate",
+                            ifelse(ra$partial_sp, "Partial overlap", "No overlap"))
+    }
+
+    if (!is.null(ra) && length(rem)) {
+      add_features(proxy, disp[rem, , drop = FALSE],
+                   rep("Removed", length(rem)), faded = TRUE, group = "removed")
+    }
+    add_features(proxy, disp[keep_idx, , drop = FALSE], category[keep_idx],
+                 group = "features")
+
+    # Overlap status legend: shown on the first Calculate and every redraw after.
+    proxy |> addLegend(
+      layerId = "legend", position = "bottomright",
+      colors = unname(PAL), labels = names(PAL),
+      title = "Overlap status", opacity = 1
+    )
+
+    # fit on the raw view and right after Calculate; keep the user's zoom after a fix
+    if (is.null(ra)) {
+      bb <- as.numeric(st_bbox(disp))
+      if (all(is.finite(bb))) proxy |> fitBounds(bb[1], bb[2], bb[3], bb[4])
+    }
+  })
+
+  # --- table row click: outline that Overlap_id group and zoom to it ---
+  observeEvent(input$ov_attr_group_click, {
+    rb <- ov_vals$before
+    req(rb)
+    gid   <- suppressWarnings(as.integer(input$ov_attr_group_click))
+    proxy <- leafletProxy("ov_map")
+    proxy |> clearGroup("highlight")
+    if (is.na(gid)) return()
+
+    feats <- which(rb$group_id == gid)
+    if (!length(feats)) return()
+    d <- st_transform(rb$x[feats, , drop = FALSE], 4326)
+    d <- d[!st_is_empty(d), , drop = FALSE]
+    if (nrow(d) == 0) return()
+
+    if (any(grepl("LINESTRING", as.character(st_geometry_type(d))))) {
+      proxy |> addPolylines(data = d, group = "highlight",
+                            color = "#00e5ff", weight = 6, opacity = 1)
+    } else {
+      proxy |> addPolygons(data = d, group = "highlight",
+                           color = "#00e5ff", weight = 4, opacity = 1, fill = FALSE)
+    }
+    bb <- as.numeric(st_bbox(d))
+    if (all(is.finite(bb))) {
+      proxy |> fitBounds(bb[1], bb[2], bb[3], bb[4],
+                         options = list(padding = c(40, 40), maxZoom = 18))
+    }
+  })
+
+  # --- save: original features minus the removed ones ------------------
+  output$ov_save <- downloadHandler(
+    filename = function() {
+      stub <- if (is.null(input$gpkg)) "layer"
+              else tools::file_path_sans_ext(input$gpkg$name)
+      paste0(stub, "_overlaps_fixed.gpkg")
+    },
+    content = function(file) {
+      req(ov_vals$src)
+      x <- ov_vals$src
+      if (length(ov_vals$removed)) x <- x[-ov_vals$removed, ]
+      lyr <- if (is.null(input$ov_layer)) "layer" else paste0(input$ov_layer, "_fixed")
+      tmp <- tempfile(fileext = ".gpkg")
+      st_write(x, tmp, layer = lyr, quiet = TRUE)
+      file.copy(tmp, file, overwrite = TRUE)
+    }
+  )
 }
 
 shinyApp(ui, server)
